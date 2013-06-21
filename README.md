@@ -63,6 +63,13 @@ It must be said that ::velvet_goldmine:: normally sets frame_start and frame_pre
 because in almost all the cases, that's what an editor really want - to render the range he has set
 for his timeline. Otherwise, it would be a bit confusing.
 
+Observation 1: Panning audio in Blender only works with mono sources, be warned.
+
+Observation 2: The proxy approach on this script is quite personal, due to the way Blender behaves with
+different FPS sources. I'd rather equalize all source videos FPSs via script (and make them mono, by the
+way) before editing, otherwise it'd be hell. Since I'm at it, I use the same script to make the proxies,
+so ::velvet_goldmine:: just toggles the strips back to their original, full-sized sources, or to their proxies.
+
 
     "Audio Pan Toggle"
     """Toggles audio pan between 0.0, 1.0 and -1.0 for selected strips"""
