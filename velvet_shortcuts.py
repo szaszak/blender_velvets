@@ -19,7 +19,10 @@
 import bpy
 import os
 
+# To be used with Addon ::velvet_goldmine::
 # ::velvet goldmine:: version - 20130621
+# Author: qazav_szaszak
+
 
 wm = bpy.context.window_manager
 kc = wm.keyconfigs.new(os.path.splitext(os.path.basename(__file__))[0])
