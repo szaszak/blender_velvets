@@ -26,7 +26,7 @@ bl_info = {
     "description": "Glamorous new shortcuts for video editing in Blender VSE",
     "author": "qazav_szaszak",
     "version": (1, 0, 20130829),
-    "blender": (2, 68, 2),
+    "blender": (2, 67, 1),
     "warning": "TO BE USED WITH LOTS OF GLITTER",
     "category": ":",
     "location": "Sequencer",
