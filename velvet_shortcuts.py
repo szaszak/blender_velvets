@@ -16,12 +16,13 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import bpy
-import os
 
 # To be used with Addon ::velvet_goldmine::
-# ::velvet goldmine:: version - 20130621
+# ::velvet goldmine:: version - 20130829
 # Author: qazav_szaszak
+
+import bpy
+import os
 
 
 wm = bpy.context.window_manager
@@ -340,4 +341,3 @@ kmi.properties.reverse = True
 kmi = km.keymap_items.new('screen.animation_cancel', 'ESC', 'PRESS')
 kmi = km.keymap_items.new('screen.animation_play', 'MEDIA_PLAY', 'PRESS')
 kmi = km.keymap_items.new('screen.animation_cancel', 'MEDIA_STOP', 'PRESS')
-
