@@ -16,18 +16,22 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# <pep8 compliant>
+
+
 import bpy
 
 bl_info = {
     "name": "Velvet Goldmine ::",
     "description": "Glamorous new shortcuts for video editing in Blender VSE",
     "author": "qazav_szaszak",
-    "version": (1, 0, 20130621),
-    "blender": (2, 67, 1),
+    "version": (1, 0, 20130829),
+    "blender": (2, 68, 2),
     "warning": "TO BE USED WITH LOTS OF GLITTER",
     "category": ":",
     "location": "Sequencer",
     "support": "COMMUNITY"}
+
 
 class Audio_Pan_Toggle(bpy.types.Operator):
     """Toggles audio pan between 0.0, 1.0 and -1.0 for selected strips"""
@@ -40,16 +44,16 @@ class Audio_Pan_Toggle(bpy.types.Operator):
     def poll(cls, context):
         return bpy.context.scene is not None
 
-    def execute(self, context):        
+    def execute(self, context):
         for i in bpy.context.selected_sequences:
-            if ( i.type == "SOUND" ):
-                if ( i.pan == 0.0 ):
+            if (i.type == "SOUND"):
+                if (i.pan == 0.0):
                     i.pan = 1.0
-                elif ( i.pan == 1.0 ):
+                elif (i.pan == 1.0):
                     i.pan = -1.0
                 else:
                     i.pan = 0.0
-        
+
         return {'FINISHED'}
 
 
@@ -64,13 +68,13 @@ class Cut_Delete_Left(bpy.types.Operator):
     def poll(cls, context):
         return bpy.context.scene is not None
 
-    def execute(self, context):        
+    def execute(self, context):
         scene = bpy.context.scene
         sequencer = bpy.ops.sequencer
 
-        sequencer.cut(frame=scene.frame_current, type='SOFT', side='LEFT')        
+        sequencer.cut(frame=scene.frame_current, type='SOFT', side='LEFT')
         sequencer.delete()
-        
+
         return {'FINISHED'}
 
 
@@ -89,20 +93,20 @@ class Cut_Delete_Left_Sel(bpy.types.Operator):
         scene = bpy.context.scene
         sequencer = bpy.ops.sequencer
         selectedStrips = bpy.context.selected_sequences
-        
+
         sequencer.cut(frame=scene.frame_current, type='SOFT', side='RIGHT')
-        
+
         selectedStrips2 = bpy.context.selected_sequences
         sequencer.select_all(action='DESELECT')
-        
+
         for strip in selectedStrips:
             strip.select = True
-            
+
         sequencer.delete()
-        
+
         for strip in selectedStrips2:
             strip.select = True
-        
+
         return {'FINISHED'}
 
 
@@ -123,7 +127,7 @@ class Cut_Delete_Right(bpy.types.Operator):
 
         sequencer.cut(frame=scene.frame_current, type='SOFT', side='RIGHT')
         sequencer.delete()
-        
+
         return {'FINISHED'}
 
 
@@ -142,13 +146,13 @@ class Cut_Delete_Right_Sel(bpy.types.Operator):
         scene = bpy.context.scene
         sequencer = bpy.ops.sequencer
         selectedStrips = bpy.context.selected_sequences
-        
+
         sequencer.cut(frame=scene.frame_current, type='SOFT', side='RIGHT')
         sequencer.delete()
-        
+
         for strip in selectedStrips:
             strip.select = True
-        
+
         return {'FINISHED'}
 
 
@@ -167,6 +171,7 @@ class Delete_Direct(bpy.types.Operator):
         bpy.ops.sequencer.delete()
         return {'FINISHED'}
 
+
 class Fade_In_Strip_Start(bpy.types.Operator):
     """Creates a one second fade in (for audio and/or video) at strip start"""
     bl_idname = "sequencer.fade_in_strip_start"
@@ -184,7 +189,7 @@ class Fade_In_Strip_Start(bpy.types.Operator):
         for strip in bpy.context.selected_sequences:
             keyframePosition1 = strip.frame_offset_start + strip.frame_start
             keyframePosition2 = keyframePosition1 + fps
-            if ( strip.type == "SOUND" ):
+            if (strip.type == "SOUND"):
                 originalVolume = strip.volume
                 strip.volume = 0
                 strip.keyframe_insert('volume', -1, keyframePosition1)
@@ -197,7 +202,7 @@ class Fade_In_Strip_Start(bpy.types.Operator):
                 strip.keyframe_insert('blend_alpha', -1, keyframePosition1)
                 strip.blend_alpha = originalAlpha
                 strip.keyframe_insert('blend_alpha', -1, keyframePosition2)
-        
+
         return {'FINISHED'}
 
 
@@ -218,7 +223,7 @@ class Fade_Out_Strip_End(bpy.types.Operator):
         for strip in bpy.context.selected_sequences:
             keyframePosition1 = strip.frame_final_end
             keyframePosition2 = keyframePosition1 - fps
-            if ( strip.type == "SOUND" ):
+            if (strip.type == "SOUND"):
                 originalVolume = strip.volume
                 strip.volume = 0
                 strip.keyframe_insert('volume', -1, keyframePosition1)
@@ -231,10 +236,10 @@ class Fade_Out_Strip_End(bpy.types.Operator):
                 strip.keyframe_insert('blend_alpha', -1, keyframePosition1)
                 strip.blend_alpha = originalAlpha
                 strip.keyframe_insert('blend_alpha', -1, keyframePosition2)
-        
+
         return {'FINISHED'}
 
-        
+
 class Markers_Delete_Closest(bpy.types.Operator):
     """Deletes the closest marker to the cursor"""
     bl_idname = "sequencer.marker_delete_closest"
@@ -250,21 +255,21 @@ class Markers_Delete_Closest(bpy.types.Operator):
         scene = bpy.context.scene
         currentFrame = scene.frame_current
         marker = scene.timeline_markers
-        
-        if ( len(marker) != 0 ):            
+
+        if (len(marker) != 0):
             markers = []
             for i in scene.timeline_markers:
                 markers.append(i.frame)
-            
+
             markers.append(currentFrame)
             markers.sort()
-        
+
             idx = markers.index(currentFrame)
-        
-            if ( idx == 0 ):
+
+            if (idx == 0):
                 # cursor before all markers, remove first
                 markerFrame = "F_" + str(markers[1])
-            elif ( idx == (len(markers)-1) ):
+            elif (idx == (len(markers)-1)):
                 # cursor after all markers, remove last
                 markerFrame = "F_" + str(markers[-2])
             else:
@@ -272,7 +277,7 @@ class Markers_Delete_Closest(bpy.types.Operator):
                 # cursor between markers, remove closest
                 sum1 = markers[idx] - markers[idx-1]
                 sum2 = markers[idx+1] - markers[idx]
-                if ( sum1 < sum2 ):
+                if (sum1 < sum2):
                     markerFrame = "F_" + str(markers[idx-1])
                 else:
                     markerFrame = "F_" + str(markers[idx+1])
@@ -298,20 +303,20 @@ class Markers_Goto_Left(bpy.types.Operator):
         scene = bpy.context.scene
         currentFrame = scene.frame_current
         marker = scene.timeline_markers
-        
-        if ( len(marker) != 0 ):
+
+        if (len(marker) != 0):
             markers = []
-            
+
             for i in scene.timeline_markers:
                 markers.append(i.frame)
-            
+
             markers.append(currentFrame)
             markers.sort()
-    
+
             idx = markers.index(currentFrame)
-    
-            if ( idx != 0 ):
-                # if cursor is not before markers                
+
+            if (idx != 0):
+                # if cursor is not before markers
                 scene.frame_current = markers[idx-1]
                 return {'FINISHED'}
             else:
@@ -337,20 +342,20 @@ class Markers_Goto_Right(bpy.types.Operator):
         scene = bpy.context.scene
         currentFrame = scene.frame_current
         marker = scene.timeline_markers
-        
-        if ( len(marker) != 0 ):
+
+        if (len(marker) != 0):
             markers = []
-            
+
             for i in scene.timeline_markers:
                 markers.append(i.frame)
-            
+
             markers.append(currentFrame)
             markers = sorted(set(markers))
-    
+
             idx = markers.index(currentFrame)
-    
-            if ( idx != len(markers)-1 ):
-                # if cursor is not after markers                
+
+            if (idx != len(markers)-1):
+                # if cursor is not after markers
                 scene.frame_current = markers[idx+1]
                 return {'FINISHED'}
             else:
@@ -374,7 +379,7 @@ class Metastrip_Make_Direct(bpy.types.Operator):
 
     def execute(self, context):
         bpy.ops.sequencer.meta_make()
-        
+
         return {'FINISHED'}
 
 
@@ -394,19 +399,19 @@ class Proxy_Editing_Toggle(bpy.types.Operator):
         import bpy
 
         for i in bpy.context.sequences:
-            if ( i.type == "SOUND" ) or ( i.type == "MOVIE" ):
-                if ( i.filepath[-4:] == ".avi" ) or \
-                   ( i.filepath[-4:] == ".mov" ):
+            if (i.type == "SOUND") or (i.type == "MOVIE"):
+                if (i.filepath[-4:] == ".avi") or \
+                   (i.filepath[-4:] == ".mov"):
                     container = i.filepath[-4:]
-                    if ( i.filepath[-10:-4:] == "_proxy" ):
+                    if (i.filepath[-10:-4:] == "_proxy"):
                         i.filepath = i.filepath[:-10] + container
                     else:
                         i.filepath = i.filepath[:-4] + "_proxy" + container
         '''
         import os
-        
+
         scene = bpy.context.scene
-        
+
         for i in scene.sequence_editor.sequences_all:
             filename = i.filepath.split(os.sep)[-1]
             if i.filepath.split(os.sep)[-2] == "//Proxies":
@@ -414,7 +419,7 @@ class Proxy_Editing_Toggle(bpy.types.Operator):
             else:
                 i.filepath = "//Proxies" + os.sep + filename
         '''
-        
+
         return {'FINISHED'}
 
 
@@ -431,15 +436,15 @@ class Render_Resolution_Percentage_Toggle(bpy.types.Operator):
 
     def execute(self, context):
         render = bpy.context.scene.render
-        resolution = render.resolution_percentage        
-        
-        if ( resolution == 100 ):
+        resolution = render.resolution_percentage
+
+        if (resolution == 100):
             render.resolution_percentage = 30
-        elif ( resolution == 30 ):
+        elif (resolution == 30):
             render.resolution_percentage = 60
         else:
-            render.resolution_percentage = 100        
-        
+            render.resolution_percentage = 100
+
         return {'FINISHED'}
 
 
@@ -456,7 +461,7 @@ class Save_Direct(bpy.types.Operator):
 
     def execute(self, context):
         bpy.ops.wm.save_mainfile()
-        
+
         return {'FINISHED'}
 
 
@@ -473,7 +478,7 @@ class Screens_Change_Animation(bpy.types.Operator):
 
     def execute(self, context):
         bpy.context.window.screen = bpy.data.screens['Animation']
-        
+
         return {'FINISHED'}
 
 
@@ -490,7 +495,7 @@ class Screens_Change_Compositing(bpy.types.Operator):
 
     def execute(self, context):
         bpy.context.window.screen = bpy.data.screens['Compositing']
-        
+
         return {'FINISHED'}
 
 
@@ -507,7 +512,7 @@ class Screens_Change_MotionTracking(bpy.types.Operator):
 
     def execute(self, context):
         bpy.context.window.screen = bpy.data.screens['Motion Tracking']
-        
+
         return {'FINISHED'}
 
 
@@ -524,7 +529,7 @@ class Screens_Change_VideoEditing(bpy.types.Operator):
 
     def execute(self, context):
         bpy.context.window.screen = bpy.data.screens['Video Editing']
-        
+
         return {'FINISHED'}
 
 
@@ -545,16 +550,16 @@ class Scene_Toggle(bpy.types.Operator):
 
         index = 0
         for i in bpy.data.scenes:
-            if ( i.name == scene.name ):        
+            if (i.name == scene.name):
                 break
             else:
                 index += 1
-        
-        if ( index == (len(bpy.data.scenes)-1) ):
+
+        if (index == (len(bpy.data.scenes)-1)):
             screen.scene = bpy.data.scenes[0]
         else:
             screen.scene = bpy.data.scenes[index+1]
-        
+
         return {'FINISHED'}
 
 
@@ -572,22 +577,22 @@ class Strips_Adjust_To_Cursor(bpy.types.Operator):
     def execute(self, context):
         scene = bpy.context.scene
         selectedStrips = bpy.context.selected_sequences
-        
+
         reference = 1
         for strip in selectedStrips:
             if strip.frame_final_end > reference:
                 reference = strip.frame_final_end
-        
+
         for strip in selectedStrips:
             stripStart = strip.frame_start + strip.frame_offset_start
             if stripStart < reference:
                 reference = stripStart
-                
+
         gap = reference - scene.frame_current
-        
+
         for strip in bpy.context.selected_sequences:
             strip.frame_start -= gap
-            
+
         return {'FINISHED'}
 
 
@@ -605,19 +610,19 @@ class Strips_Adjust_To_Start(bpy.types.Operator):
     def execute(self, context):
         scene = bpy.context.scene
         selectedStrips = bpy.context.selected_sequences
-        
+
         reference = 1
         for strip in selectedStrips:
             if strip.frame_final_end > reference:
                 reference = strip.frame_final_end
-        
+
         for strip in selectedStrips:
             stripStart = strip.frame_start + strip.frame_offset_start
             if stripStart < reference:
                 reference = stripStart
-                
+
         gap = reference - scene.frame_preview_start
-        
+
         for strip in bpy.context.selected_sequences:
             strip.frame_start -= gap
         return {'FINISHED'}
@@ -636,11 +641,11 @@ class Strips_Channel_Up(bpy.types.Operator):
 
     def execute(self, context):
         selectedStrips = bpy.context.selected_sequences
-        
-        myRange = range(len(selectedStrips)-1,-1,-1)
+
+        myRange = range(len(selectedStrips)-1, -1, -1)
         for i in myRange:
-            selectedStrips[i].channel += 1        
-        
+            selectedStrips[i].channel += 1
+
         return {'FINISHED'}
 
 
@@ -657,9 +662,9 @@ class Strips_Channel_Down(bpy.types.Operator):
 
     def execute(self, context):
         for strip in bpy.context.selected_sequences:
-            if ( strip.channel > 1 ):
+            if (strip.channel > 1):
                 strip.channel -= 1
-                
+
         return {'FINISHED'}
 
 
@@ -683,15 +688,15 @@ class Strips_Jump_To_Next(bpy.types.Operator):
             stripStart = i.frame_start + i.frame_offset_start
             references.append(stripStart)
             references.append(i.frame_final_end)
-    
+
         references.append(currentFrame)
 
         references = sorted(set(references))
         idx = references.index(currentFrame)
 
-        if ( idx != (len(references)-1) ):
+        if (idx != (len(references)-1)):
             scene.frame_current = references[idx+1]
-        
+
         return {'FINISHED'}
 
 
@@ -709,21 +714,21 @@ class Strips_Jump_To_Previous(bpy.types.Operator):
     def execute(self, context):
         scene = bpy.context.scene
         currentFrame = scene.frame_current
-        
+
         references = []
         for sequence in scene.sequence_editor.sequences:
             stripStart = sequence.frame_start + sequence.frame_offset_start
             references.append(stripStart)
             references.append(sequence.frame_final_end)
-    
+
         references.append(currentFrame)
 
         references = sorted(set(references))
         idx = references.index(currentFrame)
 
-        if ( idx != 0 ):
+        if (idx != 0):
             scene.frame_current = references[idx-1]
-        
+
         return {'FINISHED'}
 
 
@@ -739,30 +744,30 @@ class Strips_Concatenate_Selected(bpy.types.Operator):
         return bpy.context.scene is not None
 
     def execute(self, context):
-    
+
         channels = []
         for strips in bpy.context.selected_sequences:
             channels.append(strips.channel)
-    
-        if ( len(sorted(set(channels))) == 1):    
+
+        if (len(sorted(set(channels))) == 1):
             list = []
             for strip in bpy.context.selected_sequences:
                 stripStart = strip.frame_start + strip.frame_offset_start
-                list.append([ stripStart , strip.frame_final_duration , \
-                              strip.name])
+                list.append([stripStart, strip.frame_final_duration,
+                             strip.name])
 
             list.sort()
-    
-            base = list[0][0] + list[0][1] # 1st strip start + duration
+
+            base = list[0][0] + list[0][1]  # 1st strip start + duration
             for i in list[1:]:
                 strip = bpy.context.scene.sequence_editor.sequences_all[i[2]]
-                gap = ( strip.frame_start + strip.frame_offset_start ) - base
+                gap = (strip.frame_start + strip.frame_offset_start) - base
                 strip.frame_start -= gap
-                base += i[1]  
-        
+                base += i[1]
+
         return {'FINISHED'}
 
-        
+
 class Strips_Waveform_Toggle(bpy.types.Operator):
     """Shows the audio waveform in selected strips (toggle)"""
     bl_idname = "sequencer.strips_show_waveform"
@@ -775,14 +780,14 @@ class Strips_Waveform_Toggle(bpy.types.Operator):
         return bpy.context.scene is not None
 
     def execute(self, context):
-    
+
         for strip in bpy.context.selected_sequences:
-            if ( strip.type == "SOUND" ):
-                if ( strip.show_waveform == False ):
+            if (strip.type == "SOUND"):
+                if (strip.show_waveform is False):
                     strip.show_waveform = True
                 else:
                     strip.show_waveform = False
-        
+
         return {'FINISHED'}
 
 
@@ -799,15 +804,15 @@ class Timeline_Adjust_End(bpy.types.Operator):
 
     def execute(self, context):
         scene = bpy.context.scene
-    
-        lastFrame = 0        
+
+        lastFrame = 0
         for sequence in scene.sequence_editor.sequences:
-                if ( sequence.frame_final_end > lastFrame ):
+                if (sequence.frame_final_end > lastFrame):
                     lastFrame = sequence.frame_final_end
-        
+
         scene.frame_end = lastFrame
         scene.frame_preview_end = lastFrame
-        
+
         return {'FINISHED'}
 
 
@@ -823,10 +828,10 @@ class Timeline_End_In_Current(bpy.types.Operator):
         return bpy.context.scene is not None
 
     def execute(self, context):
-        scene = bpy.context.scene        
+        scene = bpy.context.scene
         scene.frame_end = scene.frame_current
         scene.frame_preview_end = scene.frame_current
-        
+
         return {'FINISHED'}
 
 
@@ -834,7 +839,7 @@ class Timeline_Start_In_Current(bpy.types.Operator):
     """Sets Timeline start to current frame"""
     bl_idname = "sequencer.timeline_start_in_current"
     bl_label = "Timeline Start to Current"
-    bl_options = {'REGISTER', 'UNDO'}    
+    bl_options = {'REGISTER', 'UNDO'}
     # Shortcut: Shift + Alt + S
 
     @classmethod
@@ -842,10 +847,10 @@ class Timeline_Start_In_Current(bpy.types.Operator):
         return bpy.context.scene is not None
 
     def execute(self, context):
-        scene = bpy.context.scene        
+        scene = bpy.context.scene
         scene.frame_start = scene.frame_current
         scene.frame_preview_start = scene.frame_current
-        
+
         return {'FINISHED'}
 
 
@@ -861,10 +866,10 @@ class Timeline_Start_In_One(bpy.types.Operator):
         return bpy.context.scene is not None
 
     def execute(self, context):
-        scene = bpy.context.scene    
+        scene = bpy.context.scene
         scene.frame_start = 1
         scene.frame_preview_start = 1
-        
+
         return {'FINISHED'}
 
 
@@ -880,29 +885,29 @@ class Timeline_Loop_Selected(bpy.types.Operator):
         return bpy.context.scene is not None
 
     def execute(self, context):
-        scene = bpy.context.scene              
+        scene = bpy.context.scene
         selectedStrips = bpy.context.selected_sequences
 
         reference = 0
         for strip in selectedStrips:
             if strip.frame_final_end > reference:
                 reference = strip.frame_final_end
-        
+
         for strip in selectedStrips:
             stripStart = strip.frame_start + strip.frame_offset_start
-            if ( stripStart < reference ):
+            if (stripStart < reference):
                 reference = stripStart
 
         scene.frame_start = reference
-        scene.frame_preview_start = reference        
+        scene.frame_preview_start = reference
 
         for strip in selectedStrips:
-            if ( strip.frame_final_end > reference ):
+            if (strip.frame_final_end > reference):
                 reference = strip.frame_final_end
-        
+
         scene.frame_end = reference
-        scene.frame_preview_end = reference        
-        
+        scene.frame_preview_end = reference
+
         return {'FINISHED'}
 
 
@@ -920,13 +925,13 @@ class Timeline_Select_Inside_Preview(bpy.types.Operator):
     def execute(self, context):
         scene = bpy.context.scene
         sequencer = bpy.ops.sequencer
-       
+
         sequencer.select_all(action='DESELECT')
-        
+
         for sequence in scene.sequence_editor.sequences:
             stripStart = sequence.frame_start + sequence.frame_offset_start
-            if ( stripStart >= scene.frame_preview_start ) and \
-               ( stripStart <= scene.frame_preview_end ):                
+            if (stripStart >= scene.frame_preview_start) and \
+               (stripStart <= scene.frame_preview_end):
                 sequence.select = True
 
         return {'FINISHED'}
@@ -944,10 +949,10 @@ class Timeline_View_Selected_Closer(bpy.types.Operator):
         return bpy.context.scene is not None
 
     def execute(self, context):
-        sequencer = bpy.ops.sequencer       
+        sequencer = bpy.ops.sequencer
         sequencer.view_zoom_ratio(ratio=0.02)
         sequencer.view_selected()
-        
+
         return {'FINISHED'}
 
 
@@ -965,17 +970,16 @@ class Timeline_ZoomIn_10s(bpy.types.Operator):
     def execute(self, context):
         preferences = bpy.context.user_preferences
         mouse = False
-        
-        if ( preferences.view.use_zoom_to_mouse == True ):
+
+        if (preferences.view.use_zoom_to_mouse is True):
             mouse = True
             preferences.view.use_zoom_to_mouse = False
-    
+
         bpy.ops.view2d.zoom(deltax=150.0, deltay=0.0)
-        
-        if ( mouse == True ):
+
+        if (mouse is True):
             preferences.view.use_zoom_to_mouse = True
-        
-        
+
         return {'FINISHED'}
 
 
@@ -993,16 +997,16 @@ class Timeline_ZoomOut_10s(bpy.types.Operator):
     def execute(self, context):
         preferences = bpy.context.user_preferences
         mouse = False
-        
-        if ( preferences.view.use_zoom_to_mouse == True ):
+
+        if (preferences.view.use_zoom_to_mouse is True):
             mouse = True
             preferences.view.use_zoom_to_mouse = False
-    
+
         bpy.ops.view2d.zoom(deltax=-150.0, deltay=0.0)
-        
-        if ( mouse == True ):
+
+        if (mouse is True):
             preferences.view.use_zoom_to_mouse = True
-        
+
         return {'FINISHED'}
 
 
@@ -1020,17 +1024,17 @@ class Timeline_ZoomOutXY(bpy.types.Operator):
     def execute(self, context):
         preferences = bpy.context.user_preferences
         mouse = False
-        
-        if ( preferences.view.use_zoom_to_mouse == True ):
+
+        if (preferences.view.use_zoom_to_mouse is True):
             mouse = True
             preferences.view.use_zoom_to_mouse = False
-    
+
         #bpy.ops.view2d.zoom(deltax=-150.0, deltay=-100.0)
         bpy.ops.view2d.zoom(deltax=-150.0, deltay=-2.0)
-        
-        if ( mouse == True ):
+
+        if (mouse is True):
             preferences.view.use_zoom_to_mouse = True
-        
+
         return {'FINISHED'}
 
 
@@ -1048,26 +1052,29 @@ class Timeline_ZoomToCursor(bpy.types.Operator):
     def execute(self, context):
         currentFrame = bpy.context.scene.frame_current
         sequencer = bpy.ops.sequencer
-        
+
         sequencer.select_all(action='DESELECT')
 
         for strip in bpy.context.sequences:
             stripStart = strip.frame_start + strip.frame_offset_start
-            if ( stripStart < currentFrame < strip.frame_final_end ):
+            if (stripStart < currentFrame < strip.frame_final_end):
                 strip.select = True
-                
+
         sequencer.view_selected()
         #sequencer.view_zoom_ratio(ratio=0.02)
-                
-        sequencer.select_all(action='DESELECT')        
-        
+
+        sequencer.select_all(action='DESELECT')
+
         return {'FINISHED'}
+
 
 def register():
     bpy.utils.register_module(__name__)
 
+
 def unregister():
     bpy.utils.unregister_module(__name__)
+
 
 if __name__ == "__main__":
     register()
