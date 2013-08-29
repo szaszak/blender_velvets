@@ -21,6 +21,7 @@
 # ::velvet goldmine:: version - 20130829
 # Author: qazav_szaszak
 
+
 import bpy
 import os
 
@@ -193,6 +194,11 @@ kmi = km.keymap_items.new('sequencer.swap', 'LEFT_ARROW', 'PRESS', alt=True)
 kmi.properties.side = 'LEFT'
 kmi = km.keymap_items.new('sequencer.swap', 'RIGHT_ARROW', 'PRESS', alt=True)
 kmi.properties.side = 'RIGHT'
+kmi = km.keymap_items.new('sequencer.gap_remove', 'BACK_SPACE', 'PRESS')
+kmi.properties.all = False
+kmi = km.keymap_items.new('sequencer.gap_remove', 'BACK_SPACE', 'PRESS', shift=True)
+kmi.properties.all = True
+kmi = km.keymap_items.new('sequencer.gap_insert', 'EQUAL', 'PRESS', shift=True)
 kmi = km.keymap_items.new('sequencer.snap', 'S', 'PRESS', shift=True)
 kmi = km.keymap_items.new('sequencer.swap_inputs', 'S', 'PRESS', alt=True)
 kmi = km.keymap_items.new('sequencer.cut_multicam', 'ONE', 'PRESS')
