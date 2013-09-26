@@ -16,11 +16,27 @@ import os
 fileName = bpy.path.basename(bpy.data.filepath)
 fileBasename = os.path.splitext(fileName)[0]
 
-system = bpy.context.user_preferences.system
-audioSampleRate = system.audio_sample_rate.split("_")[1]
+context = bpy.context 
+system = context.user_preferences.system
+scene = context.scene
+
+audioSampleRate = int(system.audio_sample_rate.split("_")[1])
+startFrame = scene.frame_start
+endFrame = scene.frame_end
+fps = scene.render.fps
 
 desktop = os.environ['HOMEPATH'] + os.sep + "Desktop"
 sourceAudiosFolder = desktop # change, must come from User choice
+
+
+def samplesPerSec(fr, ar, fps):
+    '''fr = duration in frames, ar = audio rate'''
+    return int(fr * ar / fps)
+    
+ardourStart = startFrame - 1
+ardourEnd = samplesPerSec((endFrame-1), audioSampleRate, fps)
+idCounter = 0
+    
 
 xmlSections = [ "Config", "Metadata", "Sources", "Regions", "Locations", "Bundles",
              "Routes", "Playlists", "UnusedPlaylists", "RouteGroups", "Click",
@@ -31,7 +47,7 @@ xmlSections = [ "Config", "Metadata", "Sources", "Regions", "Locations", "Bundle
 atSession = {'version': 3001,
              'name': fileBasename,
              'sample-rate': audioSampleRate,
-             'id-counter': 2,
+             'id-counter': 0,
              'event-counter': 0
              }
                  
@@ -48,17 +64,17 @@ atOption = {'name': "audio-search-path",\
 #              'position-lock-style': ["AudioTime", "AudioTime", "AudioTime"]
 #              }
 
-atLocation = {'id': 0,
+atLocation = {'id': idCounter,
               'name': "session",
-              'start': 0, # Start is 0 - timeline start = 0
-              'end': 1, # End is 1 for empty project (infinity) or end = endOfTimeline
+              'start': ardourStart, # Start is 0 - timeline start = 0
+              'end': ardourEnd, # End is 1 for empty project (infinity) or end = endOfTimeline
               'flags': "IsSessionRange",
               'locked': "no",
               'position-lock-style': "AudioTime"
               }
 
 atIO = {'name': "click",
-        'id': 1,
+        'id': idCounter,
         'direction': "Output",
         'default-type': "audio",
         'user-latency': 0,
@@ -129,7 +145,7 @@ atRegion = {'name': "lala", # audio file, without extension
             }
 
 atRoute = {'id': 52, # generic id, BUT will be the referenced by atPlaylist
-           'name': "lala", # audio file, without extension
+           'name': "boo_track_name", # track name (channel in Blender), boo_track_name
            'default-type': "audio",
            'active': "yes",
            'phase-invert': 0,
@@ -147,7 +163,7 @@ atRoute = {'id': 52, # generic id, BUT will be the referenced by atPlaylist
            'mode': "Normal"
            }
 
-atRouteIO = {'name': ["lala", "lala"], # audio file, without extension
+atRouteIO = {'name': ["boo_track_name", "boo_track_name"], # track name (channel in Blender), boo_track_name
              'id': [69, 70], # generic id
              'direction': ["Input", "Output"],
              'default-type': ["audio", "audio"],
@@ -155,7 +171,7 @@ atRouteIO = {'name': ["lala", "lala"], # audio file, without extension
              }
 
 atRouteIOPort = {'type': ["audio", "audio"],
-                 'name': ["lala/audio_in 1", "lala/audio_out 1"] # audio file, without extension
+                 'name': ["boo_track_name/audio_in 1", "boo_track_name/audio_out 1"] # track name (channel in Blender), boo_track_name
                  }
 
 atDiskstream = {'flags': "Recordable",
@@ -177,24 +193,24 @@ atPlaylist = {'id': 80, # generic id
 
 # atPlaylistRegion seems to have the same attributes of atRegion, except for #name, #whole-file and #id (generic id)
 atPlaylistRegion = {'name': "lala.1",
-                    'muted': 0,
+                    'muted': 0, # muted = 1 = muted; muted = 0 = not-muted
                     'opaque': 1,
-                    'locked': 0,
+                    'locked': 0, # locked = 1 = locked, locked = 0 = not-locked
                     'video-locked': 0,
                     'automatic': 0,
                     'whole-file': 0,
                     'import': 0,
-                    'external': 1,
+                    'external': 1, # external probably refers to audio not in ardour's sources folders
                     'sync-marked': 0,
                     'left-of-split': 0,
                     'right-of-split': 0,
                     'hidden': 0,
                     'position-locked': 0,
                     'valid-transients': 0,
-                    'start': 0,
-                    'length': 24303909,
-                    'position': 0,
-                    'sync-position': 0,
+                    'start': 0, # = offset_start (onde, com relação à timeline, começa o arquivo de audio)
+                    'length': 24303909, # = duração (considera alterações de offset start e offset end; é o quanto vemos realmente na timeline)
+                    'position': 0, # é onde a visualização (bloco com onda sonora) começa na timeline
+                    'sync-position': 0, # é onde começa a visualização da onda sonora, com relação ao áudio original (arquivo.wav)
                     'ancestral-start': 0,
                     'ancestral-length': 0,
                     'stretch': 1,
@@ -231,6 +247,7 @@ def valLength(dic):
     return len(next(iter(dic.values())))
 
 
+
 # XML root = Session
 Session = Element("Session")
 tree = ElementTree(Session)
@@ -249,7 +266,11 @@ Meter = SubElement(Session[12], "Meter")# Session > TempoMap > Meter
 createSubElements(Session, atSession)
 createSubElements(Option, atOption)
 createSubElements(Location, atLocation)
+idCounter += 1
+print(idCounter)
 createSubElements(IO, atIO)
+idCounter += 1
+print(idCounter)
 createSubElements(Tempo, atTempo)
 createSubElements(Meter, atMeter)
 
@@ -282,8 +303,11 @@ Region = SubElement(Session[3], "Region")
 Route = SubElement(Session[6], "Route")
 
 createSubElements(Source, atSource)
+idCounter += 1
 createSubElements(Region, atRegion)
+idCounter += 1
 createSubElements(Route, atRoute)
+idCounter += 1
 
 #RouteIO = ""
 #for counter in range(valLength(atRouteIO)):
@@ -301,6 +325,7 @@ for counter in range(valLength(atRouteIO)):
     RouteIO = SubElement(Route, "IO")
     RouteIOPort = SubElement(RouteIO, "Port")
     createSubElementsMulti(RouteIO, atRouteIO, counter)
+    idCounter += 1
     createSubElementsMulti(RouteIOPort, atRouteIOPort, counter)
 
 
@@ -309,8 +334,11 @@ Playlist = SubElement(Session[7], "Playlist")
 PlaylistRegion = SubElement(Playlist, "Region")
 
 createSubElements(Diskstream, atDiskstream)
+idCounter += 1
 createSubElements(Playlist, atPlaylist)
+idCounter += 1
 createSubElements(PlaylistRegion, atPlaylistRegion)
+idCounter += 1
 
 ####### ------------------------------------
 
@@ -341,7 +369,7 @@ createSubElements(PlaylistRegion, atPlaylistRegion)
 #SubElement(config, "one")
 
 
-
+Session.set('id-counter', str(idCounter))
 
 
 
