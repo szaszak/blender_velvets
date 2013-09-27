@@ -313,35 +313,37 @@ for counter in range(valLength(atPort())):
 ######## INSERT AUDIO TRACK
 ######## ---------------------------------------------------------------------------
 
-def insertAudioTrack(idCounter):
+def insertAudioTrack(n):
     Source = SubElement(Session[2], "Source")
     Region = SubElement(Session[3], "Region")
     Route = SubElement(Session[6], "Route")
     Playlist = SubElement(Session[7], "Playlist");
     PlaylistRegion = SubElement(Playlist, "Region")
     
-    createSubElements(Source, atSource(idCounter));
-    sourceID = idCounter; idCounter += 1
-    createSubElements(Region, atRegion(idCounter, sourceID)); idCounter += 1
-    createSubElements(Route, atRoute(idCounter));
-    routeID = idCounter; idCounter += 1
-    createSubElements(Playlist, atPlaylist(idCounter, routeID)); idCounter += 1
-    createSubElements(PlaylistRegion, atPlaylistRegion(idCounter, sourceID)); idCounter += 1
+    createSubElements(Source, atSource(n));
+    sourceID = n; n += 1
+    createSubElements(Region, atRegion(n, sourceID)); n += 1
+    createSubElements(Route, atRoute(n));
+    routeID = n; n += 1
+    createSubElements(Playlist, atPlaylist(n, routeID)); n += 1
+    createSubElements(PlaylistRegion, atPlaylistRegion(n, sourceID)); n += 1
 
     RouteIO = ""
     RouteIOPort = ""
-    for counter in range(valLength(atRouteIO(idCounter))):
+    for counter in range(valLength(atRouteIO(n))):
         RouteIO = SubElement(Route, "IO")
         RouteIOPort = SubElement(RouteIO, "Port")
-        createSubElementsMulti(RouteIO, atRouteIO(idCounter), counter)
-        idCounter += 1
+        createSubElementsMulti(RouteIO, atRouteIO(n), counter)
+        n += 1
         createSubElementsMulti(RouteIOPort, atRouteIOPort(), counter)
 
     Diskstream = SubElement(Route, "Diskstream")
-    createSubElements(Diskstream, atDiskstream(idCounter)); idCounter += 1
-    return idCounter
+    createSubElements(Diskstream, atDiskstream(n)); n += 1
+    idCounter = n
+    global idCounter 
 
-idCounter = insertAudioTrack(idCounter)
+
+insertAudioTrack(idCounter)
 
 #Source = SubElement(Session[2], "Source")
 #Region = SubElement(Session[3], "Region")
