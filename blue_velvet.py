@@ -9,7 +9,7 @@ print("-------------------------------------------------------------")
 fileName = bpy.path.basename(bpy.data.filepath)
 fileBasename = os.path.splitext(fileName)[0]
 
-context = bpy.context 
+context = bpy.context
 system = context.user_preferences.system
 scene = context.scene
 
@@ -197,6 +197,32 @@ def atPlaylist(idCounter, routeID):
                   }
     return atPlaylist
 
+def atRouteIO(idCounter):
+    atRouteIO = {'name': ["boo_track_name", "boo_track_name"], # track name (channel in Blender), boo_track_name
+                 'id': [idCounter, idCounter], # generic id
+                 'direction': ["Input", "Output"],
+                 'default-type': ["audio", "audio"],
+                 'user-latency': [0, 0]
+                 }
+    return atRouteIO
+
+def atRouteIOPort():
+    atRouteIOPort = {'type': ["audio", "audio"],
+                     'name': ["boo_track_name/audio_in 1", "boo_track_name/audio_out 1"] # track name (channel in Blender), boo_track_name
+                     }
+    return atRouteIOPort
+
+def atDiskstream(idCounter):
+    atDiskstream = {'flags': "Recordable",
+                    'playlist': "lala", # audio file, without extension
+                    'name': "lala", # audio file, without extension
+                    'id': idCounter, # generic id
+                    'speed': "1.000000",
+                    'capture-alignment': "Automatic",
+                    'channels': 1 # mono file
+                    }
+    return atDiskstream
+
 # atPlaylistRegion seems to have the same attributes of atRegion, except for #name, #whole-file and #id (generic id)
 def atPlaylistRegion(idCounter, sourceID):
     atPlaylistRegion = {'name': "lala.1", # audio file, without extension
@@ -238,32 +264,6 @@ def atPlaylistRegion(idCounter, sourceID):
                         'channels': 1 # mono file
                         }
     return atPlaylistRegion
-
-def atRouteIO(idCounter):
-    atRouteIO = {'name': ["boo_track_name", "boo_track_name"], # track name (channel in Blender), boo_track_name
-                 'id': [idCounter, idCounter], # generic id
-                 'direction': ["Input", "Output"],
-                 'default-type': ["audio", "audio"],
-                 'user-latency': [0, 0]
-                 }
-    return atRouteIO
-
-def atRouteIOPort():
-    atRouteIOPort = {'type': ["audio", "audio"],
-                     'name': ["boo_track_name/audio_in 1", "boo_track_name/audio_out 1"] # track name (channel in Blender), boo_track_name
-                     }
-    return atRouteIOPort
-
-def atDiskstream(idCounter):
-    atDiskstream = {'flags': "Recordable",
-                    'playlist': "lala", # audio file, without extension
-                    'name': "lala", # audio file, without extension
-                    'id': idCounter, # generic id
-                    'speed': "1.000000",
-                    'capture-alignment': "Automatic",
-                    'channels': 1 # mono file
-                    }
-    return atDiskstream
 
 
 ######## ---------------------------------------------------------------------------
@@ -314,36 +314,103 @@ for counter in range(valLength(atPort())):
 ######## ---------------------------------------------------------------------------
 
 def insertAudioTrack(n):
-    Source = SubElement(Session[2], "Source")
-    Region = SubElement(Session[3], "Region")
-    Route = SubElement(Session[6], "Route")
-    Playlist = SubElement(Session[7], "Playlist");
-    PlaylistRegion = SubElement(Playlist, "Region")
+    Source = SubElement(Session[2], "Source") #
+    Region = SubElement(Session[3], "Region") #
+    Route = SubElement(Session[6], "Route") #
+    Playlist = SubElement(Session[7], "Playlist") #
+    PlaylistRegion = SubElement(Playlist, "Region") #
     
-    createSubElements(Source, atSource(n));
-    sourceID = n; n += 1
-    createSubElements(Region, atRegion(n, sourceID)); n += 1
-    createSubElements(Route, atRoute(n));
-    routeID = n; n += 1
-    createSubElements(Playlist, atPlaylist(n, routeID)); n += 1
-    createSubElements(PlaylistRegion, atPlaylistRegion(n, sourceID)); n += 1
+    createSubElements(Source, atSource(n)) #
+    sourceID = n; n += 1 #
+    createSubElements(Region, atRegion(n, sourceID)); n += 1 #
+    createSubElements(Route, atRoute(n)) #
+    routeID = n; n += 1 #
+    createSubElements(Playlist, atPlaylist(n, routeID)); n += 1 #
+    createSubElements(PlaylistRegion, atPlaylistRegion(n, sourceID)); n += 1 #
 
-    RouteIO = ""
-    RouteIOPort = ""
-    for counter in range(valLength(atRouteIO(n))):
-        RouteIO = SubElement(Route, "IO")
-        RouteIOPort = SubElement(RouteIO, "Port")
-        createSubElementsMulti(RouteIO, atRouteIO(n), counter)
-        n += 1
-        createSubElementsMulti(RouteIOPort, atRouteIOPort(), counter)
+    RouteIO = "" #
+    RouteIOPort = "" #
+    for counter in range(valLength(atRouteIO(n))): #
+        RouteIO = SubElement(Route, "IO") #
+        RouteIOPort = SubElement(RouteIO, "Port") #
+        createSubElementsMulti(RouteIO, atRouteIO(n), counter) #
+        n += 1 # 
+        createSubElementsMulti(RouteIOPort, atRouteIOPort(), counter) #
 
-    Diskstream = SubElement(Route, "Diskstream")
-    createSubElements(Diskstream, atDiskstream(n)); n += 1
+    Diskstream = SubElement(Route, "Diskstream") #
+    createSubElements(Diskstream, atDiskstream(n)); n += 1 #
     idCounter = n
-    global idCounter 
+    global idCounter
 
 
 insertAudioTrack(idCounter)
+
+# for i in bpy.data.sounds -> sources -> mustdefine sourceID here!
+# for s in sequences: -> regions
+def createAudioSources(idCount):
+    Source = SubElement(Session[2], "Source")
+    Region = SubElement(Session[3], "Region")
+
+    createSubElements(Source, atSource(idCount))
+    sourceID = idCount; idCount += 1
+    # idCount, sourceID will be referenced by atRegion
+    # s.name    
+    
+    createSubElements(Region, atRegion(idCount, sourceID))
+    idCount += 1
+    # idCount, sourceID comes from atSource
+    # base_name, muted, locked, start, length, position, sync-position, channels
+    
+    idCounter = idCount
+    global idCounter
+
+# for i in project.channels:
+def createPlaylists(idCount):
+    Route = SubElement(Session[6], "Route")
+    Playlist = SubElement(Session[7], "Playlist")
+    
+    createSubElements(Route, atRoute(idCount))
+    routeID = idCount; idCount += 1
+    # idCount, + routeID will be referenced by atPlaylist
+    # track_name
+    
+    createSubElements(Playlist, atPlaylist(idCount, routeID)); idCount += 1
+    # idCount, routeID comes from atRoute
+    # base_name
+    
+    RouteIO = ""
+    RouteIOPort = ""
+    for counter in range(valLength(atRouteIO(idCount))):
+        RouteIO = SubElement(Route, "IO")
+        RouteIOPort = SubElement(RouteIO, "Port")
+        createSubElementsMulti(RouteIO, atRouteIO(idCount), counter)
+        idCount += 1
+        # idCount
+        # track_name
+        
+        createSubElementsMulti(RouteIOPort, atRouteIOPort(), counter)
+        # track_name
+
+    Diskstream = SubElement(Route, "Diskstream")
+    createSubElements(Diskstream, atDiskstream(idCount)); idCount += 1
+    # idCount
+    # base_name
+    
+    idCounter = idCount
+    global idCounter
+
+
+# for s in sequences:
+def insertSourcesInPlaylists(idCount, sourceID):
+    PlaylistRegion = SubElement(Playlist, "Region")
+    createSubElements(PlaylistRegion, atPlaylistRegion(idCount, sourceID)); idCount += 1
+    # idCount
+    # sourceID comes from source!
+    # base_name, muted, locked, start, length, position, sync-position, channels
+    
+    idCounter = idCount
+    global idCounter
+
 
 #Source = SubElement(Session[2], "Source")
 #Region = SubElement(Session[3], "Region")
