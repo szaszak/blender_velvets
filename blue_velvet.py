@@ -14,9 +14,12 @@ system = context.user_preferences.system
 scene = context.scene
 
 audioSampleRate = int(system.audio_sample_rate.split("_")[1])
+audioSampleFormat = system.audio_sample_format
 startFrame = scene.frame_start
 endFrame = scene.frame_end
-fps = scene.render.fps
+fps = scene.render.fps # check validity!
+    # FPS allowed in ardour are: 
+    # 23.976, 24, 24.975, 25, 29.97, 29.97 drop, 30, 30 drop, 59.94, 60
 
 desktop = os.environ['HOMEPATH'] + os.sep + "Desktop"
 sourceAudiosFolder = desktop # change, must come from User choice
@@ -62,8 +65,17 @@ def atSession():
     return atSession
 
 def atOption():
-    atOption = {'name': "audio-search-path",
-                'value': sourceAudiosFolder
+    timecode = "timecode_%s" % fps
+    format = "FormatInt16" # change to system.audio_sample_format
+                           # 32-bit floating point = FormatFloat
+                           # 24-bit integer = FormatInt24
+                           # 16-bit integer = FormatInt16
+    atOption = {'name': ["audio-search-path", "timecode-format",
+                         "use-video-file-fps", "videotimeline-pullup", "native-file-data-format"],
+                'value': [sourceAudiosFolder, timecode, 
+                          1, 0, format] # blender project fps
+                          # 1 in use-video-file-fps = use video file's fps instead of timecode value for timeline and video monitor
+                          # 0 in videotimeline-pullup = apply pull-updown to video timeline and video monitor (unless in jack-sync)
                 }
     return atOption
 
@@ -290,14 +302,16 @@ for section in xmlSections:
     Session.append(Element(section))
 
 # Create Option, IO, Tempo and Meter + Attributes
-Option = SubElement(Session[0], "Option") # Session > Config > Option
+for counter in range(valLength(atOption())): #
+    Option = SubElement(Session[0], "Option") # Session > Config > Option
+    createSubElementsMulti(Option, atOption(), counter)
+
 Location = SubElement(Session[4], "Location") # Session > Locations > Location
 IO = SubElement(Session[10], "IO") # Session > Click > IO
 Tempo = SubElement(Session[12], "Tempo") # Session > TempoMap > Tempo
 Meter = SubElement(Session[12], "Meter")# Session > TempoMap > Meter
 
-createSubElements(Session, atSession())
-createSubElements(Option, atOption())
+createSubElements(Session, atSession())    
 createSubElements(Location, atLocation()); idCounter += 1
 createSubElements(IO, atIO()); idCounter += 1
 createSubElements(Tempo, atTempo())
