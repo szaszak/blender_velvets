@@ -60,8 +60,9 @@ def getAudioTimeline():
             position = samplesPosition(i.frame_start + i.frame_offset_start - 1)
             length = samplesPosition(i.frame_final_end - (i.frame_start + i.frame_offset_start))
         
-            audioData = {'name': i.name,            
+            audioData = {'name': i.name,
                          'base_name': i.name.split(".")[0],
+                         'ext': i.name.split(".")[1],
                          'length': length,
                          'origin': i.filepath,                  
                          'position': position,
@@ -78,6 +79,13 @@ def getAudioTimeline():
                 audioData['locked'] = 1
             else:
                 audioData['locked'] = 0
+                
+            if audioData['ext'].upper() in ["AAC", "AC3", "FLAC", "MP2", "MP3", "OGG", "WAV"]:
+                audioData['nExt'] = 1
+            else:
+                audioData['nExt'] = int(i.name.split(".")[1]) + 1
+            
+            audioData['ardour_name'] = "%s.%i" % (audioData['base_name'], audioData['nExt'])
         
             audioTimeline.append(audioData)
 
@@ -189,12 +197,13 @@ def atRegion(strip, idCount):
                 'id': idCount, # generic id
                 'length': strip['length'],
                 'locked': strip['locked'],
-                'master-source-0': strip['id'], # this is same id as atSource's id
+                'master-source-0': strip['id'], # this is same id as atSource's id -------!!!!!!!
                 'muted': strip['muted'],
-                'name': strip['base_name'],
+                'name': strip['ardour_name'],
                 'position': strip['position'],
-                'source-0': strip['id'], # this is same id as atSource's id
+                'source-0': strip['id'], # this is same id as atSource's id -------!!!!!!!
                 'start': strip['start'],
+                
                 'ancestral-length': 0,
                 'ancestral-start': 0,
                 'automatic': 0,                
@@ -232,9 +241,10 @@ def atRegion(strip, idCount):
 def createAudioSources(strip, idCount):
     Source = SubElement(Session[2], "Source")
     Region = SubElement(Session[3], "Region")
-
-    createSubElements(Source, atSource(strip))
-    idCount += 1
+    
+    if (strip['nExt'] == 1):
+        createSubElements(Source, atSource(strip))
+        idCount += 1
     
     createSubElements(Region, atRegion(strip, idCount))
     idCount += 1
@@ -296,7 +306,7 @@ for strip in audios:
     strip['id'] = idCounter
     createAudioSources(strip, idCounter)
 
-    print(strip['name'], strip['id'])
+    print(strip['name'], strip['nExt'], strip['ardour_name'])
 
 #### SOURCES MUST NOT CREATE ENTRIES FOR .001 FILES
 #### REGIONS FOR .001 FILES MUST REFERENCE ORIGINAL .WAV FILES
