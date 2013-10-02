@@ -52,7 +52,8 @@ def toSamples(fr, ar=audioRate, fps=24):
     return int(fr * audioRate / fps)
 
 def getAudioTimeline():
-    audioTimeline = []
+    timelineSources = []
+    timelineRepeated = []
     for i in bpy.context.sequences:
         #if (i.select):
         if (i.type == "SOUND"):
@@ -63,6 +64,7 @@ def getAudioTimeline():
             audioData = {'name': i.name,
                          'base_name': i.name.split(".")[0],
                          'ext': i.name.split(".")[1],
+                         'id': "",
                          'length': length,
                          'origin': i.filepath,                  
                          'position': position,
@@ -82,14 +84,14 @@ def getAudioTimeline():
                 
             if audioData['ext'].upper() in ["AAC", "AC3", "FLAC", "MP2", "MP3", "OGG", "WAV"]:
                 audioData['nExt'] = 1
+                audioData['ardour_name'] = "%s.%i" % (audioData['base_name'], audioData['nExt'])
+                timelineSources.append(audioData)
             else:
                 audioData['nExt'] = int(i.name.split(".")[1]) + 1
-            
-            audioData['ardour_name'] = "%s.%i" % (audioData['base_name'], audioData['nExt'])
-        
-            audioTimeline.append(audioData)
+                audioData['ardour_name'] = "%s.%i" % (audioData['base_name'], audioData['nExt'])
+                timelineRepeated.append(audioData)
 
-    return audioTimeline
+    return timelineSources, timelineRepeated
 
 
 ######## ---------------------------------------------------------------------------
@@ -197,11 +199,11 @@ def atRegion(strip, idCount):
                 'id': idCount, # generic id
                 'length': strip['length'],
                 'locked': strip['locked'],
-                'master-source-0': strip['id'], # this is same id as atSource's id -------!!!!!!!
+                'master-source-0': strip['sourceID'], # this is same id as atSource's id -------!!!!!!!
                 'muted': strip['muted'],
                 'name': strip['ardour_name'],
                 'position': strip['position'],
-                'source-0': strip['id'], # this is same id as atSource's id -------!!!!!!!
+                'source-0': strip['sourceID'], # this is same id as atSource's id -------!!!!!!!
                 'start': strip['start'],
                 
                 'ancestral-length': 0,
@@ -240,23 +242,31 @@ def atRegion(strip, idCount):
 
 def createAudioSources(strip, idCount):
     Source = SubElement(Session[2], "Source")
-    Region = SubElement(Session[3], "Region")
-    
-    if (strip['nExt'] == 1):
-        createSubElements(Source, atSource(strip))
-        idCount += 1
-    
-    createSubElements(Region, atRegion(strip, idCount))
+    #Region = SubElement(Session[3], "Region")
+
+    createSubElements(Source, atSource(strip))
     idCount += 1
+    
+    #createSubElements(Region, atRegion(strip, idCount))
+    #idCount += 1
     
     idCounter = idCount
     global idCounter
 
+def createSourcesRegions(strip, idCount):
+    Region = SubElement(Session[3], "Region")
+    
+    createSubElements(Region, atRegion(strip, idCount))
+    idCount += 1
+
+    idCounter = idCount
+    global idCounter
+        
 ######## ---------------------------------------------------------------------------
 ######## CREATE SKELETAL XML
 ######## ---------------------------------------------------------------------------
 
-audios = getAudioTimeline()
+audios, repeated = getAudioTimeline()
 fps = checkFPS()
 sampleFormat = checkSampleFormat()
 ardourStart = toSamples((startFrame-1), audioRate, fps)
@@ -302,19 +312,31 @@ for counter in range(valLength(atPort())):
 
 ######## ---------------------------------------------------------------------------
 
+# create sources and sources regions
 for strip in audios:
     strip['id'] = idCounter
+    strip['sourceID'] = idCounter
     createAudioSources(strip, idCounter)
+    createSourcesRegions(strip, idCounter)
 
-    print(strip['name'], strip['nExt'], strip['ardour_name'])
+# correct reference to sources in other regions
+for aud, rep in zip(audios, repeated):
+    if (rep['origin'] == aud['origin']):
+        rep['sourceID'] = aud['id']
+        print(aud['name'], aud['id'], rep['name'], rep['sourceID'])
+        
+for strip in repeated:        
+    strip['id'] = idCounter
+    createSourcesRegions(strip, idCounter)    
+    #print(strip['name'], strip['nExt'], strip['ardour_name'])
 
 #### SOURCES MUST NOT CREATE ENTRIES FOR .001 FILES
 #### REGIONS FOR .001 FILES MUST REFERENCE ORIGINAL .WAV FILES
 
 
 
-print(ardourStart, ardourEnd)
-
+#print(ardourStart, ardourEnd)
+#print(audios[0])
 
 
 
