@@ -13,7 +13,7 @@ fileBasename = fileName.split(".")[0]
 context = bpy.context
 
 system = context.user_preferences.system
-audioSampleRate = int(system.audio_sample_rate.split("_")[1])
+audioRate = int(system.audio_sample_rate.split("_")[1])
     
 scene = context.scene
 startFrame = scene.frame_start
@@ -48,17 +48,17 @@ def checkFPS():
         fps = 24
     return fps
 
-def samplesPosition(fr, ar=audioSampleRate, fps=24):
-    return int(fr * audioSampleRate / fps)
+def toSamples(fr, ar=audioRate, fps=24):
+    return int(fr * audioRate / fps)
 
 def getAudioTimeline():
     audioTimeline = []
     for i in bpy.context.sequences:
         #if (i.select):
         if (i.type == "SOUND"):
-            start = samplesPosition(i.frame_offset_start)
-            position = samplesPosition(i.frame_start + i.frame_offset_start - 1)
-            length = samplesPosition(i.frame_final_end - (i.frame_start + i.frame_offset_start))
+            start = toSamples(i.frame_offset_start)
+            position = toSamples(i.frame_start + i.frame_offset_start - 1)
+            length = toSamples(i.frame_final_end - (i.frame_start + i.frame_offset_start))
         
             audioData = {'name': i.name,
                          'base_name': i.name.split(".")[0],
@@ -115,7 +115,7 @@ def valLength(dic):
 def atSession():
     atSession = {'version': 3001,
                  'name': fileBasename,
-                 'sample-rate': audioSampleRate,
+                 'sample-rate': audioRate,
                  'id-counter': idCounter,
                  'event-counter': 0
                  }
@@ -259,8 +259,8 @@ def createAudioSources(strip, idCount):
 audios = getAudioTimeline()
 fps = checkFPS()
 sampleFormat = checkSampleFormat()
-ardourStart = samplesPosition((startFrame-1), audioSampleRate, fps)
-ardourEnd = samplesPosition((endFrame-1), audioSampleRate, fps)
+ardourStart = toSamples((startFrame-1), audioRate, fps)
+ardourEnd = toSamples((endFrame-1), audioRate, fps)
 
 
 ######## ---------------------------------------------------------------------------
