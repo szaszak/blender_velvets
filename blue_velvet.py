@@ -5,7 +5,6 @@ import os
 
 print("----------------------------------------------------------")
 
-
 ### VARIABLES
 fileName = bpy.path.basename(bpy.data.filepath)
 fileBasename = fileName.split(".")[0]
@@ -19,7 +18,8 @@ scene = context.scene
 startFrame = scene.frame_start
 endFrame = scene.frame_end
 
-desktop = os.environ['HOME'] + os.sep + "Desktop"
+#desktop = os.environ['HOME'] + os.sep + "Desktop"
+desktop = os.environ['HOMEPATH'] + os.sep + "Desktop"
 sourceAudiosFolder = desktop # change, must come from User choice
 
 
@@ -31,14 +31,14 @@ sourceAudiosFolder = desktop # change, must come from User choice
 def checkSampleFormat():
     sampleFormat = system.audio_sample_format
     if (sampleFormat == "S16"):
-        sampleFormat = "FormatInt16"        
+        sampleFormat = "FormatInt16"
     elif (sampleFormat == "S24"):
         sampleFormat = "FormatInt24"
     elif (sampleFormat == "FLOAT"):
         sampleFormat = "FormatFloat"
     else:
         raise TypeError('Sample Format ' + sampleFormat + ' not supported by Ardour.\
-                         Change Sample Format in Blender\'s User Settings.')
+Change Sample Format in Blender\'s User Settings.')
     return sampleFormat
     
 def checkFPS():
@@ -54,6 +54,7 @@ def toSamples(fr, ar=audioRate, fps=24):
 def getAudioTimeline(idCounter=0):
     timelineSources = []
     timelineRepeated = []
+    tracks = []
     for i in bpy.context.sequences:
         #if (i.select):
         if (i.type == "SOUND"):
@@ -63,14 +64,16 @@ def getAudioTimeline(idCounter=0):
         
             audioData = {'name': i.name,
                          'base_name': i.name.split(".")[0],
+                         'channel': i.channel,
                          'ext': i.name.split(".")[1],
                          'id': idCounter,
                          'length': length,
-                         'origin': i.filepath,                  
+                         'origin': i.filepath,
                          'position': position,
                          'sourceID': idCounter,
                          'start': start,
                          'track': "Channel %i" % i.channel
+                         #'track': i.channel
                          }
                   
             if (i.mute):
@@ -93,7 +96,9 @@ def getAudioTimeline(idCounter=0):
                 audioData['ardour_name'] = "%s.%i" % (audioData['base_name'], audioData['nExt'])
                 timelineRepeated.append(audioData)
 
-    return timelineSources, timelineRepeated, idCounter
+            tracks.append(audioData['track'])
+            
+    return timelineSources, timelineRepeated, tracks, idCounter
 
 
 ######## ---------------------------------------------------------------------------
@@ -129,10 +134,10 @@ def atOption():
     timecode = "timecode_%s" % fps # check validity in ardour for many FPSs
     format = checkSampleFormat()
     atOption = {'name': ["audio-search-path", "timecode-format",
-                         "use-video-file-fps", "videotimeline-pullup", 
+                         "use-video-file-fps", "videotimeline-pullup",
                          "native-file-data-format"],
-                'value': [sourceAudiosFolder, timecode, 
-                          1, 0, 
+                'value': [sourceAudiosFolder, timecode,
+                          1, 0,
                           format] # blender project fps
                           # 1 in use-video-file-fps = use video file's fps instead of timecode value for timeline and video monitor
                           # 0 in videotimeline-pullup = apply pull-updown to video timeline and video monitor (unless in jack-sync)
@@ -191,7 +196,7 @@ def atSource(strip):
                 'flags': "",
                 'id': strip['id'], # this id influentiates atRegion in source-o and master-source-0
                 'name': strip['name'],
-                'origin': strip['name'], # could be an absolute path                
+                'origin': strip['name'], # could be an absolute path
                 'type': "audio"
                 }
     return atSource
@@ -210,7 +215,7 @@ def atRegion(strip, idCounter):
                 
                 'ancestral-length': 0,
                 'ancestral-start': 0,
-                'automatic': 0,                
+                'automatic': 0,
                 'default-fade-in': 0,
                 'default-fade-out': 0,
                 'envelope-active': 0, # metastrip in Blender?
@@ -221,13 +226,13 @@ def atRegion(strip, idCounter):
                 'hidden': 0,
                 'import': 0,
                 'layering-index': 0,
-                'left-of-split': 0,                
-                'opaque': 1,                
+                'left-of-split': 0,
+                'opaque': 1,
                 'position-locked': 0,
-                'positional-lock-style': "AudioTime",                
+                'positional-lock-style': "AudioTime",
                 'right-of-split': 0,
                 'scale-amplitude': 1,
-                'shift': 1,                
+                'shift': 1,
                 'stretch': 1,
                 'sync-marked': 0,
                 'sync-position': 0,
@@ -243,31 +248,31 @@ def atRegion(strip, idCounter):
 
 
 
-def atRoute(strip, idCounter):
+def atRoute(track, idCounter):
     atRoute = {'id': idCounter, # will be the referenced atPlaylist
-               'name': strip['track'],
+               'name': track, # Channel 1, Channel 2 etc
                
                'active': "yes",
                'default-type': "audio",
-               'denormal-protection': "no",               
+               'denormal-protection': "no",
                'meter-point': "MeterPostFader",
                'meter-type': "MeterPeak",
                'mode': "Normal",
                'monitoring': "",
                'order-keys': "EditorSort=0:MixerSort=0",
-               'phase-invert': 0,               
+               'phase-invert': 0,
                'saved-meter-point': "MeterPostFader",
                'self-solo': "no",
                'soloed-by-downstream': 0,
-               'soloed-by-upstream': 0,               
+               'soloed-by-upstream': 0,
                'solo-isolated': "no",
                'solo-safe': "no"
                }
     return atRoute
 
-def atPlaylist(strip, idCounter, routeID):
+def atPlaylist(track, idCounter, routeID):
     atPlaylist = {'id': idCounter,
-                  'name': strip['track'],
+                  'name': track, # Channel 1, Channel 2 etc
                   'orig-track-id': routeID, # generic id of atRoute!
                   
                   'combine-ops': 0,
@@ -277,33 +282,40 @@ def atPlaylist(strip, idCounter, routeID):
                   }
     return atPlaylist
 
-def atRouteIO(strip, idCounter):
+def atRouteIO(track, idCounter):
     atRouteIO = {'id': [idCounter, idCounter],
-                 'name': [strip['track'], strip['track']],
+                 'name': [track, track], # Channel 1, Channel 2 etc
                  
                  'default-type': ["audio", "audio"],
-                 'direction': ["Input", "Output"],                 
+                 'direction': ["Input", "Output"],
                  'user-latency': [0, 0]
                  }
     return atRouteIO
 
-def atRouteIOPort(strip):
-    atRouteIOPort = {'name': [strip['track']+"/audio_in 1", strip['track']+"/audio_out 1"],
+def atRouteIOPort(track):
+    atRouteIOPort = {'name': [track+"/audio_in 1", track+"/audio_out 1"], # Channel 1, Channel 2 etc
                      'type': ["audio", "audio"]
                      }
     return atRouteIOPort
 
-def atDiskstream(strip, idCounter):
-    atDiskstream = {'channels': 1, # mono file    
+def atDiskstream(track, idCounter):
+    atDiskstream = {'channels': 1, # mono file
                     'id': idCounter,
-                    'name': strip['base_name'],
-                    'playlist': strip['track'],
+                    #'name': strip['base_name'],
+                    'name': track, # Channel 1, Channel 2 etc
+                    'playlist': track, # Channel 1, Channel 2 etc
                     
                     'capture-alignment': "Automatic",
-                    'flags': "Recordable",                    
+                    'flags': "Recordable",
                     'speed': "1.000000"
                     }
     return atDiskstream
+
+
+
+
+
+
 
 def atPlaylistRegion(strip, idCounter):
     atPlaylistRegion = {'channels': 1, # mono file
@@ -355,52 +367,63 @@ def createAudioSources(strip, idCounter):
     Source = SubElement(Session[2], "Source")
     createSubElements(Source, atSource(strip))
 
-def createSourcesRegions(strip, idCount):
-    Region = SubElement(Session[3], "Region")
-    
-    createSubElements(Region, atRegion(strip, idCount))
+#def createSourcesRegions(strip, idCount):
+#    Region = SubElement(Session[3], "Region")
+#    
+#    createSubElements(Region, atRegion(strip, idCount))
+#    idCount += 1
+#
+#    idCounter = idCount
+#    global idCounter
+
+def createPlaylists(track, idCount):
+    Route = SubElement(Session[6], "Route")
+    createSubElements(Route, atRoute(track, idCount))
+    routeID = idCount
     idCount += 1
 
-    idCounter = idCount
-    global idCounter
-
-def createPlaylists(strip, idCount):
-    Route = SubElement(Session[6], "Route")
     Playlist = SubElement(Session[7], "Playlist")
-    
-    createSubElements(Route, atRoute(strip, idCount))
-    routeID = idCount; idCount += 1
-    
-    createSubElements(Playlist, atPlaylist(strip, idCount, routeID))
+    createSubElements(Playlist, atPlaylist(track, idCount, routeID))
     idCount += 1
     # routeID comes from atRoute
         
     RouteIO = ""
     RouteIOPort = ""
-    for counter in range(valLength(atRouteIO(strip, idCount))):
+    for counter in range(valLength(atRouteIO(track, idCount))):
         RouteIO = SubElement(Route, "IO")
         RouteIOPort = SubElement(RouteIO, "Port")
-        createSubElementsMulti(RouteIO, atRouteIO(strip, idCount), counter)
+        createSubElementsMulti(RouteIO, atRouteIO(track, idCount), counter)
         idCount += 1
         
-        createSubElementsMulti(RouteIOPort, atRouteIOPort(strip), counter)
+        createSubElementsMulti(RouteIOPort, atRouteIOPort(track), counter)
 
 
     Diskstream = SubElement(Route, "Diskstream")
-    createSubElements(Diskstream, atDiskstream(strip, idCount)); idCount += 1
+    createSubElements(Diskstream, atDiskstream(track, idCount))
+    idCount += 1
     
-    PlaylistRegion = SubElement(Playlist, "Region")
-    createSubElements(PlaylistRegion, atPlaylistRegion(strip, idCount)); idCount += 1
+    #PlaylistRegion = SubElement(Playlist, "Region")
+    #createSubElements(PlaylistRegion, atPlaylistRegion(strip, idCount))
+    #idCount += 1
     
-    idCounter = idCount
     global idCounter
+    idCounter = idCount
     
+def createPlaylistRegions(strip, track, idCount):
+    PlaylistRegion = SubElement(Session[7][track], "Region") #print(identXML(Session[7][2]))
+    createSubElements(PlaylistRegion, atPlaylistRegion(strip, idCount))
+    idCount += 1
+
+    global idCounter
+    idCounter = idCount
+
     
 ######## ---------------------------------------------------------------------------
 ######## CREATE SKELETAL XML
 ######## ---------------------------------------------------------------------------
 
-audios, repeated, idCounter = getAudioTimeline()
+audios, repeated, tracks, idCounter = getAudioTimeline()
+tracks = sorted(set(tracks))
 fps = checkFPS()
 sampleFormat = checkSampleFormat()
 ardourStart = toSamples((startFrame-1), audioRate, fps)
@@ -431,7 +454,7 @@ IO = SubElement(Session[10], "IO") # Session > Click > IO
 Tempo = SubElement(Session[12], "Tempo") # Session > TempoMap > Tempo
 Meter = SubElement(Session[12], "Meter")# Session > TempoMap > Meter
 
-createSubElements(Session, atSession())    
+createSubElements(Session, atSession())
 createSubElements(Location, atLocation())
 idCounter += 1
 createSubElements(IO, atIO())
@@ -450,35 +473,24 @@ for counter in range(valLength(atPort())):
 # create sources and sources regions
 for strip in audios:
     createAudioSources(strip, idCounter)
-    #createSourcesRegions(strip, idCounter)
-    createPlaylists(strip, idCounter)
+    
+for track in tracks:
+    createPlaylists(track, idCounter)    
 
+#for strip in audios:    
+ #   createPlaylistRegions(strip, idCounter)
+    
 # correct reference to sources in other regions
 for aud, rep in zip(audios, repeated):
     if (rep['origin'] == aud['origin']):
         rep['sourceID'] = aud['id']
-        print(aud['name'], aud['id'], rep['name'], rep['sourceID'])
         
-for strip in repeated:        
-    #createSourcesRegions(strip, idCounter)
-    createPlaylists(strip, idCounter)
-    #print(strip['name'], strip['nExt'], strip['ardour_name'])
+#for strip in repeated:
+ #   createPlaylistRegions(strip, idCounter)
 
-
-#print(ardourStart, ardourEnd)
-#print(audios[0])
-
-
-
-
-
-
-
-
-
-
-
-
+for strip in (audios + repeated):
+    track = tracks.index(strip['track'])
+    createPlaylistRegions(strip, track, idCounter)
 
 
 
@@ -495,10 +507,23 @@ Session.set('id-counter', str(idCounter))
 from xml.dom.minidom import parseString
 
 def identXML(element):
-    return parseString(etree.tostring(element, "UTF-8")).toprettyxml(indent="  ")
+    return parseString(etree.tostring(element, "UTF-8")).toprettyxml(indent=" ")
 
 outXML = desktop + os.sep + fileBasename + ".xml" # should be similar to #sourceAudiosFolder, get from UI
 with open(outXML, 'w') as xmlFile:
     xmlFile.write(identXML(Session))
 
+#print(Session.getchildren().index(Location))
+
+
+#print(Session[7][0].attrib['name']) # Channel 1
+
+
+#print(identXML(Session[7]['name']))
 #os.environ['HOMEPATH'] + os.sep + "Desktop"
+
+#for elem in Session.findall('Playlists'):
+ #   print("Tag: %s" %elem.tag)
+  #  print("ID: %s" %elem.keys())
+    #print "Transform %s\n" %elem.get('transform')
+    
