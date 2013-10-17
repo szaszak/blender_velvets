@@ -22,7 +22,7 @@
 import bpy
 
 bl_info = {
-    "name": "Velvet Goldmine ::",
+    "name": "velvet_goldmine ::",
     "description": "Glamorous new shortcuts for video editing in Blender VSE",
     "author": "qazav_szaszak",
     "version": (1, 0, 20130829),
