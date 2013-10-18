@@ -38,12 +38,18 @@ import os
 
 def checkFPS():
     '''Checks project's FPS compatibility with Ardour's FPSs'''
-    fps = bpy.context.scene.render.fps
-    if (fps in [23.976, 24, 24.975, 25, 29.97, 30, 59.94, 60]):  # Ardour valid FPSs
-        fps = bpy.context.scene.render.fps
-        timecode = "timecode_%s" % fps  # TODO check validity in ardour for many FPSs
+    validFPS = [23.976, 24, 24.975, 25, 29.97, 30, 59.94, 60]  # Valid Ardour FPS
+    render = bpy.context.scene.render
+    fps = round((render.fps / render.fps_base), 3)
+    
+    if fps in validFPS:
+        if fps.is_integer():
+            fps = int(fps)
+            timecode = "timecode_%s" % fps
+        else:
+            timecode = "timecode_%s" % str(fps).replace(".", "")
     else:
-        raise RuntimeError("Framerate of \'" + fps + "\' not supported by Ardour."
+        raise RuntimeError("Framerate \'" + str(fps) + "\' not supported by Ardour."
                            "Change to 23.976, 24, 24.975, 25, 29.97, 30, 59.94, 60.")
     return fps, timecode
 
@@ -545,9 +551,10 @@ def runFFMPEG(ffCommand, sources, audioRate, outputFolder):
         output = outputFolder + os.sep + basename + ".wav"
 
         # Due to spaces, the command entries (ffCommand, input and output) have 
-        # to be read as strings by the call command, thus the escapings below
+        # to be read as strings by the call command, thus the escapings below        
         callFFMPEG = "\"%s\" -i \"%s\" -y -vn -ar %i -ac 1 \"%s\"" \
                      % (ffCommand, input, audioRate, output)
+        print(callFFMPEG)
         call(callFFMPEG, shell=True)
         
     return {'FINISHED'}
