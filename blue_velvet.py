@@ -1,7 +1,36 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+# <pep8 compliant>
+
+bl_info = {
+    "name": "blue_velvet ::",
+    "description": "An exporter of Blender's VSE audio timeline to Ardour",
+    "author": "qazav_szaszak",
+    "version": (1, 0, 20131017),
+    "blender": (2, 68, 0),
+    "warning": "War, children, it's just a shot away.",
+    "category": ":",
+    "location": "File > Export > Ardour (.ardour)",
+    "support": "COMMUNITY"}
+
 import bpy
 import os
-
-print("----------------------------------------------------------start")
 
 ######## ----------------------------------------------------------------------
 ######## TIMELINE AND SETTINGS FUNCTIONS
@@ -14,8 +43,8 @@ def checkFPS():
         fps = bpy.context.scene.render.fps
         timecode = "timecode_%s" % fps  # TODO check validity in ardour for many FPSs
     else:
-        raise RuntimeError("Framerate of \'" + bpy.context.scene.render.fps + "\' not supported by Ardour. \
-                            Change FPS to 23.976, 24, 24.975, 25, 29.97, 30, 59.94, 60.")
+        raise RuntimeError("Framerate of \'" + fps + "\' not supported by Ardour."
+                           "Change to 23.976, 24, 24.975, 25, 29.97, 30, 59.94, 60.")
     return fps, timecode
 
 
@@ -29,8 +58,9 @@ def checkSampleFormat():
     elif (sampleFormat == "FLOAT"):
         sampleFormat = "FormatFloat"
     else:
-        raise RuntimeError("Sample Format \'" + sampleFormat + "\' not supported by Ardour. \
-                            Change Audio\'s Sample Format to 16, 24 or 32 bits in Blender\'s User Settings.")
+        raise RuntimeError("Sample Format \'" + sampleFormat + "\' not supported"
+                           " by Ardour. Change Audio Sample Format to 16, 24 or "
+                           "32 bits in User Settings.")
     return sampleFormat
 
 
@@ -51,14 +81,17 @@ def getAudioTimeline(ar, fps):
     validExts = list(bpy.path.extensions_audio) + list(bpy.path.extensions_movie)
 
     for i in bpy.context.sequences:
-        if (i.type == "SOUND"):
-            # Movies with audio such as MOV (h264 + mp3) are read by Blender as:
-            # movie_strip.mov (type=='SOUND') and movie_strip.001 (type=='VIDEO').
-            # If there is a movie strip with no audio, it will be read as:
-            # movie_strip.mov (type=='VIDEO'). Valid tracks are type 'SOUND'.
-            start = toSamples(i.frame_offset_start, ar, fps)
-            position = toSamples(i.frame_start + i.frame_offset_start - 1, ar, fps)
-            length = toSamples(i.frame_final_end - (i.frame_start + i.frame_offset_start), ar, fps)
+        # Movies with audio such as MOV (h264 + mp3) are read by Blender as:
+        # movie_strip.mov (type=='SOUND') and movie_strip.001 (type=='VIDEO').
+        # If there is a movie strip with no audio, it will be read as:
+        # movie_strip.mov (type=='VIDEO'). Valid tracks are type 'SOUND'.
+        if (i.type == "SOUND"):            
+            start = i.frame_offset_start
+            start = toSamples(start, ar, fps)
+            position = i.frame_start + i.frame_offset_start - 1
+            position = toSamples(position, ar, fps)
+            length = i.frame_final_end - (i.frame_start + i.frame_offset_start)
+            length = toSamples(length, ar, fps)
             base_name, ext = i.name.split(".")
             
             if (i.channel < 10):  # To keep track order: 3 will become 03.
@@ -313,7 +346,7 @@ def atPlaylistRegion(idCounter, strip):
                         'id': idCounter,
                         'length': strip['length'],
                         'locked': strip['locked'],
-                        'master-source-0': strip['sourceID'],  # same as atSource's id
+                        'master-source-0': strip['sourceID'],  # == atSource's id
                         'muted': strip['muted'],
                         'name': strip['ardour_name'],
                         'position': strip['position'],
@@ -420,9 +453,9 @@ def createXML(startFrame, endFrame, fps, timecode, audioRate, ardourBasename, au
     ardourStart = toSamples((startFrame-1), audioRate, fps)
     ardourEnd = toSamples((endFrame-1), audioRate, fps)
     
-    ######## ----------------------------------------------------------------------
+    ######## ------------------------------------------------------------------
     ######## STATIC XML SECTIONS
-    ######## ----------------------------------------------------------------------
+    ######## ------------------------------------------------------------------
 
     Session = Element("Session")  # XML root = Session
     tree = ElementTree(Session)
@@ -460,9 +493,9 @@ def createXML(startFrame, endFrame, fps, timecode, audioRate, ardourBasename, au
         createSubElementsMulti(Port, atPort(), counter)
 
 
-    ######## ----------------------------------------------------------------------
+    ######## ------------------------------------------------------------------
     ######## DYNAMIC XML SECTIONS
-    ######## ----------------------------------------------------------------------
+    ######## ------------------------------------------------------------------
 
     # create sources and sources' regions
     for source in sources:
@@ -496,8 +529,8 @@ from subprocess import call
 
 def runFFMPEG(ffCommand, sources, audioRate, outputFolder):
     if not os.path.exists(ffCommand):
-        raise RuntimeError("You don\'t seem to have FFMPEG installed on your system. \
-                            Either install it or point to it at the addon preferences.")
+        raise RuntimeError("You don't seem to have FFMPEG on your system. Either"
+                           " install it or point to it at the addon preferences.")
     
     if (os.path.exists(outputFolder) is False):
         os.mkdir(outputFolder)
@@ -563,19 +596,40 @@ class ExportArdour(bpy.types.Operator, ExportHelper):
         return {'FINISHED'}
 
 
+class Blue_Velvet_Ardour_Exporter(bpy.types.AddonPreferences):
+    bl_idname = __name__.split(".")[0]
+    bl_option = {'REGISTER'}
+    
+    if which('ffmpeg') is not None:
+        ffmpeg = which('ffmpeg')
+    else:
+        ffmpeg = "/usr/bin/ffmpeg"
+
+    ffCommand = StringProperty(
+        name="Path to FFMPEG binary or executable",
+        description="If you have a local FFMPEG, change this path",
+        subtype='FILE_PATH',
+        default=ffmpeg,
+        )       
+
+    def draw(self, context):
+        layout = self.layout        
+        layout.prop(self, "ffCommand")
+
 
 def menuEntry(self, context):
     self.layout.operator(ExportArdour.bl_idname, text="Ardour (.ardour)")
 
 
-def register():
-    bpy.utils.register_class(ExportArdour)
+def register():    
+    bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_export.append(menuEntry)
 
 
-def unregister():
-    bpy.utils.unregister_class(ExportArdour)
+def unregister():    
+    bpy.utils.unregister_module(__name__)
     bpy.types.INFO_MT_file_export.remove(menuEntry)
+
 
 if __name__ == "__main__":
     register()
