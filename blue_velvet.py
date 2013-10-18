@@ -1,18 +1,18 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
 #
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 #
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
 
@@ -38,7 +38,7 @@ import os
 
 def checkFPS():
     '''Checks project's FPS compatibility with Ardour's FPSs'''
-    validFPS = [23.976, 24, 24.975, 25, 29.97, 30, 59.94, 60]  # Valid Ardour FPS
+    validFPS = [23.976, 24, 24.975, 25, 29.97, 30, 59.94, 60] # Valid Ardour FPS
     render = bpy.context.scene.render
     fps = round((render.fps / render.fps_base), 3)
     
@@ -83,7 +83,7 @@ def getAudioTimeline(ar, fps):
     idCounter = 0
     
     #validExts = ["AAC", "AC3", "AVI", "DV", "FLAC", "M4A", "MKV", "MOV",
-    #             "MP2", "MP3", "MP4", "MPG", "OGG", "OGM", "WAV"]
+    # "MP2", "MP3", "MP4", "MPG", "OGG", "OGM", "WAV"]
     validExts = list(bpy.path.extensions_audio) + list(bpy.path.extensions_movie)
 
     for i in bpy.context.sequences:
@@ -91,7 +91,7 @@ def getAudioTimeline(ar, fps):
         # movie_strip.mov (type=='SOUND') and movie_strip.001 (type=='VIDEO').
         # If there is a movie strip with no audio, it will be read as:
         # movie_strip.mov (type=='VIDEO'). Valid tracks are type 'SOUND'.
-        if (i.type == "SOUND"):            
+        if (i.type == "SOUND"):
             start = i.frame_offset_start
             start = toSamples(start, ar, fps)
             position = i.frame_start + i.frame_offset_start - 1
@@ -100,7 +100,7 @@ def getAudioTimeline(ar, fps):
             length = toSamples(length, ar, fps)
             base_name, ext = i.name.split(".")
             
-            if (i.channel < 10):  # To keep track order: 3 will become 03.
+            if (i.channel < 10): # To keep track order: 3 will become 03.
                 channel = "0" + str(i.channel)
             else:
                 channel = str(i.channel)
@@ -129,13 +129,13 @@ def getAudioTimeline(ar, fps):
 
             if ("." + ext).lower() in validExts:
                 audioData['nExt'] = 1
-                audioData['ardour_name'] = "%s.%i" % (audioData['base_name'], 
+                audioData['ardour_name'] = "%s.%i" % (audioData['base_name'],
                                                       audioData['nExt'])
                 timelineSources.append(audioData)
                 idCounter += 1
             else:
                 audioData['nExt'] = int(ext) #+ 1
-                audioData['ardour_name'] = "%s.%i" % (audioData['base_name'], 
+                audioData['ardour_name'] = "%s.%i" % (audioData['base_name'],
                                                       audioData['nExt'])
                 timelineRepeated.append(audioData)
 
@@ -185,7 +185,7 @@ def atSession(audioRate, fileBasename, idCounter):
                  'id-counter': idCounter,
                  'name': fileBasename,
                  'sample-rate': audioRate,
-                 'version': 3001              
+                 'version': 3001
                  }
                  
     return atSession
@@ -221,7 +221,7 @@ def atIO(idCounter):
     atIO = {'default-type': "audio",
             'direction': "Output",
             'id': idCounter,
-            'name': "click",           
+            'name': "click",
             'user-latency': 0
             }
     return atIO
@@ -230,7 +230,7 @@ def atIO(idCounter):
 def atPort():
     '''Attributes for Click > IO > Port'''
     atPort = {'name': ["click/audio_out 1", "click/audio_out 2"],
-              'type': ["audio", "audio"]              
+              'type': ["audio", "audio"]
               }
               
     return atPort
@@ -241,7 +241,7 @@ def atTempo():
     atTempo = {'beats-per-minute': "120.000000",
                'movable': "no",
                'note-type': "4.000000",
-               'start': "1|1|0"               
+               'start': "1|1|0"
                }
                
     return atTempo
@@ -276,7 +276,7 @@ def atSource(strip):
 
 def atRoute(idCounter, track):
     '''Attributes for Routes > Route'''
-    atRoute = {'id': idCounter,  # will be the referenced atPlaylist
+    atRoute = {'id': idCounter, # will be the referenced atPlaylist
                'name': track,
 
                'active': "yes",
@@ -302,7 +302,7 @@ def atPlaylist(idCounter, routeID, track):
     '''Attributes for Playlists > Playlist'''
     atPlaylist = {'id': idCounter,
                   'name': track,
-                  'orig-track-id': routeID,  # generic id of atRoute
+                  'orig-track-id': routeID, # generic id of atRoute
 
                   'combine-ops': 0,
                   'frozen': "no",
@@ -348,11 +348,11 @@ def atDiskstream(idCounter, track):
 
 def atPlaylistRegion(idCounter, strip):
     '''Attributes for Playlists > Playlist > Region'''
-    atPlaylistRegion = {'channels': 1,  # mono file
+    atPlaylistRegion = {'channels': 1, # mono file
                         'id': idCounter,
                         'length': strip['length'],
                         'locked': strip['locked'],
-                        'master-source-0': strip['sourceID'],  # == atSource's id
+                        'master-source-0': strip['sourceID'], # == atSource's id
                         'muted': strip['muted'],
                         'name': strip['ardour_name'],
                         'position': strip['position'],
@@ -365,7 +365,7 @@ def atPlaylistRegion(idCounter, strip):
                         'default-fade-in': 0,
                         'default-fade-out': 0,
                         'envelope-active': 0,
-                        'external': 1,  # audios not in ardour's sources folders?
+                        'external': 1, # audios not in ardour's sources folders?
                         'fade-in-active': 1,
                         'fade-out-active': 1,
                         'first-edit': "nothing",
@@ -408,7 +408,7 @@ def createPlaylists(Session, idCount, track):
     idCount += 1
 
     Playlist = SubElement(Session[7], "Playlist")
-    createSubElements(Playlist, atPlaylist(idCount, routeID, track))  # routeID comes from atRoute
+    createSubElements(Playlist, atPlaylist(idCount, routeID, track)) # routeID comes from atRoute
     idCount += 1
 
 
@@ -463,7 +463,7 @@ def createXML(startFrame, endFrame, fps, timecode, audioRate, ardourBasename, au
     ######## STATIC XML SECTIONS
     ######## ------------------------------------------------------------------
 
-    Session = Element("Session")  # XML root = Session
+    Session = Element("Session") # XML root = Session
     tree = ElementTree(Session)
 
     # Create Session Elements + Attributes
@@ -476,13 +476,13 @@ def createXML(startFrame, endFrame, fps, timecode, audioRate, ardourBasename, au
 
     # Create Option, IO, Tempo and Meter + Attributes
     for counter in range(valLength(atOption(audiosFolder, sampleFormat, timecode))):
-        Option = SubElement(Session[0], "Option")  # Session > Config > Option
+        Option = SubElement(Session[0], "Option") # Session > Config > Option
         createSubElementsMulti(Option, atOption(audiosFolder, sampleFormat, timecode), counter)
 
-    Location = SubElement(Session[4], "Location")  # Session > Locations > Location
-    IO = SubElement(Session[10], "IO")  # Session > Click > IO
-    Tempo = SubElement(Session[12], "Tempo")  # Session > TempoMap > Tempo
-    Meter = SubElement(Session[12], "Meter")  # Session > TempoMap > Meter
+    Location = SubElement(Session[4], "Location") # Session > Locations > Location
+    IO = SubElement(Session[10], "IO") # Session > Click > IO
+    Tempo = SubElement(Session[12], "Tempo") # Session > TempoMap > Tempo
+    Meter = SubElement(Session[12], "Meter") # Session > TempoMap > Meter
 
 
     createSubElements(Session, atSession(audioRate, ardourBasename, idCounter))
@@ -495,7 +495,7 @@ def createXML(startFrame, endFrame, fps, timecode, audioRate, ardourBasename, au
 
     Port = ""
     for counter in range(valLength(atPort())):
-        Port = SubElement(IO, "Port")  # Session > Click > IO > Port
+        Port = SubElement(IO, "Port") # Session > Click > IO > Port
         createSubElementsMulti(Port, atPort(), counter)
 
 
@@ -546,12 +546,12 @@ def runFFMPEG(ffCommand, sources, audioRate, outputFolder):
 
         input = source['origin']
         if (input.startswith("//")):
-            input = input.replace("//", "")        
+            input = input.replace("//", "")
 
         output = outputFolder + os.sep + basename + ".wav"
 
-        # Due to spaces, the command entries (ffCommand, input and output) have 
-        # to be read as strings by the call command, thus the escapings below        
+        # Due to spaces, the command entries (ffCommand, input and output) have
+        # to be read as strings by the call command, thus the escapings below
         callFFMPEG = "\"%s\" -i \"%s\" -y -vn -ar %i -ac 1 \"%s\"" \
                      % (ffCommand, input, audioRate, output)
         print(callFFMPEG)
@@ -579,6 +579,8 @@ class ExportArdour(bpy.types.Operator, ExportHelper):
             return context.sequences is not None
 
     def execute(self, context):
+        bpy.ops.file.make_paths_absolute()
+        
         scene = bpy.context.scene
         startFrame = scene.frame_start
         endFrame = scene.frame_end
@@ -592,7 +594,7 @@ class ExportArdour(bpy.types.Operator, ExportHelper):
         ardourBasename = os.path.splitext(ardourFile)[0]
         audiosFolder = audiosFolderPath + os.sep + "Audios_for_" + ardourBasename
         
-        Session = createXML(startFrame, endFrame, fps, timecode, audioRate, 
+        Session = createXML(startFrame, endFrame, fps, timecode, audioRate,
                             ardourBasename, audiosFolder)
         
         ffCommand = preferences.addons['blue_velvet'].preferences.ffCommand
@@ -617,10 +619,13 @@ class Blue_Velvet_Ardour_Exporter(bpy.types.AddonPreferences):
         description="If you have a local FFMPEG, change this path",
         subtype='FILE_PATH',
         default=ffmpeg,
-        )       
+        )
 
     def draw(self, context):
-        layout = self.layout        
+        layout = self.layout
+        layout.label(text="The path below *must* be absolute. If you have to "
+                          "change it, do so with no .blend files open or "
+                          "they will be relative.")
         layout.prop(self, "ffCommand")
 
 
@@ -628,12 +633,12 @@ def menuEntry(self, context):
     self.layout.operator(ExportArdour.bl_idname, text="Ardour (.ardour)")
 
 
-def register():    
+def register():
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_export.append(menuEntry)
 
 
-def unregister():    
+def unregister():
     bpy.utils.unregister_module(__name__)
     bpy.types.INFO_MT_file_export.remove(menuEntry)
 
