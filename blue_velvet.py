@@ -36,12 +36,13 @@ import os
 ######## TIMELINE AND SETTINGS FUNCTIONS
 ######## ----------------------------------------------------------------------
 
+
 def checkFPS():
     '''Checks project's FPS compatibility with Ardour's FPSs'''
-    validFPS = [23.976, 24, 24.975, 25, 29.97, 30, 59.94, 60] # Valid Ardour FPS
+    validFPS = [23.976, 24, 24.975, 25, 29.97, 30, 59.94, 60]  # Ardour FPSs
     render = bpy.context.scene.render
     fps = round((render.fps / render.fps_base), 3)
-    
+
     if fps in validFPS:
         if fps.is_integer():
             fps = int(fps)
@@ -49,8 +50,10 @@ def checkFPS():
         else:
             timecode = "timecode_%s" % str(fps).replace(".", "")
     else:
-        raise RuntimeError("Framerate \'" + str(fps) + "\' not supported by Ardour."
-                           "Change to 23.976, 24, 24.975, 25, 29.97, 30, 59.94, 60.")
+        raise RuntimeError(
+            "Framerate \'" + str(fps) + "\' not supported by Ardour."
+            "Change to 23.976, 24, 24.975, 25, 29.97, 30, 59.94, 60."
+        )
     return fps, timecode
 
 
@@ -64,9 +67,12 @@ def checkSampleFormat():
     elif (sampleFormat == "FLOAT"):
         sampleFormat = "FormatFloat"
     else:
-        raise RuntimeError("Sample Format \'" + sampleFormat + "\' not supported"
-                           " by Ardour. Change Audio Sample Format to 16, 24 or "
-                           "32 bits in User Settings.")
+        raise RuntimeError(
+            "Sample Format %s not supported by Ardour. Change Audio "
+            "Sample Format to 16, 24 or 32 bits in User Settings."
+            % (sampleFormat)
+        )
+
     return sampleFormat
 
 
@@ -81,10 +87,9 @@ def getAudioTimeline(ar, fps):
     timelineRepeated = []
     tracks = []
     idCounter = 0
-    
-    #validExts = ["AAC", "AC3", "AVI", "DV", "FLAC", "M4A", "MKV", "MOV",
-    # "MP2", "MP3", "MP4", "MPG", "OGG", "OGM", "WAV"]
-    validExts = list(bpy.path.extensions_audio) + list(bpy.path.extensions_movie)
+
+    path = bpy.path
+    validExts = list(path.extensions_audio) + list(path.extensions_movie)
 
     for i in bpy.context.sequences:
         # Movies with audio such as MOV (h264 + mp3) are read by Blender as:
@@ -99,8 +104,8 @@ def getAudioTimeline(ar, fps):
             length = i.frame_final_end - (i.frame_start + i.frame_offset_start)
             length = toSamples(length, ar, fps)
             base_name, ext = i.name.split(".")
-            
-            if (i.channel < 10): # To keep track order: 3 will become 03.
+
+            if (i.channel < 10):  # To keep track order: 3 will become 03.
                 channel = "0" + str(i.channel)
             else:
                 channel = str(i.channel)
@@ -134,7 +139,7 @@ def getAudioTimeline(ar, fps):
                 timelineSources.append(audioData)
                 idCounter += 1
             else:
-                audioData['nExt'] = int(ext) #+ 1
+                audioData['nExt'] = int(ext)
                 audioData['ardour_name'] = "%s.%i" % (audioData['base_name'],
                                                       audioData['nExt'])
                 timelineRepeated.append(audioData)
@@ -155,7 +160,8 @@ def createSubElements(el, att):
 
 
 def createSubElementsMulti(el, att, count):
-    '''Creates XML SubElements using dicts with more than one attribute (att)'''
+    '''Creates XML SubElements using dicts with more
+    than one attribute (att)'''
     for key, value in att.items():
         el.set(key, str(value[count]))
 
@@ -179,6 +185,7 @@ def writeXML(outXML, xmlRoot):
 ######## SKELETAL XML
 ######## ----------------------------------------------------------------------
 
+
 def atSession(audioRate, fileBasename, idCounter):
     '''Attributes for XML Session (root)'''
     atSession = {'event-counter': 0,
@@ -187,7 +194,7 @@ def atSession(audioRate, fileBasename, idCounter):
                  'sample-rate': audioRate,
                  'version': 3001
                  }
-                 
+
     return atSession
 
 
@@ -198,7 +205,7 @@ def atOption(audiosFolder, sampleFormat, timecode):
                          "native-file-data-format"],
                 'value': [audiosFolder, timecode, 0, 0, sampleFormat]
                 }
-                    
+
     return atOption
 
 
@@ -212,7 +219,7 @@ def atLocation(ardourStart, ardourEnd, idCounter):
                   'position-lock-style': "AudioTime",
                   'start': ardourStart
                   }
-                  
+
     return atLocation
 
 
@@ -232,7 +239,7 @@ def atPort():
     atPort = {'name': ["click/audio_out 1", "click/audio_out 2"],
               'type': ["audio", "audio"]
               }
-              
+
     return atPort
 
 
@@ -243,7 +250,7 @@ def atTempo():
                'note-type': "4.000000",
                'start': "1|1|0"
                }
-               
+
     return atTempo
 
 
@@ -254,7 +261,7 @@ def atMeter():
                'note-type': "4.000000",
                'start': "1|1|0"
                }
-               
+
     return atMeter
 
 
@@ -264,7 +271,7 @@ def atMeter():
 
 def atSource(strip):
     '''Attributes for Sources > Source'''
-    atSource = {'channel': 0, # ???????
+    atSource = {'channel': 0,  # ???????
                 'flags': "",
                 'id': strip['id'],
                 'name': strip['name'],
@@ -276,7 +283,7 @@ def atSource(strip):
 
 def atRoute(idCounter, track):
     '''Attributes for Routes > Route'''
-    atRoute = {'id': idCounter, # will be the referenced atPlaylist
+    atRoute = {'id': idCounter,  # will be the referenced atPlaylist
                'name': track,
 
                'active': "yes",
@@ -302,12 +309,11 @@ def atPlaylist(idCounter, routeID, track):
     '''Attributes for Playlists > Playlist'''
     atPlaylist = {'id': idCounter,
                   'name': track,
-                  'orig-track-id': routeID, # generic id of atRoute
+                  'orig-track-id': routeID,  # generic id of atRoute
 
                   'combine-ops': 0,
                   'frozen': "no",
                   'type': "audio"
-
                   }
     return atPlaylist
 
@@ -334,7 +340,7 @@ def atRouteIOPort(track):
 
 def atDiskstream(idCounter, track):
     '''Attributes for Routes > Route > Diskstream'''
-    atDiskstream = {'channels': 1, # mono file
+    atDiskstream = {'channels': 1,  # mono file
                     'id': idCounter,
                     'name': track,
                     'playlist': track,
@@ -348,11 +354,11 @@ def atDiskstream(idCounter, track):
 
 def atPlaylistRegion(idCounter, strip):
     '''Attributes for Playlists > Playlist > Region'''
-    atPlaylistRegion = {'channels': 1, # mono file
+    atPlaylistRegion = {'channels': 1,  # mono file
                         'id': idCounter,
                         'length': strip['length'],
                         'locked': strip['locked'],
-                        'master-source-0': strip['sourceID'], # == atSource's id
+                        'master-source-0': strip['sourceID'],  # atSource's id
                         'muted': strip['muted'],
                         'name': strip['ardour_name'],
                         'position': strip['position'],
@@ -365,7 +371,7 @@ def atPlaylistRegion(idCounter, strip):
                         'default-fade-in': 0,
                         'default-fade-out': 0,
                         'envelope-active': 0,
-                        'external': 1, # audios not in ardour's sources folders?
+                        'external': 1,  # audios not in ardour sources folder?
                         'fade-in-active': 1,
                         'fade-out-active': 1,
                         'first-edit': "nothing",
@@ -401,16 +407,17 @@ def createAudioSources(Session, strip):
 
 
 def createPlaylists(Session, idCount, track):
-    '''Creates Playlists (tracks) in the XML; in Blender, they are the Channels'''
+    '''Creates Playlists (tracks) in the XML;
+    in Blender, they are the Channels'''
     Route = SubElement(Session[6], "Route")
     createSubElements(Route, atRoute(idCount, track))
     routeID = idCount
     idCount += 1
 
     Playlist = SubElement(Session[7], "Playlist")
-    createSubElements(Playlist, atPlaylist(idCount, routeID, track)) # routeID comes from atRoute
+    createSubElements(Playlist, atPlaylist(idCount, routeID, track))
+    # routeID comes from atRoute
     idCount += 1
-
 
     RouteIO = ""
     RouteIOPort = ""
@@ -432,7 +439,8 @@ def createPlaylists(Session, idCount, track):
 
 
 def createPlaylistRegions(Session, idCount, strip, track):
-    '''Creates the Playlists' Regions in the XML; in Blender, these are the strips'''
+    '''Creates the Playlists' Regions in the XML;
+    in Blender, these are the strips'''
     PlaylistRegion = SubElement(Session[7][track], "Region")
     createSubElements(PlaylistRegion, atPlaylistRegion(idCount, strip))
     idCount += 1
@@ -449,7 +457,9 @@ import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import ElementTree, Element, SubElement
 from xml.dom.minidom import parseString
 
-def createXML(startFrame, endFrame, fps, timecode, audioRate, ardourBasename, audiosFolder):
+
+def createXML(startFrame, endFrame, fps, timecode, audioRate,
+              ardourBasename, audiosFolder):
     '''Creates full Ardour XML to be written to a file'''
     global idCounter
     global sources
@@ -458,32 +468,33 @@ def createXML(startFrame, endFrame, fps, timecode, audioRate, ardourBasename, au
     sampleFormat = checkSampleFormat()
     ardourStart = toSamples((startFrame-1), audioRate, fps)
     ardourEnd = toSamples((endFrame-1), audioRate, fps)
-    
+
     ######## ------------------------------------------------------------------
     ######## STATIC XML SECTIONS
     ######## ------------------------------------------------------------------
 
-    Session = Element("Session") # XML root = Session
+    Session = Element("Session")  # XML root = Session
     tree = ElementTree(Session)
 
     # Create Session Elements + Attributes
-    xmlSections = ["Config", "Metadata", "Sources", "Regions", "Locations", "Bundles",
-                   "Routes", "Playlists", "UnusedPlaylists", "RouteGroups", "Click",
-                   "Speakers", "TempoMap", "ControlProtocols", "Extra"]
+    xmlSections = ["Config", "Metadata", "Sources", "Regions", "Locations",
+                   "Bundles", "Routes", "Playlists", "UnusedPlaylists",
+                   "RouteGroups", "Click", "Speakers", "TempoMap",
+                   "ControlProtocols", "Extra"]
 
     for section in xmlSections:
         Session.append(Element(section))
 
     # Create Option, IO, Tempo and Meter + Attributes
     for counter in range(valLength(atOption(audiosFolder, sampleFormat, timecode))):
-        Option = SubElement(Session[0], "Option") # Session > Config > Option
-        createSubElementsMulti(Option, atOption(audiosFolder, sampleFormat, timecode), counter)
+        Option = SubElement(Session[0], "Option")  # Session > Config > Option
+        createSubElementsMulti(Option, atOption(audiosFolder, sampleFormat,
+                                                timecode), counter)
 
-    Location = SubElement(Session[4], "Location") # Session > Locations > Location
-    IO = SubElement(Session[10], "IO") # Session > Click > IO
-    Tempo = SubElement(Session[12], "Tempo") # Session > TempoMap > Tempo
-    Meter = SubElement(Session[12], "Meter") # Session > TempoMap > Meter
-
+    Location = SubElement(Session[4], "Location")  # Session > Locations > Location
+    IO = SubElement(Session[10], "IO")  # Session > Click > IO
+    Tempo = SubElement(Session[12], "Tempo")  # Session > TempoMap > Tempo
+    Meter = SubElement(Session[12], "Meter")  # Session > TempoMap > Meter
 
     createSubElements(Session, atSession(audioRate, ardourBasename, idCounter))
     createSubElements(Location, atLocation(ardourStart, ardourEnd, idCounter))
@@ -495,9 +506,8 @@ def createXML(startFrame, endFrame, fps, timecode, audioRate, ardourBasename, au
 
     Port = ""
     for counter in range(valLength(atPort())):
-        Port = SubElement(IO, "Port") # Session > Click > IO > Port
+        Port = SubElement(IO, "Port")  # Session > Click > IO > Port
         createSubElementsMulti(Port, atPort(), counter)
-
 
     ######## ------------------------------------------------------------------
     ######## DYNAMIC XML SECTIONS
@@ -523,7 +533,7 @@ def createXML(startFrame, endFrame, fps, timecode, audioRate, ardourBasename, au
         createPlaylistRegions(Session, idCounter, audio, track)
 
     Session.set('id-counter', str(idCounter))
-    
+
     return Session
 
 ######## ----------------------------------------------------------------------
@@ -533,14 +543,17 @@ def createXML(startFrame, endFrame, fps, timecode, audioRate, ardourBasename, au
 from shutil import which
 from subprocess import call
 
+
 def runFFMPEG(ffCommand, sources, audioRate, outputFolder):
     if not os.path.exists(ffCommand):
-        raise RuntimeError("You don't seem to have FFMPEG on your system. Either"
-                           " install it or point to it at the addon preferences.")
-    
+        raise RuntimeError(
+            "You don't seem to have FFMPEG on your system. Either"
+            " install it or point to it at the addon preferences."
+        )
+
     if (os.path.exists(outputFolder) is False):
         os.mkdir(outputFolder)
-            
+
     for source in sources:
         basename, ext = os.path.splitext(source['name'])
 
@@ -556,7 +569,7 @@ def runFFMPEG(ffCommand, sources, audioRate, outputFolder):
                      % (ffCommand, input, audioRate, output)
         print(callFFMPEG)
         call(callFFMPEG, shell=True)
-        
+
     return {'FINISHED'}
 
 ######## ----------------------------------------------------------------------
@@ -565,6 +578,7 @@ def runFFMPEG(ffCommand, sources, audioRate, outputFolder):
 
 from bpy_extras.io_utils import ExportHelper
 from bpy.props import StringProperty, BoolProperty
+
 
 class ExportArdour(bpy.types.Operator, ExportHelper):
     """Export audio timeline (including audios from videos) to Ardour"""
@@ -580,7 +594,7 @@ class ExportArdour(bpy.types.Operator, ExportHelper):
 
     def execute(self, context):
         bpy.ops.file.make_paths_absolute()
-        
+
         scene = bpy.context.scene
         startFrame = scene.frame_start
         endFrame = scene.frame_end
@@ -589,17 +603,17 @@ class ExportArdour(bpy.types.Operator, ExportHelper):
         preferences = bpy.context.user_preferences
         system = preferences.system
         audioRate = int(system.audio_sample_rate.split("_")[1])
-        
+
         audiosFolderPath, ardourFile = os.path.split(self.filepath)
         ardourBasename = os.path.splitext(ardourFile)[0]
         audiosFolder = audiosFolderPath + os.sep + "Audios_for_" + ardourBasename
-        
-        Session = createXML(startFrame, endFrame, fps, timecode, audioRate,
-                            ardourBasename, audiosFolder)
-        
+
+        Session = createXML(startFrame, endFrame, fps, timecode,
+                            audioRate, ardourBasename, audiosFolder)
+
         ffCommand = preferences.addons['blue_velvet'].preferences.ffCommand
         runFFMPEG(ffCommand, sources, audioRate, audiosFolder)
-        
+
         writeXML(self.filepath, Session)
 
         return {'FINISHED'}
@@ -608,7 +622,7 @@ class ExportArdour(bpy.types.Operator, ExportHelper):
 class Blue_Velvet_Ardour_Exporter(bpy.types.AddonPreferences):
     bl_idname = __name__.split(".")[0]
     bl_option = {'REGISTER'}
-    
+
     if which('ffmpeg') is not None:
         ffmpeg = which('ffmpeg')
     else:
@@ -619,7 +633,7 @@ class Blue_Velvet_Ardour_Exporter(bpy.types.AddonPreferences):
         description="If you have a local FFMPEG, change this path",
         subtype='FILE_PATH',
         default=ffmpeg,
-        )
+    )
 
     def draw(self, context):
         layout = self.layout
