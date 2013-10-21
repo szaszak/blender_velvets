@@ -142,7 +142,15 @@ def getAudioTimeline(ar, fps):
                 audioData['nExt'] = int(ext)
                 audioData['ardour_name'] = "%s.%i" % (audioData['base_name'],
                                                       audioData['nExt'])
-                timelineRepeated.append(audioData)
+                
+                # if strip name is foo.003 and the original foo.wav is not on the
+                # timeline, this guarantees that foo will go to timelineSources
+                # instead of going to timelineRepeated
+                if any (d['base_name'] == base_name for d in timelineSources):
+                    timelineRepeated.append(audioData)
+                else:
+                    timelineSources.append(audioData)
+                    idCounter += 1
 
             tracks.append(audioData['track'])
 
@@ -458,9 +466,10 @@ from xml.etree.ElementTree import ElementTree, Element, SubElement
 from xml.dom.minidom import parseString
 
 
-def createXML(idCounter, sources, startFrame, endFrame, fps, 
-              timecode, audioRate, ardourBasename, audiosFolder):
+def createXML(sources, startFrame, endFrame, fps, timecode, audioRate, 
+              ardourBasename, audiosFolder):
     '''Creates full Ardour XML to be written to a file'''
+    global idCounter
     sources, repeated, tracks, idCounter = getAudioTimeline(audioRate, fps)
     tracks = sorted(set(tracks))[::-1]
     sampleFormat = checkSampleFormat()
@@ -521,8 +530,8 @@ def createXML(idCounter, sources, startFrame, endFrame, fps,
 
     # correct reference to master-source-0 and source-0 in repeated audios
     for rep in repeated:
-        for sour in sources:
-            if (rep['origin'] == sour['origin']):
+        for sour in sources:            
+            if (rep['name'] == sour['name']):
                 rep['sourceID'] = sour['id']
 
     # create playlists regions (timeline)
@@ -606,10 +615,9 @@ class ExportArdour(bpy.types.Operator, ExportHelper):
         ardourBasename = os.path.splitext(ardourFile)[0]
         audiosFolder = audiosFolderPath + os.sep + "Audios_for_" + ardourBasename
 
-        idCounter = 0
         sources = []
-        Session, sources = createXML(idCounter, sources, startFrame, endFrame, 
-                                     fps, timecode, audioRate, ardourBasename, 
+        Session, sources = createXML(sources, startFrame, endFrame, fps,
+                                     timecode, audioRate, ardourBasename,
                                      audiosFolder)
 
         ffCommand = preferences.addons['blue_velvet'].preferences.ffCommand
