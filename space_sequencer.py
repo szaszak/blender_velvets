@@ -159,11 +159,12 @@ class SEQUENCER_HT_header(Header):
 
             col = layout.column()
             # Strip start | end (duration) values
-            strip = act_strip(context)
-            frameStart = strip.frame_start + strip.frame_offset_start
-            col.label(" %s | %s (%s) " % (smpte(frameStart),
-                                          smpte(strip.frame_final_end),
-                                          smpte(strip.frame_final_duration)))
+            if context.sequences:
+                strip = act_strip(context)
+                frameStart = strip.frame_start + strip.frame_offset_start
+                col.label(" %s | %s (%s) " % (smpte(frameStart),
+                                              smpte(strip.frame_final_end),
+                                              smpte(strip.frame_final_duration)))
 
             layout.prop(scene, "sync_mode", text="")
 
@@ -1118,55 +1119,55 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel): # New class 
         #------------------------------------
 
         #------------------------------------
-        row = layout.column()
-        sub = row.row()
-        sub.prop(strip, "name", text="")
+            row = layout.column()
+            sub = row.row()
+            sub.prop(strip, "name", text="")
 
-        split = layout.split(percentage=0.5)
+            split = layout.split(percentage=0.5)
 
-        elem = False
-        if strip.type == 'IMAGE':
-            elem = strip.strip_elem_from_frame(frame_current)
-        elif strip.type == 'MOVIE':
-            elem = strip.elements[0]
+            elem = False
+            if strip.type == 'IMAGE':
+                elem = strip.strip_elem_from_frame(frame_current)
+            elif strip.type == 'MOVIE':
+                elem = strip.elements[0]
 
-        if elem and elem.orig_width > 0 and elem.orig_height > 0:
-            split.label(text="Resolution: %dx%d" % (elem.orig_width, elem.orig_height))
-        else:
-            split.label(text="")
+            if elem and elem.orig_width > 0 and elem.orig_height > 0:
+                split.label(text="Resolution: %dx%d" % (elem.orig_width, elem.orig_height))
+            else:
+                split.label(text="")
             
-        #split.label(text="Name:")
-        split.prop(strip, "channel")
+            #split.label(text="Name:")
+            split.prop(strip, "channel")
 
-        row = layout.column()
-        sub = row.row(align=True)
-        sub.enabled = not strip.lock
-        sub.prop(strip, "frame_start", text="Start")
-        sub.prop(strip, "frame_final_duration")
-        #sub.prop(strip, "channel")
-        #------------------------------------
+            row = layout.column()
+            sub = row.row(align=True)
+            sub.enabled = not strip.lock
+            sub.prop(strip, "frame_start", text="Start")
+            sub.prop(strip, "frame_final_duration")
+            #sub.prop(strip, "channel")
+            #------------------------------------
 
-        # XXX note strip.type is never equal to 'EFFECT', look at seq_type_items within rna_sequencer.c
-        if stype == 'EFFECT':
-            pass
-            # layout.separator()
-            # layout.operator("sequencer.effect_change")
-            # layout.operator("sequencer.effect_reassign_inputs")
-        elif stype == 'IMAGE':
-            layout.separator()
-            # layout.operator("sequencer.image_change")
-            layout.operator("sequencer.rendersize")
-        elif stype == 'SCENE':
-            pass
-            # layout.separator()
-            # layout.operator("sequencer.scene_change", text="Change Scene")
-        elif stype == 'MOVIE':
-            layout.separator()
-            # layout.operator("sequencer.movie_change")
-            layout.operator("sequencer.rendersize")
-        elif stype == 'SOUND':
-            layout.separator()
-            layout.operator("sequencer.crossfade_sounds")
+            # XXX note strip.type is never equal to 'EFFECT', look at seq_type_items within rna_sequencer.c
+            if stype == 'EFFECT':
+                pass
+                # layout.separator()
+                # layout.operator("sequencer.effect_change")
+                # layout.operator("sequencer.effect_reassign_inputs")
+            elif stype == 'IMAGE':
+                layout.separator()
+                # layout.operator("sequencer.image_change")
+                layout.operator("sequencer.rendersize")
+            elif stype == 'SCENE':
+                pass
+                # layout.separator()
+                # layout.operator("sequencer.scene_change", text="Change Scene")
+            elif stype == 'MOVIE':
+                layout.separator()
+                # layout.operator("sequencer.movie_change")
+                layout.operator("sequencer.rendersize")
+            elif stype == 'SOUND':
+                layout.separator()
+                layout.operator("sequencer.crossfade_sounds")
 
 
 class SEQUENCER_PT_sequencer_modifiers(SequencerButtonsPanel_Output, Panel): # New class [ Blender mod ]
@@ -1175,54 +1176,53 @@ class SEQUENCER_PT_sequencer_modifiers(SequencerButtonsPanel_Output, Panel): # N
     def draw(self, context):
 
         layout = self.layout
-
         strip = act_strip(context)
         sequencer = context.scene.sequence_editor
 
-        layout.prop(strip, "use_linear_modifiers")
+        if strip:
+            layout.prop(strip, "use_linear_modifiers")
+            layout.operator_menu_enum("sequencer.strip_modifier_add", "type")
 
-        layout.operator_menu_enum("sequencer.strip_modifier_add", "type")
+            for mod in strip.modifiers:
+                box = layout.box()
 
-        for mod in strip.modifiers:
-            box = layout.box()
-
-            row = box.row()
-            row.prop(mod, "show_expanded", text="", emboss=False)
-            row.prop(mod, "name", text="")
-
-            row.prop(mod, "mute", text="")
-
-            sub = row.row(align=True)
-            props = sub.operator("sequencer.strip_modifier_move", text="", icon='TRIA_UP')
-            props.name = mod.name
-            props.direction = 'UP'
-            props = sub.operator("sequencer.strip_modifier_move", text="", icon='TRIA_DOWN')
-            props.name = mod.name
-            props.direction = 'DOWN'
-
-            props = row.operator("sequencer.strip_modifier_remove", text="", icon='X', emboss=False)
-            props.name = mod.name
-
-            if mod.show_expanded:
                 row = box.row()
-                row.prop(mod, "input_mask_type", expand=True)
+                row.prop(mod, "show_expanded", text="", emboss=False)
+                row.prop(mod, "name", text="")
 
-                if mod.input_mask_type == 'STRIP':
-                    box.prop_search(mod, "input_mask_strip", sequencer, "sequences", text="Mask")
-                else:
-                    box.prop(mod, "input_mask_id")
+                row.prop(mod, "mute", text="")
 
-                if mod.type == 'COLOR_BALANCE':
-                    box.prop(mod, "color_multiply")
-                    draw_color_balance(box, mod.color_balance)
-                elif mod.type == 'CURVES':
-                    box.template_curve_mapping(mod, "curve_mapping", type='COLOR')
-                elif mod.type == 'HUE_CORRECT':
-                    box.template_curve_mapping(mod, "curve_mapping", type='HUE')
-                elif mod.type == 'BRIGHT_CONTRAST':
-                    col = box.column()
-                    col.prop(mod, "bright")
-                    col.prop(mod, "contrast")
+                sub = row.row(align=True)
+                props = sub.operator("sequencer.strip_modifier_move", text="", icon='TRIA_UP')
+                props.name = mod.name
+                props.direction = 'UP'
+                props = sub.operator("sequencer.strip_modifier_move", text="", icon='TRIA_DOWN')
+                props.name = mod.name
+                props.direction = 'DOWN'
+
+                props = row.operator("sequencer.strip_modifier_remove", text="", icon='X', emboss=False)
+                props.name = mod.name
+
+                if mod.show_expanded:
+                    row = box.row()
+                    row.prop(mod, "input_mask_type", expand=True)
+
+                    if mod.input_mask_type == 'STRIP':
+                        box.prop_search(mod, "input_mask_strip", sequencer, "sequences", text="Mask")
+                    else:
+                        box.prop(mod, "input_mask_id")
+
+                    if mod.type == 'COLOR_BALANCE':
+                        box.prop(mod, "color_multiply")
+                        draw_color_balance(box, mod.color_balance)
+                    elif mod.type == 'CURVES':
+                        box.template_curve_mapping(mod, "curve_mapping", type='COLOR')
+                    elif mod.type == 'HUE_CORRECT':
+                        box.template_curve_mapping(mod, "curve_mapping", type='HUE')
+                    elif mod.type == 'BRIGHT_CONTRAST':
+                        col = box.column()
+                        col.prop(mod, "bright")
+                        col.prop(mod, "contrast")
 
 
 if __name__ == "__main__": # only for live edit.
