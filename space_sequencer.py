@@ -82,8 +82,10 @@ class SEQUENCER_HT_header(Header):
             rd = context.scene.render
 
             col = layout.column()
-            col.label(" %s x %s | %s FPS" % (rd.resolution_x,
-                                             rd.resolution_y, rd.fps))
+            render = bpy.context.scene.render
+            fps = round((render.fps / render.fps_base), 3)
+            col.label("%s x %s | %s FPS" % (rd.resolution_x, rd.resolution_y,
+                                            fps))
 
             row = layout.column()
             sub = row.row(align=True)
