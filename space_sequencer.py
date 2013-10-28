@@ -23,6 +23,7 @@
 
 
 import bpy
+import os
 from bpy.types import Header, Menu, Panel
 from bpy.app.translations import pgettext_iface as iface_
 
@@ -1107,17 +1108,20 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel): # New class 
                 col.prop(strip, "use_float")
                 
             elif stype == 'SOUND':
+                sound = strip.sound
+
                 row = layout.row(align=True)
                 sub = row.row()
                 sub.active = (not strip.mute)
-                
+
                 sub.prop(strip, "volume")
                 #layout.prop(strip, "pitch")
                 sub.prop(strip, "pan")
-                
+
                 split = layout.split(percentage=0.5)
                 split.prop(strip, "show_waveform")
-                split.prop(bpy.data.sounds[strip.name], "use_mono", text="Use as Mono")
+                split.prop(strip.sound, "use_mono", text="Use as Mono")
+                #layout.template_ID(strip, "sound", open="sound.open")
         #------------------------------------
 
         #------------------------------------
