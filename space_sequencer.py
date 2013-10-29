@@ -163,11 +163,22 @@ class SEQUENCER_HT_header(Header):
             col = layout.column()
             # Strip start | end (duration) values
             if context.sequences:
-                strip = act_strip(context)
-                frameStart = strip.frame_start + strip.frame_offset_start
-                col.label(" (%s) %s | %s " % (smpte(strip.frame_final_duration),
-                                              smpte(frameStart),
-                                              smpte(strip.frame_final_end)))
+                #strip = act_strip(context)
+                #frameStart = strip.frame_start + strip.frame_offset_start
+                #col.label(" (%s) %s | %s " % (smpte(strip.frame_final_duration),
+                #                              smpte(frameStart),
+                #                              smpte(strip.frame_final_end)))
+                
+                fs, fe = [], 1
+                for s in bpy.context.sequences:                
+                    if s.select:                        
+                        fs.append(s.frame_start + s.frame_offset_start)
+                        if fe < s.frame_final_end:
+                            fe = s.frame_final_end
+
+                fs = sorted(fs)[0]
+                dur = fe - fs
+                col.label(" (%s) %s | %s " % (smpte(dur), smpte(fs), smpte(fe)))
 
             layout.prop(scene, "sync_mode", text="")
 
@@ -412,8 +423,8 @@ class SEQUENCER_MT_strip(Menu):
         layout.operator("sequencer.meta_separate")
 
         #if (ed && (ed->metastack.first || (ed->act_seq && ed->act_seq->type == SEQ_META))) {
-        #        uiItemS(layout);
-        #        uiItemO(layout, NULL, 0, "sequencer.meta_toggle");
+        # uiItemS(layout);
+        # uiItemO(layout, NULL, 0, "sequencer.meta_toggle");
         #}
 
         layout.separator()
