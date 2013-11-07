@@ -1,18 +1,18 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
 #
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 #
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
 
@@ -25,8 +25,8 @@ bl_info = {
     "name": "velvet_goldmine ::",
     "description": "Glamorous new shortcuts for video editing in Blender VSE",
     "author": "qazav_szaszak",
-    "version": (1, 0, 20130829),
-    "blender": (2, 67, 1),
+    "version": (1, 0, 20131107),
+    "blender": (2, 69, 0),
     "warning": "TO BE USED WITH LOTS OF GLITTER",
     "category": ":",
     "location": "Sequencer",
@@ -408,17 +408,17 @@ class Proxy_Editing_Toggle(bpy.types.Operator):
                     else:
                         i.filepath = i.filepath[:-4] + "_proxy" + container
         '''
-        import os
+import os
 
-        scene = bpy.context.scene
+scene = bpy.context.scene
 
-        for i in scene.sequence_editor.sequences_all:
-            filename = i.filepath.split(os.sep)[-1]
-            if i.filepath.split(os.sep)[-2] == "//Proxies":
-                i.filepath = "//Original" + os.sep + filename
-            else:
-                i.filepath = "//Proxies" + os.sep + filename
-        '''
+for i in scene.sequence_editor.sequences_all:
+filename = i.filepath.split(os.sep)[-1]
+if i.filepath.split(os.sep)[-2] == "//Proxies":
+i.filepath = "//Original" + os.sep + filename
+else:
+i.filepath = "//Proxies" + os.sep + filename
+'''
 
         return {'FINISHED'}
 
@@ -758,7 +758,7 @@ class Strips_Concatenate_Selected(bpy.types.Operator):
 
             list.sort()
 
-            base = list[0][0] + list[0][1]  # 1st strip start + duration
+            base = list[0][0] + list[0][1] # 1st strip start + duration
             for i in list[1:]:
                 strip = bpy.context.scene.sequence_editor.sequences_all[i[2]]
                 gap = (strip.frame_start + strip.frame_offset_start) - base
@@ -1054,6 +1054,7 @@ class Timeline_ZoomToCursor(bpy.types.Operator):
         sequencer = bpy.ops.sequencer
 
         sequencer.select_all(action='DESELECT')
+        bpy.context.scene.sequence_editor.active_strip = None
 
         for strip in bpy.context.sequences:
             stripStart = strip.frame_start + strip.frame_offset_start
