@@ -8,8 +8,8 @@ Aimed for video editors. To be used with lots of glitter.
 
 Install instructions
 ------------------------------------
-    ::velvet_goldmine:: has been tested and works on the Blender versions: 2.65, 2.66, 2.66a, 2.66b.
-    Even though not tested yet, there is no reason why it should not work on versions 2.67 and 2.68.
+    ::velvet_goldmine:: has been tested and works on the Blender versions: 2.69, 2.68a, 2.65, 2.66, 2.66a, 2.66b.
+    Even though not tested yet, there is no reason why it should not work on versions between those numbers.
 
 Download the .py files (there are three) and follow the steps below.
 
