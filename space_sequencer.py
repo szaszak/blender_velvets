@@ -1,24 +1,24 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
 
-# velvet [ mod version ] - 20131022
+# velvet [ mod version ] - 20131107
 # mod by qazav_szaszak
 
 
@@ -130,7 +130,6 @@ class SEQUENCER_HT_header(Header):
                     row = layout.row()
                     row.prop(st, "overlay_type", text="")
 
-        layout.separator()
         # Commented for layout space improvement
         #row = layout.row(align=True)
         #row.operator("render.opengl", text="", icon='RENDER_STILL').sequencer = True
@@ -138,6 +137,8 @@ class SEQUENCER_HT_header(Header):
         #props.animation = True
         #props.sequencer = True
 
+#---------------------------------------------------------------------------------------------NEW
+        layout.separator()
         if st.view_type == 'SEQUENCER':
 
             scene = bpy.context.scene
@@ -145,40 +146,30 @@ class SEQUENCER_HT_header(Header):
             smpte = bpy.utils.smpte_from_frame
             toolsettings = context.tool_settings
 
-#---------------------------------------------------------------------------------------------NEW
             row = layout.row(align=True)
             row.prop(scene, "frame_preview_start", text="Start")
             row.prop(scene, "frame_preview_end", text="End")
             row.prop(scene, "frame_current", text="")
 
+            # Show timeline "start | end" values
             col = layout.column()
-            # Timeline start | end values
             col.label(" %s | %s " % (smpte(scene.frame_start),
                                      smpte(scene.frame_end)))
 
-            #col = layout.column()
-            #col.label(" %s " % \
-            # (smpte(scene.frame_current)))
-
+            # Show selected strips "(duration) start | end" values
             col = layout.column()
-            # Strip start | end (duration) values
             if context.sequences:
-                #strip = act_strip(context)
-                #frameStart = strip.frame_start + strip.frame_offset_start
-                #col.label(" (%s) %s | %s " % (smpte(strip.frame_final_duration),
-                #                              smpte(frameStart),
-                #                              smpte(strip.frame_final_end)))
-                
-                fs, fe = [], 1
-                for s in bpy.context.sequences:                
-                    if s.select:                        
+                sel = [ sel for sel in bpy.context.sequences if sel.select ]
+                if sel:
+                    fe = 1
+                    fs = []
+                    for s in sel:
                         fs.append(s.frame_start + s.frame_offset_start)
                         if fe < s.frame_final_end:
                             fe = s.frame_final_end
-
-                fs = sorted(fs)[0]
-                dur = fe - fs
-                col.label(" (%s) %s | %s " % (smpte(dur), smpte(fs), smpte(fe)))
+                    fs = sorted(fs)[0]
+                    dur = fe - fs
+                    col.label(" (%s) %s | %s " % (smpte(dur), smpte(fs), smpte(fe)))
 
             layout.prop(scene, "sync_mode", text="")
 
@@ -197,6 +188,7 @@ class SEQUENCER_HT_header(Header):
             row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
             row.operator("anim.keyframe_insert", text="", icon='KEY_HLT')
             row.operator("anim.keyframe_delete", text="", icon='KEY_DEHLT')
+
 #---------------------------------------------------------------------------------------CLOSE NEW
 
         layout.template_running_jobs()
@@ -376,7 +368,7 @@ class SEQUENCER_MT_strip(Menu):
         layout.operator("sequencer.gap_remove")
         layout.operator("sequencer.gap_insert")
 
-        # uiItemO(layout, NULL, 0, "sequencer.strip_snap"); // TODO - add this operator
+        #  uiItemO(layout, NULL, 0, "sequencer.strip_snap"); // TODO - add this operator
         layout.separator()
 
         layout.operator("sequencer.cut", text="Cut (hard) at frame").type = 'HARD'
@@ -423,8 +415,8 @@ class SEQUENCER_MT_strip(Menu):
         layout.operator("sequencer.meta_separate")
 
         #if (ed && (ed->metastack.first || (ed->act_seq && ed->act_seq->type == SEQ_META))) {
-        # uiItemS(layout);
-        # uiItemO(layout, NULL, 0, "sequencer.meta_toggle");
+        #	uiItemS(layout);
+        #	uiItemO(layout, NULL, 0, "sequencer.meta_toggle");
         #}
 
         layout.separator()
@@ -692,7 +684,7 @@ class SEQUENCER_PT_input(SequencerButtonsPanel, Panel):
             if elem:
                 split = layout.split(percentage=0.2)
                 split.label(text="File:")
-                split.prop(elem, "filename", text="") # strip.elements[0] could be a fallback
+                split.prop(elem, "filename", text="")  # strip.elements[0] could be a fallback
 
             layout.prop(strip.colorspace_settings, "name")
             layout.prop(strip, "alpha_mode")
@@ -1042,7 +1034,8 @@ class SEQUENCER_PT_modifiers(SequencerButtonsPanel, Panel):
                     col.prop(mod, "contrast")
 
 
-class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel): # New class [ Blender mod ]
+#---------------------------------------------------------------------------------------------NEW
+class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
     bl_label = "Strip Data"
 
     def draw(self, context):
@@ -1187,7 +1180,7 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel): # New class 
                 layout.operator("sequencer.crossfade_sounds")
 
 
-class SEQUENCER_PT_sequencer_modifiers(SequencerButtonsPanel_Output, Panel): # New class [ Blender mod ]
+class SEQUENCER_PT_sequencer_modifiers(SequencerButtonsPanel_Output, Panel):
     bl_label = "Sequencer Modifiers"
 
     def draw(self, context):
@@ -1241,6 +1234,7 @@ class SEQUENCER_PT_sequencer_modifiers(SequencerButtonsPanel_Output, Panel): # N
                         col.prop(mod, "bright")
                         col.prop(mod, "contrast")
 
+#---------------------------------------------------------------------------------------CLOSE NEW
 
 if __name__ == "__main__": # only for live edit.
     bpy.utils.register_module(__name__)
