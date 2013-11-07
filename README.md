@@ -8,8 +8,9 @@ Aimed for video editors. To be used with lots of glitter.
 
 Install instructions
 ------------------------------------
-    ::velvet_goldmine:: has been tested and works on the Blender versions: 2.69, 2.68a, 2.65, 2.66, 2.66a, 2.66b.
-    Even though not tested yet, there is no reason why it should not work on versions between those numbers.
+
+    ::velvet_goldmine:: has been tested and works on Blender versions: 2.69, 2.68a, 2.66b, 2.66a, 
+    2.66 and 2.65. There is no reason why it should not work on versions between those.
 
 Download the .py files (there are three) and follow the steps below.
 
@@ -19,7 +20,7 @@ Download the .py files (there are three) and follow the steps below.
 
 3. If you want to use the modified VSE interface (check the notes below), go to your \scripts\startup\bl_ui folder and replace the <b>space_sequencer.py</b> that is there by the one you just downloaded. It is wise to create a backup before doing so - Ctrl+C and Ctrl+V on the original will do the job.
 
-
+If you want a screenshot-by-screenshot guide, it is here: https://szaszak.wordpress.com/linux/blender-como-editor-de-video/
 
 Detailed description
 ------------------------------------
