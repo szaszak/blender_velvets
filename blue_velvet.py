@@ -22,7 +22,7 @@ bl_info = {
     "name": "blue_velvet ::",
     "description": "An exporter of Blender's VSE audio timeline to Ardour",
     "author": "qazav_szaszak",
-    "version": (1, 0, 20131017),
+    "version": (1, 0, 20131114),
     "blender": (2, 68, 0),
     "warning": "War, children, it's just a shot away.",
     "category": ":",
@@ -104,6 +104,7 @@ def getAudioTimeline(ar, fps):
             length = i.frame_final_end - (i.frame_start + i.frame_offset_start)
             length = toSamples(length, ar, fps)
             base_name, ext = i.name.split(".")
+            folder, name = os.path.split(i.filepath)
 
             if (i.channel < 10): # To keep track order: 3 will become 03.
                 channel = "0" + str(i.channel)
@@ -131,6 +132,15 @@ def getAudioTimeline(ar, fps):
                 audioData['locked'] = 1
             else:
                 audioData['locked'] = 0
+            
+            # Some strips may be no longer in data.sounds but present in
+            # Blender's list of sources. This would cause an error when
+            # running the script. Files not in data.sounds will be considered
+            # as stereo here, but they will not be processed later.
+            if (name in bpy.data.sounds) and (bpy.data.sounds[name].use_mono):
+                audioData['channels'] = 0
+            else:
+                audioData['channels'] = 1
 
             if ("." + ext).lower() in validExts:
                 audioData['nExt'] = 1
@@ -277,9 +287,9 @@ def atMeter():
 ######## SKELETAL AUDIO TRACK
 ######## ----------------------------------------------------------------------
 
-def atSource(strip):
+def atSource(strip, n_channels):
     '''Attributes for Sources > Source'''
-    atSource = {'channel': 0, # ???????
+    atSource = {'channel': n_channels,
                 'flags': "",
                 'id': strip['id'],
                 'name': strip['name'],
@@ -301,8 +311,8 @@ def atRoute(idCounter, track):
                'meter-type': "MeterPeak",
                'mode': "Normal",
                'monitoring': "",
-               'order-keys': "EditorSort=0:MixerSort=0",
-               'phase-invert': 0,
+               'order-keys': "EditorSort=1:MixerSort=1", # was 0 for mono
+               'phase-invert': "00", # Was 0 for mono but seems to work only with 00 for stereo
                'saved-meter-point': "MeterPostFader",
                'self-solo': "no",
                'soloed-by-downstream': 0,
@@ -346,9 +356,17 @@ def atRouteIOPort(track):
     return atRouteIOPort
 
 
+def atRouteIOPort2(track):
+    '''Attributes for Routes > Route > IO > Port'''
+    atRouteIOPort2 = {'name': [track+"/audio_in 2", track+"/audio_out 2"],
+                     'type': ["audio", "audio"]
+                     }
+    return atRouteIOPort2
+
+
 def atDiskstream(idCounter, track):
     '''Attributes for Routes > Route > Diskstream'''
-    atDiskstream = {'channels': 1, # mono file
+    atDiskstream = {'channels': 2, # 1 for mono file
                     'id': idCounter,
                     'name': track,
                     'playlist': track,
@@ -362,7 +380,7 @@ def atDiskstream(idCounter, track):
 
 def atPlaylistRegion(idCounter, strip):
     '''Attributes for Playlists > Playlist > Region'''
-    atPlaylistRegion = {'channels': 1, # mono file
+    atPlaylistRegion = {'channels': strip['channels'] + 1, # mono file
                         'id': idCounter,
                         'length': strip['length'],
                         'locked': strip['locked'],
@@ -401,6 +419,11 @@ def atPlaylistRegion(idCounter, strip):
                         'video-locked': 0,
                         'whole-file': 0
                         }
+                        
+    if (strip['channels'] == 1):
+        atPlaylistRegion['master-source-1'] = strip['master-source-1']
+        atPlaylistRegion['source-1'] = strip['source-1']
+        
     return atPlaylistRegion
 
 
@@ -408,15 +431,15 @@ def atPlaylistRegion(idCounter, strip):
 ######## CREATE AUDIO TRACK
 ######## ----------------------------------------------------------------------
 
-def createAudioSources(Session, strip):
+def createAudioSources(Session, strip, n_channels=0):
     '''Creates audio sources in XML'''
     Source = SubElement(Session[2], "Source")
-    createSubElements(Source, atSource(strip))
+    createSubElements(Source, atSource(strip, n_channels))
 
 
 def createPlaylists(Session, idCount, track):
     '''Creates Playlists (tracks) in the XML;
-in Blender, they are the Channels'''
+    in Blender, they are the Channels'''
     Route = SubElement(Session[6], "Route")
     createSubElements(Route, atRoute(idCount, track))
     routeID = idCount
@@ -437,6 +460,8 @@ in Blender, they are the Channels'''
         idCount += 1
 
         createSubElementsMulti(RouteIOPort, atRouteIOPort(track), counter)
+        RouteIOPort2 = SubElement(RouteIO, "Port")
+        createSubElementsMulti(RouteIOPort2, atRouteIOPort2(track), counter)
 
     Diskstream = SubElement(Route, "Diskstream")
     createSubElements(Diskstream, atDiskstream(idCount, track))
@@ -448,7 +473,7 @@ in Blender, they are the Channels'''
 
 def createPlaylistRegions(Session, idCount, strip, track):
     '''Creates the Playlists' Regions in the XML;
-in Blender, these are the strips'''
+    in Blender, these are the strips'''
     PlaylistRegion = SubElement(Session[7][track], "Region")
     createSubElements(PlaylistRegion, atPlaylistRegion(idCount, strip))
     idCount += 1
@@ -466,7 +491,7 @@ from xml.etree.ElementTree import ElementTree, Element, SubElement
 from xml.dom.minidom import parseString
 
 
-def createXML(sources, startFrame, endFrame, fps, timecode, audioRate, 
+def createXML(sources, startFrame, endFrame, fps, timecode, audioRate,
               ardourBasename, audiosFolder):
     '''Creates full Ardour XML to be written to a file'''
     global idCounter
@@ -524,20 +549,36 @@ def createXML(sources, startFrame, endFrame, fps, timecode, audioRate,
     for source in sources:
         createAudioSources(Session, source)
 
+    # create another sources' entry for stereo files
+    stereoSources = []
+    for source in sources:
+        if (source['channels'] == 1):
+            source['id'] = int(source['id'] + idCounter)
+            createAudioSources(Session, source, 1)
+            stereoSources.append(source)
+            idCounter += 1
+
     # create playlists (tracks)
     for track in tracks:
         createPlaylists(Session, idCounter, track)
 
     # correct reference to master-source-0 and source-0 in repeated audios
     for rep in repeated:
-        for sour in sources:            
+        for sour in sources:
             if (rep['name'] == sour['name']):
                 rep['sourceID'] = sour['id']
 
     # create playlists regions (timeline)
     for audio in (sources + repeated):
         track = tracks.index(audio['track'])
-        createPlaylistRegions(Session, idCounter, audio, track)
+        if (audio['channels'] == 0):
+            createPlaylistRegions(Session, idCounter, audio, track)
+        else:
+            for stereos in stereoSources:
+                if (audio['name'] == stereos['name']):
+                    audio['master-source-1'] = stereos['id']
+                    audio['source-1'] = stereos['id']
+                    createPlaylistRegions(Session, idCounter, audio, track)
 
     Session.set('id-counter', str(idCounter))
 
@@ -568,12 +609,13 @@ def runFFMPEG(ffCommand, sources, audioRate, outputFolder):
         if (input.startswith("//")):
             input = input.replace("//", "")
 
+        audioChannels = source['channels'] + 1
         output = outputFolder + os.sep + basename + ".wav"
 
         # Due to spaces, the command entries (ffCommand, input and output) have
         # to be read as strings by the call command, thus the escapings below
-        callFFMPEG = "\"%s\" -i \"%s\" -y -vn -ar %i -ac 1 \"%s\"" \
-                     % (ffCommand, input, audioRate, output)
+        callFFMPEG = "\"%s\" -i \"%s\" -y -vn -ar %i -ac \"%s\" \"%s\"" \
+                     % (ffCommand, input, audioRate, audioChannels, output)
         print(callFFMPEG)
         call(callFFMPEG, shell=True)
 
