@@ -25,7 +25,7 @@ bl_info = {
     "name": "velvet_goldmine ::",
     "description": "Glamorous new shortcuts for video editing in Blender VSE",
     "author": "qazav_szaszak",
-    "version": (1, 0, 20131107),
+    "version": (1, 0, 20131116),
     "blender": (2, 69, 0),
     "warning": "TO BE USED WITH LOTS OF GLITTER",
     "category": ":",
@@ -808,7 +808,7 @@ class Timeline_Adjust_End(bpy.types.Operator):
         lastFrame = 0
         for sequence in scene.sequence_editor.sequences:
                 if (sequence.frame_final_end > lastFrame):
-                    lastFrame = sequence.frame_final_end
+                    lastFrame = sequence.frame_final_end - 1
 
         scene.frame_end = lastFrame
         scene.frame_preview_end = lastFrame
@@ -903,7 +903,7 @@ class Timeline_Loop_Selected(bpy.types.Operator):
 
         for strip in selectedStrips:
             if (strip.frame_final_end > reference):
-                reference = strip.frame_final_end
+                reference = strip.frame_final_end - 1
 
         scene.frame_end = reference
         scene.frame_preview_end = reference
