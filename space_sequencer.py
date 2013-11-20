@@ -18,7 +18,7 @@
 
 # <pep8 compliant>
 
-# velvet [ mod version ] - 20131107
+# velvet [ mod version ] - 20131120
 # mod by qazav_szaszak
 
 
