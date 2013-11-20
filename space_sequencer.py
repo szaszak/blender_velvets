@@ -1051,7 +1051,7 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
             stype = strip.type
 
         #------------------------------------
-            if stype == 'MOVIE':
+            if stype == 'MOVIE' or stype == 'IMAGE':
                 split = layout.split(percentage=0.3)
                 split.label(text="Blend:")
                 split.prop(strip, "blend_type", text="")
@@ -1110,7 +1110,7 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
                 #col.prop(strip, "use_premultiply")
                 col = split.column()
                 col.prop(strip, "use_float")
-                
+
             elif stype == 'SOUND':
                 sound = strip.sound
 
@@ -1126,9 +1126,100 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
                 split.prop(strip, "show_waveform")
                 split.prop(strip.sound, "use_mono", text="Use as Mono")
                 #layout.template_ID(strip, "sound", open="sound.open")
-        #------------------------------------
 
-        #------------------------------------
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+
+            elif stype == 'COLOR':
+                layout.prop(strip, "color")
+
+            elif stype == 'WIPE':
+                col = layout.column()
+                col.prop(strip, "transition_type")
+                col.label(text="Direction:")
+                col.row().prop(strip, "direction", expand=True)
+
+                col = layout.column()
+                col.prop(strip, "blur_width", slider=True)
+                if strip.transition_type in {'SINGLE', 'DOUBLE'}:
+                    col.prop(strip, "angle")
+
+            elif stype == 'GLOW':
+                flow = layout.column_flow()
+                flow.prop(strip, "threshold", slider=True)
+                flow.prop(strip, "clamp", slider=True)
+                flow.prop(strip, "boost_factor")
+                flow.prop(strip, "blur_radius")
+
+                row = layout.row()
+                row.prop(strip, "quality", slider=True)
+                row.prop(strip, "use_only_boost")
+
+            elif stype == 'SPEED':
+                layout.prop(strip, "use_default_fade", "Stretch to input strip length")
+                if not strip.use_default_fade:
+                    layout.prop(strip, "use_as_speed")
+                    if strip.use_as_speed:
+                        layout.prop(strip, "speed_factor")
+                    else:
+                        layout.prop(strip, "speed_factor", text="Frame number")
+                        layout.prop(strip, "scale_to_length")
+
+            elif stype == 'TRANSFORM':
+                layout = self.layout
+                col = layout.column()
+
+                col.prop(strip, "interpolation")
+                col.prop(strip, "translation_unit")
+                col = layout.column(align=True)
+                col.label(text="Position:")
+                col.prop(strip, "translate_start_x", text="X")
+                col.prop(strip, "translate_start_y", text="Y")
+
+                layout.separator()
+
+                col = layout.column(align=True)
+                col.prop(strip, "use_uniform_scale")
+                if strip.use_uniform_scale:
+                    col = layout.column(align=True)
+                    col.prop(strip, "scale_start_x", text="Scale")
+                else:
+                    col = layout.column(align=True)
+                    col.label(text="Scale:")
+                    col.prop(strip, "scale_start_x", text="X")
+                    col.prop(strip, "scale_start_y", text="Y")
+
+                #layout.separator()
+
+                col = layout.column(align=True)
+                #col.label(text="Rotation:")
+                col.prop(strip, "rotation_start", text="Rotation")
+
+            elif stype == 'MULTICAM':
+                layout.prop(strip, "multicam_source")
+
+                row = layout.row(align=True)
+                sub = row.row(align=True)
+                sub.scale_x = 2.0
+
+                sub.operator("screen.animation_play", text="", icon='PAUSE' if context.screen.is_animation_playing else 'PLAY')
+
+                row.label("Cut To")
+                for i in range(1, strip.channel):
+                    row.operator("sequencer.cut_multicam", text="%d" % i).camera = i
+
+            col = layout.column(align=True)
+            if stype == 'SPEED':
+                col.prop(strip, "multiply_speed")
+            elif stype in {'CROSS', 'GAMMA_CROSS', 'WIPE'}:
+                col.prop(strip, "use_default_fade", "Default fade")
+                if not strip.use_default_fade:
+                    col.prop(strip, "effect_fader", text="Effect fader")
+
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
             row = layout.column()
             sub = row.row()
             sub.prop(strip, "name", text="")
@@ -1178,6 +1269,8 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
             elif stype == 'SOUND':
                 layout.separator()
                 layout.operator("sequencer.crossfade_sounds")
+                
+                
 
 
 class SEQUENCER_PT_sequencer_modifiers(SequencerButtonsPanel_Output, Panel):
