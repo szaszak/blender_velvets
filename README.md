@@ -56,6 +56,7 @@ Beyond adding the new functions/shortcuts, velvet_shortcuts also changes the cur
 <b>"Del"</b> - Delects without prompting for confirmation;<BR>
 <b>"G"</b> - Makes meta-strip without prompting for confirmation;<BR>
 <b>"Ctrl+S"</b> - Saves the file without prompting for confirmation;<BR>
+<b>"Shift+R"</b> - Refresh Sequencer;<BR>
 <b>"Left Mouse Click"</b> - now selects strips with linked time by default (audio + video);<BR>
 <b>"Ctrl+Left Mouse Click"</b> - selects strips disregarding linked time;<BR>
 <b>"Ctrl+Right Mouse Click"</b> - view all (equivalent to "Home", without having to abandon the mouse);
