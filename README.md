@@ -193,7 +193,7 @@ so <b>::velvet_goldmine::</b> just toggles the strips back to their original, fu
 
     "Strips - Show Waveform"
     """Shows the audio waveform in selected strips (toggle)"""
-    # Shortcut: Ctrl + Alt + Shift + W
+    # Shortcut: W
 
     "Timeline - Adjust End"
     """Adjusts VSE Timeline according to last video"""
