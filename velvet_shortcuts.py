@@ -143,6 +143,7 @@ kmi = km.keymap_items.new('screen.screens_change_videoediting', 'F1', 'PRESS', s
 # Map Sequencer
 km = kc.keymaps.new('Sequencer', space_type='SEQUENCE_EDITOR', region_type='WINDOW', modal=False)
 
+kmi = km.keymap_items.new('sequencer.refresh_all', 'R', 'PRESS', shift=True)
 kmi = km.keymap_items.new('sequencer.select_all', 'A', 'PRESS')
 kmi.properties.action = 'SELECT'
 kmi = km.keymap_items.new('sequencer.select_all', 'A', 'PRESS', alt=True)
