@@ -18,7 +18,7 @@
 
 
 # To be used with Addon ::velvet_goldmine::
-# ::velvet goldmine:: version - 20130829
+# ::velvet goldmine:: version - 20131124
 # Author: qazav_szaszak
 
 
@@ -296,7 +296,7 @@ kmi = km.keymap_items.new('sequencer.strip_down', 'DOWN_ARROW', 'PRESS', alt=Tru
 kmi = km.keymap_items.new('sequencer.strip_jump_next', 'PAGE_UP', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('sequencer.strip_jump_previous', 'PAGE_DOWN', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('sequencer.strips_concatenate_selected', 'C', 'PRESS', shift=True)
-kmi = km.keymap_items.new('sequencer.strips_show_waveform', 'W', 'PRESS', shift=True, ctrl=True, alt=True)
+kmi = km.keymap_items.new('sequencer.strips_show_waveform', 'W', 'PRESS')
 kmi = km.keymap_items.new('sequencer.timeline_adjust_endof', 'E', 'PRESS', alt=True)
 kmi = km.keymap_items.new('sequencer.timeline_end_in_current', 'E', 'PRESS', shift=True)
 kmi = km.keymap_items.new('sequencer.timeline_start_in_current', 'S', 'PRESS', shift=True, alt=True)
