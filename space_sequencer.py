@@ -18,7 +18,7 @@
 
 # <pep8 compliant>
 
-# velvet [ mod version ] - 20131120
+# velvet [ mod version ] - 20131207
 # mod by qazav_szaszak
 
 
@@ -415,8 +415,8 @@ class SEQUENCER_MT_strip(Menu):
         layout.operator("sequencer.meta_separate")
 
         #if (ed && (ed->metastack.first || (ed->act_seq && ed->act_seq->type == SEQ_META))) {
-        #	uiItemS(layout);
-        #	uiItemO(layout, NULL, 0, "sequencer.meta_toggle");
+        #        uiItemS(layout);
+        #        uiItemO(layout, NULL, 0, "sequencer.meta_toggle");
         #}
 
         layout.separator()
@@ -1248,21 +1248,27 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
             #sub.prop(strip, "channel")
             #------------------------------------
 
+
+
+            #------------------------------------
             # XXX note strip.type is never equal to 'EFFECT', look at seq_type_items within rna_sequencer.c
             if stype == 'EFFECT':
-                pass
-                # layout.separator()
-                # layout.operator("sequencer.effect_change")
-                # layout.operator("sequencer.effect_reassign_inputs")
-            elif stype == 'IMAGE':
+                #pass
                 layout.separator()
-                # layout.operator("sequencer.image_change")
-                layout.operator("sequencer.rendersize")
+                layout.operator("sequencer.effect_change")
+                layout.operator("sequencer.effect_reassign_inputs")
+            #elif stype == 'IMAGE':
+            #    layout.separator()
+            #    layout.operator("sequencer.image_change")
+            #    layout.operator("sequencer.rendersize")
             elif stype == 'SCENE':
-                pass
-                # layout.separator()
-                # layout.operator("sequencer.scene_change", text="Change Scene")
-            elif stype == 'MOVIE':
+                #pass
+                layout.separator()
+                layout.operator("sequencer.scene_change", text="Change Scene")
+            elif stype == 'MOVIE' or stype == 'IMAGE':
+                split = layout.split(percentage=0.2)
+                split.label(text="Path:")
+                split.prop(strip, "filepath", text="")
                 layout.separator()
                 # layout.operator("sequencer.movie_change")
                 layout.operator("sequencer.rendersize")
