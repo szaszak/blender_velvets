@@ -1273,6 +1273,9 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
                 # layout.operator("sequencer.movie_change")
                 layout.operator("sequencer.rendersize")
             elif stype == 'SOUND':
+                split = layout.split(percentage=0.2)
+                split.label(text="Path:")
+                split.prop(strip, "filepath", text="")
                 layout.separator()
                 layout.operator("sequencer.crossfade_sounds")
                 
