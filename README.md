@@ -1,5 +1,5 @@
-blender_velvet
-==============
+blender_velvets
+===============
 
 Glamorous new functions for video editing in Blender VSE, with shortcuts more adapted to video editing use and interface changes to eliminate redundancy in Blender's windows. 
 
