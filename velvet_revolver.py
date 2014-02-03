@@ -1,22 +1,3 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
-
-
 bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
@@ -36,15 +17,19 @@ from subprocess import call
 from bpy_extras.io_utils import ExportHelper
 from bpy.props import StringProperty, BoolProperty
 
+import glob
+import os
+
 print("-------------------------------------------")
 
 #ffCommand = "C:\Documents and Settings\FFreitas.CTI\Meus documentos\HCKR\FFMPEG\bin\ffmpeg.exe"
 
 
-class FF(object):    
-    def __init__(self, ffCommand, input, format, fps, deinter, audioRate, audioChannels, output):
+class VideoSource(object):    
+    def __init__(self, ffCommand, filepath, input, format, fps, deinter, audioRate, audioChannels, output):
         self.ffCommand = ffCommand
         self.input = input
+        self.filepath = filepath
         self.format = format # can be proxy
         self.fps = fps
         self.deinter = deinter
@@ -84,67 +69,55 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
         ('transcode_mjpeg', 'in MJPEG', '')
     )
 
-    create_proxies = BoolProperty(
+    proxies = BoolProperty(
             name="Proxies at SD resolution",
             description="Create Standard Definition 480p proxies with custom FPS set below",
             default=False,
-            )
-    #transcode_videos_prores = BoolProperty(
-    #        name="ProRes422",
-    #        description="Transcode to ProRes422 - keeps original resolution, uses custom FPS set below",
-    #        default=False,
-    #        )
-    #transcode_videos_mjpeg = BoolProperty(
-    #        name="MJPEG",
-    #        description="Transcode to MJPEG - keeps original resolution, uses custom FPS set below",
-    #        default=False,
-    #        )                
-    transcode_videos = EnumProperty(
+            )                  
+    transcode = EnumProperty(
             name="Copies",
             default="do_not_transcode",
             description="Also create copies in this format for final render (slow)",
             items=transcode_items
             )    
-    video_properties_fps = FloatProperty(
+    prop_fps = FloatProperty(
             name="FPS (Beware!)",
             description="Transcoded videos will have this FPS - this *MUST* be the same as your project",
             default=24.00
             )
-    audio_properties_samplerate = IntProperty(
+    prop_ar = IntProperty(
             name="Audio Sample Rate",
             description="Transcoded videos will have this audio rate",
             default=48000
             )
-    video_properties_deinterlace = BoolProperty(
+    prop_deint = BoolProperty(
             name="Deinterlace videos",
             description="Uses FFMPEG Yadif filter to deinterlace all videos",
             default=False,
             )
-    audio_properties_channels = BoolProperty(
+    prop_ac = BoolProperty(
             name="Force mono audio?",
             description="Forces FFMPEG to transcode videos to mono - easier panning in Blender, but usually not recommended",
             default=False,
             )
 
-            
+
     def draw(self, context):
         layout = self.layout
 
         box = layout.box()
         box.label('What to do in selected folder?')
         box.label('Create proxies:')
-        box.prop(self, 'create_proxies')
+        box.prop(self, 'proxies')
         box.label('Create copies of source videos:')
-        box.prop(self, 'transcode_videos')
-        #box.prop(self, 'transcode_videos_prores')
-        #box.prop(self, 'transcode_videos_mjpeg')
+        box.prop(self, 'transcode')
         box = layout.box()
         box.label('Properties for videos:')
         box.label('FPS *must* be the same as project\'s!')
-        box.prop(self, 'video_properties_fps')
-        box.prop(self, 'audio_properties_samplerate')
-        box.prop(self, 'video_properties_deinterlace')
-        box.prop(self, 'audio_properties_channels')
+        box.prop(self, 'prop_fps')
+        box.prop(self, 'prop_ar')
+        box.prop(self, 'prop_deint')
+        box.prop(self, 'prop_ac')
 
 
 ######## ----------------------------------------------------------------------
@@ -157,34 +130,34 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
     def execute(self, context):
         bpy.ops.file.make_paths_absolute()
         
-        render = bpy.context.scene.render
-        fps = round((render.fps / render.fps_base), 3)
-
-        scene = bpy.context.scene
-        startFrame = scene.frame_start
-        endFrame = scene.frame_end
-        fps, timecode = checkFPS()
-
         preferences = bpy.context.user_preferences
-        system = preferences.system
-        audioRate = int(system.audio_sample_rate.split("_")[1])
-
-        audiosFolderPath, ardourFile = os.path.split(self.filepath)
-        ardourBasename = os.path.splitext(ardourFile)[0]
-        audiosFolder = audiosFolderPath + os.sep + "Audios_for_" + ardourBasename
-
-        sources = []
-        Session, sources = createXML(sources, startFrame, endFrame, fps,
-                                     timecode, audioRate, ardourBasename,
-                                     audiosFolder)
-
         ffCommand = preferences.addons['velvet_revolver'].preferences.ffCommand
-        runFFMPEG(ffCommand, sources, audioRate, audiosFolder)
-
-        writeXML(self.filepath, Session)
-
-        return main(self.filepath, context, self.include_animation, self.include_active_cam, self.include_selected_cams, self.include_selected_objects, self.include_cam_bundles)
-        #return {'FINISHED'}
+        
+        videosFolderPath, blenderFile = os.path.split(self.filepath)
+        videosFolderPath += os.sep
+        #print(videosFolderPath)
+        
+        sources = []
+        for i in glob.glob(os.getcwd() + os.sep + "*.*"):
+            if i[-4:].lower() in bpy.path.extensions_movie:
+                sources.append(i)
+        
+        #print(sources)
+        
+        if self.proxies:
+            for source in sources:
+                #vs = VideoSource(ffCommand, filepath, input, format, fps, deinter, audioRate, audioChannels, output)
+                #ext = source[-4:]
+                output_v = source[:-4] + "_proxy.mkv"
+                vs = VideoSource(ffCommand, videosFolderPath, source, "proxy", self.prop_fps, self.prop_deint, self.prop_ar, self.prop_ac, output_v)
+                vs.runFF()
+                
+        
+        return {'FINISHED'}
+        
+        #return main(self.filepath, ffCommand, input, format, fps, deinter, audioRate, audioChannels, output)
+        #ffCommand, self.filepath, self.create_proxies, self.transcode_videos, self.video_properties_fps, self.video_properties_deinterlace, self.audio_properties_samplerate, self.audio_properties_channels)
+        #ffCommand, filepath, input, format, fps, deinter, audioRate, audioChannels, output
 
 
 class Velvet_Revolver_Transcoder(bpy.types.AddonPreferences):
@@ -202,12 +175,6 @@ class Velvet_Revolver_Transcoder(bpy.types.AddonPreferences):
         subtype='FILE_PATH',
         default=ffmpeg,
     )
-    #ffDefaultFPS = StringProperty(
-    #    name="Default FPS to be used by FFMPEG for transcoding:",
-     #   description="This is the default FPS used for creting proxies or transcoding to ProRes422/MJPEG",
-        #subtype='FILE_PATH',
-      #  default='24.00',
-    #)
 
     def draw(self, context):
     
@@ -216,8 +183,6 @@ class Velvet_Revolver_Transcoder(bpy.types.AddonPreferences):
                           "change it, do so with no .blend files open or "
                           "they will be relative.")
         layout.prop(self, "ffCommand")
-     #   layout = self.layout        
-      #  layout.prop(self, "ffDefaultFPS")
 
 
 def menuEntry(self, context):
