@@ -24,7 +24,7 @@ bl_info = {
     "author": "qazav_szaszak",
     "version": (1, 0, 20140403),
     "blender": (2, 69, 0),
-    "warning": "Current in test phase",
+    "warning": "Bang! Bang! That awful sound.",
     "category": ":",
     "location": "File > Export > Revolver (.revolver)",
     "support": "COMMUNITY"}
