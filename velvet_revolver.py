@@ -25,25 +25,43 @@ print("-------------------------------------------")
 #ffCommand = "C:\Documents and Settings\FFreitas.CTI\Meus documentos\HCKR\FFMPEG\bin\ffmpeg.exe"
 
 
-class VideoSource(object):    
-    def __init__(self, ffCommand, filepath, input, format, fps, deinter, audioRate, audioChannels, output):
+class VideoSource(object):
+    def __init__(self, ffCommand, filepath, v_source, v_format, fps, deinter, ar, ac, v_output):
         self.ffCommand = ffCommand
-        self.input = input
+        self.input = v_source
         self.filepath = filepath
-        self.format = format # can be proxy
-        self.fps = fps
-        self.deinter = deinter
-        self.arate = audioRate
-        self.achannels = audioChannels
-        self.output = output
-        
-    def runFF(self):        
+        self.fps = str(round(fps, 3))
+        self.arate = str(ar)
+        self.output = v_output
+
+        if deinter:
+            self.deinter = "-vf yadif"
+        else:
+            self.deinter = ""
+
+        if ac:
+            self.achannels = "-ac 1"
+        else:
+            self.achannels = ""
+
+        if v_format == "proxy": # can be proxy, prores422 or mjpeg
+            self.format = "-s 640x368 -c:v mjpeg -qscale 5 -acodec pcm_s16be"
+            #self.format = "-s 640x368 -f image2 -c:v prores_ks -profile:v 0 -qscale:v 13"
+            #self.format = "-s 640x368 -c:v prores -profile:v 0 -qscale:v 13"
+            #ffmpeg -y -probesize 5000000 -f image2 -r 48 -force_fps -i ${DPX_HERO} -c:v prores_ks -profile:v 3 -qscale:v ${QSCALE} -vendor ap10 -pix_fmt yuv422p10le -s 2048x1152 -r 48 output.mov
+        elif v_format == "prores422":
+            self.format = "-probesize 5000000 -f image2 -c:v prores_ks -profile:v 3 -qscale:v 5 -vendor ap10 -pix_fmt yuv422p10le"
+        else: # v_format == "mjpeg"
+            self.format = "-probesize 5000000 -f image2 -c:v mjpeg -qscale:v 1 -vendor ap10 -pix_fmt yuvj422p -acodec pcm_s16be"
+
+    def runFF(self):
         # Due to spaces, the command entries (ffCommand, input and output) have
         # to be read as strings by the call command, thus the escapings below
-        callFFMPEG = "\"%s\" -i \"%s\" -y \"%s\" -r:v \"%s\" \"%s\" -ar \"%s\" -ac \"%s\" \"%s\"" \
+        callFFMPEG = "\"%s\" -i \"%s\" -y %s -r %s %s -ar %s %s %s" \
                      % (self.ffCommand, self.input, self.format, self.fps, self.deinter, self.arate, self.achannels, self.output)
-                     
+
         print(callFFMPEG)
+        call(callFFMPEG, shell=True)
 
 
 ######## ----------------------------------------------------------------------
@@ -73,13 +91,13 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
             name="Proxies at SD resolution",
             description="Create Standard Definition 480p proxies with custom FPS set below",
             default=False,
-            )                  
+            )
     transcode = EnumProperty(
             name="Copies",
             default="do_not_transcode",
             description="Also create copies in this format for final render (slow)",
             items=transcode_items
-            )    
+            )
     prop_fps = FloatProperty(
             name="FPS (Beware!)",
             description="Transcoded videos will have this FPS - this *MUST* be the same as your project",
@@ -129,32 +147,32 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
 
     def execute(self, context):
         bpy.ops.file.make_paths_absolute()
-        
+
         preferences = bpy.context.user_preferences
         ffCommand = preferences.addons['velvet_revolver'].preferences.ffCommand
         
         videosFolderPath, blenderFile = os.path.split(self.filepath)
         videosFolderPath += os.sep
         #print(videosFolderPath)
-        
+
         sources = []
-        for i in glob.glob(os.getcwd() + os.sep + "*.*"):
+        for i in glob.glob(videosFolderPath + "*.*"):
             if i[-4:].lower() in bpy.path.extensions_movie:
                 sources.append(i)
-        
+
         #print(sources)
-        
+
         if self.proxies:
             for source in sources:
+                print(source)
                 #vs = VideoSource(ffCommand, filepath, input, format, fps, deinter, audioRate, audioChannels, output)
                 #ext = source[-4:]
                 output_v = source[:-4] + "_proxy.mkv"
                 vs = VideoSource(ffCommand, videosFolderPath, source, "proxy", self.prop_fps, self.prop_deint, self.prop_ar, self.prop_ac, output_v)
                 vs.runFF()
-                
-        
+
         return {'FINISHED'}
-        
+
         #return main(self.filepath, ffCommand, input, format, fps, deinter, audioRate, audioChannels, output)
         #ffCommand, self.filepath, self.create_proxies, self.transcode_videos, self.video_properties_fps, self.video_properties_deinterlace, self.audio_properties_samplerate, self.audio_properties_channels)
         #ffCommand, filepath, input, format, fps, deinter, audioRate, audioChannels, output
@@ -177,7 +195,7 @@ class Velvet_Revolver_Transcoder(bpy.types.AddonPreferences):
     )
 
     def draw(self, context):
-    
+
         layout = self.layout
         layout.label(text="The path below *must* be absolute. If you have to "
                           "change it, do so with no .blend files open or "
