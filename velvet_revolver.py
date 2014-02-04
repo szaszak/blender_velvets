@@ -1,38 +1,48 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+# <pep8 compliant>
+
 bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
     "author": "qazav_szaszak",
-    "version": (1, 0, 20140203),
+    "version": (1, 0, 20140403),
     "blender": (2, 69, 0),
     "warning": "Current in test phase",
     "category": ":",
-    "location": "File > Export > Velvet Revolver",
+    "location": "File > Export > Revolver (.revolver)",
     "support": "COMMUNITY"}
 
 import bpy
-
-from shutil import which
 from subprocess import call
-
-from bpy_extras.io_utils import ExportHelper
-from bpy.props import StringProperty, BoolProperty
-
-import glob
-import os
-
-print("-------------------------------------------")
-
-#ffCommand = "C:\Documents and Settings\FFreitas.CTI\Meus documentos\HCKR\FFMPEG\bin\ffmpeg.exe"
 
 
 class VideoSource(object):
-    def __init__(self, ffCommand, filepath, v_source, v_format, fps, deinter, ar, ac, v_output):
+    """Uses video source to run FFMPEG and create
+       proxies or full-res intra-frame copies"""
+    def __init__(self, ffCommand, filepath, v_source, v_res, v_format,
+                 fps, deinter, ar, ac):
         self.ffCommand = ffCommand
         self.input = v_source
         self.filepath = filepath
         self.fps = str(round(fps, 3))
         self.arate = str(ar)
-        self.output = v_output
 
         if deinter:
             self.deinter = "-vf yadif"
@@ -44,91 +54,116 @@ class VideoSource(object):
         else:
             self.achannels = ""
 
-        if v_format == "proxy": # can be proxy, prores422 or mjpeg
-            self.format = "-s 640x368 -c:v mjpeg -qscale 5 -acodec pcm_s16be"
-            #self.format = "-s 640x368 -f image2 -c:v prores_ks -profile:v 0 -qscale:v 13"
-            #self.format = "-s 640x368 -c:v prores -profile:v 0 -qscale:v 13"
-            #ffmpeg -y -probesize 5000000 -f image2 -r 48 -force_fps -i ${DPX_HERO} -c:v prores_ks -profile:v 3 -qscale:v ${QSCALE} -vendor ap10 -pix_fmt yuv422p10le -s 2048x1152 -r 48 output.mov
-        elif v_format == "prores422":
-            self.format = "-probesize 5000000 -f image2 -c:v prores_ks -profile:v 3 -qscale:v 5 -vendor ap10 -pix_fmt yuv422p10le"
-        else: # v_format == "mjpeg"
-            self.format = "-probesize 5000000 -f image2 -c:v mjpeg -qscale:v 1 -vendor ap10 -pix_fmt yuvj422p -acodec pcm_s16be"
+        if v_res == "proxy":
+            self.v_output = self.input[:-4] + "_proxy.mov"
+            if v_format == "is_prores":
+                self.format = "-probesize 5000000 -s 640x368 -c:v prores \
+                               -profile:v 0 -qscale:v 13 -vendor ap10 \
+                               -pix_fmt yuv422p10le -acodec pcm_s16be"
+            else:  # v_format == "is_mjpeg":
+                self.format = "-probesize 5000000 -s 640x368 -c:v mjpeg \
+                               -qscale:v 5 -acodec pcm_s16be"
+        else:  # v_res == "fullres"
+            if v_format == "is_prores":
+                self.v_output = self.input[:-4] + "_PRORES.mov"
+                self.format = "-probesize 5000000 -c:v prores -profile:v 3 \
+                               -qscale:v 5 -vendor ap10 -pix_fmt yuv422p10le \
+                               -acodec pcm_s16be"
+            else:  # v_format == "is_mjpeg":
+                self.v_output = self.input[:-4] + "_MJPEG.mov"
+                self.format = "-probesize 5000000 -c:v mjpeg -qscale:v 1 \
+                               -acodec pcm_s16be"
 
     def runFF(self):
         # Due to spaces, the command entries (ffCommand, input and output) have
         # to be read as strings by the call command, thus the escapings below
-        callFFMPEG = "\"%s\" -i \"%s\" -y %s -r %s %s -ar %s %s %s" \
-                     % (self.ffCommand, self.input, self.format, self.fps, self.deinter, self.arate, self.achannels, self.output)
+        callFFMPEG = "\"%s\" -i \"%s\" -y %s -r %s %s -ar %s %s \"%s\"" \
+                     % (self.ffCommand, self.input, self.format, self.fps,
+                        self.deinter, self.arate, self.achannels, self.v_output)
 
         print(callFFMPEG)
         call(callFFMPEG, shell=True)
 
 
 ######## ----------------------------------------------------------------------
-######## EXPORT TO ARDOUR
+######## VELVET REVOLVER MAIN CLASS
 ######## ----------------------------------------------------------------------
 
 from bpy_extras.io_utils import ExportHelper
 from bpy.props import StringProperty, EnumProperty, IntProperty, FloatProperty, BoolProperty
+from shutil import which
+
+import glob
+import os
 
 
 class VelvetRevolver(bpy.types.Operator, ExportHelper):
-    """Mass create proxies and/or ProRes422//MJPEG from original files"""
+    """Mass create proxies and/or intra-frame copies from original files"""
     bl_idname = "export.revolver"
     bl_label = "Export to Revolver"
     filename_ext = ".revolver"
-    filter_glob = StringProperty(subtype='FILE_PATH')
+    filter_movie = BoolProperty(default=True, options={'HIDDEN'})
 
 ######## ----------------------------------------------------------------------
 
     transcode_items = (
-        ('do_not_transcode', 'Do not create copies', ''),
-        ('transcode_prores', 'in ProRes422', ''),
-        ('transcode_mjpeg', 'in MJPEG', '')
+        ('is_prores', 'ProRes422', ''),
+        ('is_mjpeg', 'MJPEG', '')
     )
 
-    proxies = BoolProperty(
-            name="Proxies at SD resolution",
-            description="Create Standard Definition 480p proxies with custom FPS set below",
-            default=False,
-            )
-    transcode = EnumProperty(
-            name="Copies",
-            default="do_not_transcode",
-            description="Also create copies in this format for final render (slow)",
-            items=transcode_items
-            )
-    prop_fps = FloatProperty(
-            name="FPS (Beware!)",
-            description="Transcoded videos will have this FPS - this *MUST* be the same as your project",
-            default=24.00
-            )
-    prop_ar = IntProperty(
-            name="Audio Sample Rate",
-            description="Transcoded videos will have this audio rate",
-            default=48000
-            )
-    prop_deint = BoolProperty(
-            name="Deinterlace videos",
-            description="Uses FFMPEG Yadif filter to deinterlace all videos",
-            default=False,
-            )
-    prop_ac = BoolProperty(
-            name="Force mono audio?",
-            description="Forces FFMPEG to transcode videos to mono - easier panning in Blender, but usually not recommended",
-            default=False,
-            )
+######## ----------------------------------------------------------------------
 
+    proxies = BoolProperty(
+        name="Create proxies at SD resolution",
+        description="Create Standard Definition 480p \
+                    proxies with custom FPS set below",
+        default=False,
+    )
+    copies = BoolProperty(
+        name="Create copies in intra-frame codec",
+        description="Create full res copies of sources \
+                    in an intra-frame codec (slow)",
+        default=False,
+    )
+    v_format = EnumProperty(
+        name="Format",
+        default="is_prores",
+        description="Intra-frame format for the creation \
+                    of proxies and/or copies",
+        items=transcode_items
+    )
+    prop_fps = FloatProperty(
+        name="FPS (Beware!)",
+        description="Transcoded videos will have this FPS - \
+                    this *MUST* be the same as your project",
+        default=24.00
+    )
+    prop_ar = IntProperty(
+        name="Audio Sample Rate",
+        description="Transcoded videos will have this audio rate",
+        default=48000
+    )
+    prop_deint = BoolProperty(
+        name="Deinterlace videos",
+        description="Uses FFMPEG Yadif filter to deinterlace all videos",
+        default=False,
+    )
+    prop_ac = BoolProperty(
+        name="Force mono audio?",
+        description="Forces FFMPEG to transcode videos to mono - easier \
+                    panning in Blender, but usually not recommended",
+        default=False,
+    )
 
     def draw(self, context):
         layout = self.layout
 
         box = layout.box()
         box.label('What to do in selected folder?')
-        box.label('Create proxies:')
         box.prop(self, 'proxies')
-        box.label('Create copies of source videos:')
-        box.prop(self, 'transcode')
+        box.prop(self, 'copies')
+        box.label('Proxies and/or copies should be in:')
+        box.prop(self, 'v_format')
         box = layout.box()
         box.label('Properties for videos:')
         box.label('FPS *must* be the same as project\'s!')
@@ -137,48 +172,47 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
         box.prop(self, 'prop_deint')
         box.prop(self, 'prop_ac')
 
-
 ######## ----------------------------------------------------------------------
-    
+
     @classmethod
     def poll(cls, context):
-        if bpy.context.sequences:
-            return context.sequences is not None
+        if bpy.data.scenes:
+            return bpy.data.scenes is not None
 
     def execute(self, context):
-        bpy.ops.file.make_paths_absolute()
-
         preferences = bpy.context.user_preferences
         ffCommand = preferences.addons['velvet_revolver'].preferences.ffCommand
-        
+
         videosFolderPath, blenderFile = os.path.split(self.filepath)
         videosFolderPath += os.sep
-        #print(videosFolderPath)
 
         sources = []
         for i in glob.glob(videosFolderPath + "*.*"):
             if i[-4:].lower() in bpy.path.extensions_movie:
-                sources.append(i)
-
-        #print(sources)
+                if "_proxy." not in i and "_MJPEG." not in i and "_PRORES." not in i:
+                    sources.append(i)
 
         if self.proxies:
             for source in sources:
-                print(source)
-                #vs = VideoSource(ffCommand, filepath, input, format, fps, deinter, audioRate, audioChannels, output)
-                #ext = source[-4:]
-                output_v = source[:-4] + "_proxy.mkv"
-                vs = VideoSource(ffCommand, videosFolderPath, source, "proxy", self.prop_fps, self.prop_deint, self.prop_ar, self.prop_ac, output_v)
+                v_res = "proxy"
+                vs = VideoSource(ffCommand, videosFolderPath, source, v_res,
+                                 self.v_format, self.prop_fps, self.prop_deint,
+                                 self.prop_ar, self.prop_ac)
+                vs.runFF()
+
+        if self.copies:
+            for source in sources:
+                v_res = "fullres"
+                vs = VideoSource(ffCommand, videosFolderPath, source, v_res,
+                                 self.v_format, self.prop_fps, self.prop_deint,
+                                 self.prop_ar, self.prop_ac)
                 vs.runFF()
 
         return {'FINISHED'}
 
-        #return main(self.filepath, ffCommand, input, format, fps, deinter, audioRate, audioChannels, output)
-        #ffCommand, self.filepath, self.create_proxies, self.transcode_videos, self.video_properties_fps, self.video_properties_deinterlace, self.audio_properties_samplerate, self.audio_properties_channels)
-        #ffCommand, filepath, input, format, fps, deinter, audioRate, audioChannels, output
-
 
 class Velvet_Revolver_Transcoder(bpy.types.AddonPreferences):
+    """Velver Revolver preferences"""
     bl_idname = __name__.split(".")[0]
     bl_option = {'REGISTER'}
 
