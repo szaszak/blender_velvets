@@ -287,7 +287,6 @@ kmi = km.keymap_items.new('sequencer.fade_out_strip_end', 'F', 'PRESS', alt=True
 kmi = km.keymap_items.new('sequencer.marker_delete_closest', 'M', 'PRESS', alt=True)
 kmi = km.keymap_items.new('sequencer.marker_goto_left', 'LEFT_ARROW', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('sequencer.marker_goto_right', 'RIGHT_ARROW', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('sequencer.proxy_editing_toggle', 'P', 'PRESS', shift=True, ctrl=True, alt=True)
 kmi = km.keymap_items.new('sequencer.resolution_percentage_toggle', 'R', 'PRESS', shift=True, ctrl=True, alt=True)
 kmi = km.keymap_items.new('screen.scene_toggle', 'QUOTE', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('sequencer.strips_adjust_to_cursor', 'C', 'PRESS', shift=True, ctrl=True, alt=True)
