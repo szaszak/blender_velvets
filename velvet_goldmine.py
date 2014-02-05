@@ -12,7 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# Inc., 51 Franklin Street, Fifth Floor, Boston, ProMA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
 
@@ -379,46 +379,6 @@ class Metastrip_Make_Direct(bpy.types.Operator):
 
     def execute(self, context):
         bpy.ops.sequencer.meta_make()
-
-        return {'FINISHED'}
-
-
-class Proxy_Editing_Toggle(bpy.types.Operator):
-    """Toggle filepath of current strips between Proxies / Original folders"""
-    bl_idname = "sequencer.proxy_editing_toggle"
-    bl_label = "Proxy Editing Toggle"
-    bl_options = {'REGISTER', 'UNDO'}
-    # Shortcuts: Ctrl + Alt + Shift + P
-
-    @classmethod
-    def poll(cls, context):
-        return bpy.context.scene is not None
-
-    def execute(self, context):
-
-        import bpy
-
-        for i in bpy.context.sequences:
-            if (i.type == "SOUND") or (i.type == "MOVIE"):
-                if (i.filepath[-4:] == ".avi") or \
-                   (i.filepath[-4:] == ".mov"):
-                    container = i.filepath[-4:]
-                    if (i.filepath[-10:-4:] == "_proxy"):
-                        i.filepath = i.filepath[:-10] + container
-                    else:
-                        i.filepath = i.filepath[:-4] + "_proxy" + container
-        '''
-import os
-
-scene = bpy.context.scene
-
-for i in scene.sequence_editor.sequences_all:
-filename = i.filepath.split(os.sep)[-1]
-if i.filepath.split(os.sep)[-2] == "//Proxies":
-i.filepath = "//Original" + os.sep + filename
-else:
-i.filepath = "//Proxies" + os.sep + filename
-'''
 
         return {'FINISHED'}
 
