@@ -132,10 +132,6 @@ so <b>::velvet_goldmine::</b> just toggles the strips back to their original, fu
     """Makes Meta Strip without prompting for confirmation"""
     # Shortcut: Ctrl + G
 
-    "Proxy Editing Toggle"
-    """Toggle filepath of current strips between Proxies / Original folders"""
-    # Shortcuts: Ctrl + Alt + Shift + P
-
     "Render - Resolution Toggle"
     """Toggle between 30, 60 and 100 values in Resolution Percentage"""
     # Shortcut: Ctrl + Alt + Shift + R
