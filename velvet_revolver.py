@@ -22,7 +22,7 @@ bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
     "author": "qazav_szaszak",
-    "version": (1, 0, 20140403),
+    "version": (1, 0, 20140503),
     "blender": (2, 69, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
@@ -59,15 +59,17 @@ class Proxy_Editing_Toggle(bpy.types.Operator):
             if (s.type == "SOUND") or (s.type == "MOVIE"):
                 f_name = s.filepath[:-10]
 
-                # if strip is a proxy and has correspondent prores/mjpeg files
+                # if strip is a proxy and has correspondent fullres files
                 if s.filepath.endswith(proxy_end):
                     if os.path.isfile(f_name + prores_end):
                         s.filepath = f_name + prores_end
                     elif os.path.isfile(f_name + mjpeg_end):
                         s.filepath = f_name + mjpeg_end
+                    elif glob.glob(s.filepath[:-10] + ".*"):
+                        s.filepath = glob.glob(s.filepath[:-10] + ".*")[0]
                     else:
                         pass
-                # or strip is a prores/mjpeg that has correspondent proxy files
+                # or strip is a fullres that has correspondent proxy files
                 elif s.filepath.endswith(prores_end) and \
                         os.path.isfile(f_name[:-1] + proxy_end):
                     s.filepath = f_name[:-1] + proxy_end
@@ -75,7 +77,13 @@ class Proxy_Editing_Toggle(bpy.types.Operator):
                         os.path.isfile(f_name + proxy_end):
                     s.filepath = f_name + proxy_end
                 else:
-                    pass
+                    # for fullres files without _PRORES or _MJPEG in their name
+                    ext_len = len(s.filepath.split(".")[-1]) + 1
+                    if glob.glob(s.filepath[:-ext_len] + "_proxy.*") and \
+                            s.filepath[-ext_len:] in bpy.path.extensions_movie:
+                        s.filepath = glob.glob(s.filepath[:-ext_len] + "_proxy.*")[0]
+                    else:
+                        pass
 
         return {'FINISHED'}
 
