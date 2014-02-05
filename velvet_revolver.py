@@ -30,8 +30,59 @@ bl_info = {
     "support": "COMMUNITY"}
 
 import bpy
+import os
 from subprocess import call
 
+
+######## ----------------------------------------------------------------------
+######## VSE TIMELINE TOGGLE PROXIES <-> FULLRES
+######## ----------------------------------------------------------------------
+
+class Proxy_Editing_Toggle(bpy.types.Operator):
+    """Toggle filepath of current strips between Proxies / FullRes files"""
+    bl_idname = "sequencer.proxy_editing_toggle"
+    bl_label = "Proxy Editing Toggle"
+    bl_options = {'REGISTER', 'UNDO'}
+    # Shortcuts: Ctrl + Alt + Shift + P
+
+    @classmethod
+    def poll(cls, context):
+        if bpy.context.sequences:
+            return bpy.context.sequences is not None
+
+    def execute(self, context):
+        proxy_end = "_proxy.mov"
+        prores_end = "_PRORES.mov"
+        mjpeg_end = "_MJPEG.mov"
+
+        for s in bpy.context.sequences:
+            if (s.type == "SOUND") or (s.type == "MOVIE"):
+                f_name = s.filepath[:-10]
+
+                # if strip is a proxy and has correspondent prores/mjpeg files
+                if s.filepath.endswith(proxy_end):
+                    if os.path.isfile(f_name + prores_end):
+                        s.filepath = f_name + prores_end
+                    elif os.path.isfile(f_name + mjpeg_end):
+                        s.filepath = f_name + mjpeg_end
+                    else:
+                        pass
+                # or strip is a prores/mjpeg that has correspondent proxy files
+                elif s.filepath.endswith(prores_end) and \
+                        os.path.isfile(f_name[:-1] + proxy_end):
+                    s.filepath = f_name[:-1] + proxy_end
+                elif s.filepath.endswith(mjpeg_end) and \
+                        os.path.isfile(f_name + proxy_end):
+                    s.filepath = f_name + proxy_end
+                else:
+                    pass
+
+        return {'FINISHED'}
+
+
+######## ----------------------------------------------------------------------
+######## FFMPEG TRANSCODING
+######## ----------------------------------------------------------------------
 
 class VideoSource(object):
     """Uses video source to run FFMPEG and create
@@ -83,6 +134,8 @@ class VideoSource(object):
 
         print(callFFMPEG)
         call(callFFMPEG, shell=True)
+        
+        return {'FINISHED'}
 
 
 ######## ----------------------------------------------------------------------
@@ -92,9 +145,7 @@ class VideoSource(object):
 from bpy_extras.io_utils import ExportHelper
 from bpy.props import StringProperty, EnumProperty, IntProperty, FloatProperty, BoolProperty
 from shutil import which
-
 import glob
-import os
 
 
 class VelvetRevolver(bpy.types.Operator, ExportHelper):
@@ -104,14 +155,10 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
     filename_ext = ".revolver"
     filter_movie = BoolProperty(default=True, options={'HIDDEN'})
 
-######## ----------------------------------------------------------------------
-
     transcode_items = (
         ('is_prores', 'ProRes422', ''),
         ('is_mjpeg', 'MJPEG', '')
     )
-
-######## ----------------------------------------------------------------------
 
     proxies = BoolProperty(
         name="Create proxies at SD resolution",
@@ -172,7 +219,6 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
         box.prop(self, 'prop_deint')
         box.prop(self, 'prop_ac')
 
-######## ----------------------------------------------------------------------
 
     @classmethod
     def poll(cls, context):
@@ -241,14 +287,27 @@ def menuEntry(self, context):
     self.layout.operator(VelvetRevolver.bl_idname, text="Revolver (.revolver)")
 
 
+revolver_keymaps = []
+
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_export.append(menuEntry)
+    
+    # Register shortcut for Proxy_Editing_Toggle
+    wm = bpy.context.window_manager
+    km = wm.keyconfigs.addon.keymaps.new('Sequencer', space_type='SEQUENCE_EDITOR', region_type='WINDOW', modal=False)
+    kmi = km.keymap_items.new(Proxy_Editing_Toggle.bl_idname, 'P', 'PRESS', shift=True, ctrl=True, alt=True)    
+    revolver_keymaps.append((km, kmi))
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
     bpy.types.INFO_MT_file_export.remove(menuEntry)
+    
+    # Unregister Proxy_Editing_Toggle shortcut
+    for km, kmi in revolver_keymaps:
+        km.keymap_items.remove(kmi)
+    revolver_keymaps.clear()
 
 
 if __name__ == "__main__":
