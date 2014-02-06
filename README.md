@@ -1,52 +1,75 @@
-blender_velvets
-===============
+the Blender Velvets
+===================
 
-Glamorous new functions for video editing in Blender VSE, with shortcuts more adapted to video editing use and interface changes to eliminate redundancy in Blender's windows. 
+<BR>
+![alt text](http://florestavermelha.files.wordpress.com/2014/02/velvet_goldmine_full.jpg "the Blender Velvets")
+##### *<p align="center">Glamorous new functions for video editing in Blender VSE. To be used with lots of glitter.</p>*
+<BR>
 
-Aimed for video editors. To be used with lots of glitter.
+What are the Blender Velvets?
+-----------------------------
+
+The **Blender Velvets** are a series of Blender Addons (or plugins, if you prefer) for improving video editing with the VSE. They can be used separately or together, and at differet steps of video production. The velvets are:
 
 
-Install instructions
-------------------------------------
+###### ::velvet_revolver::
+
+    ::velvet_revolver:: has been developed over Blender 2.69, but it should not work on previous versions.
+
+The **::velvet_revolver::** is designed to make mass proxy generating an easy task for those lazy enough to open a terminal. It can create SD intra-frame (meaning 480p ProRes422 or MJPEG) proxies from all your videos using Blender's own interface. Just point it to a folder and dance to the radio for a while. In case you have multiple FPSs in your footage, notoriously crappy to use in Blender, Revolver can also create full-Res copies of your sources, levelling everything to your chosen FPS. *Get your fix twice: during the preparation for video editing and at the end, before color grading or final rendering.*
+
+###### ::velvet_goldmine::
 
     ::velvet_goldmine:: has been tested and works on Blender versions: 2.69, 2.68a, 2.66b, 2.66a, 
     2.66 and 2.65. There is no reason why it should not work on versions between those.
 
-Download the .py files (there are three) and follow the steps below.
+The **::velvet_goldmine::** is a bunch of new functions and shortcuts aimed to fasten and loosen the overall hard VSE user interface. To be used with lots of glitter and with its companion, the *velvet_shortcuts*, for one can't dance alone, eh? *Get your fix during the video editing phase*.
 
-1. The <b>velvet_goldmine.py</b> file is where the new functions are. To enable them, open Blender and go to: <i>File > User Preferences > Addons tab > Install from file > Choose velvet_goldmine.py.</i> The addon <b>::velvet_goldmine::</b> will show up among the addons list - enable it by clicking on the small box to the right.
+###### ::blue_velvet::
 
-2. There is a set of suggested shortcuts that both change some of the standard hotkeys (check the list below) and assign new ones to be used with the new functions. They are at the <b>velvet_shortcuts.py</b> file. To import it, go to: <i>File > User Preferences > Input tab > Import Key Configuration > Choose velvet_shortcuts.py.</i> You're done: it will show up in the list and will already be your current shortcut set.
+    ::blue_velvet:: has been developed over Blender 2.69, but it should not work on previous versions.
 
-3. If you want to use the modified VSE interface (check the notes below), go to your \scripts\startup\bl_ui folder and replace the <b>space_sequencer.py</b> that is there by the one you just downloaded. It is wise to create a backup before doing so - Ctrl+C and Ctrl+V on the original will do the job.
+You can edit in Blender, but there's no way you will get decent audio out of it. The program was simply not made for DAW uses, so stop whining. What **::blue_velvet::** does is to get your finished timeline and export the audio cuts directly to Ardour, the correct program to deal with them. *Get your fix when your video is ready for blasting the audio to maximum volume.*
 
-If you want a screenshot-by-screenshot guide, it is here: https://szaszak.wordpress.com/linux/blender-como-editor-de-video/
+###### ::modified_space_sequencer::
 
-Detailed description
-------------------------------------
+    the modified space_sequencer has been tested and works on Blender versions: 2.69, 2.68a, 2.66b, 
+    2.66a, 2.66 and 2.65. There is no reason why it should not work on versions between those.
 
-<h3>Interface changes (space_sequencer.py)</h3>
-
-
-If you take a look at the screenshots below, you can take a glimpse at the modifications:<BR>
-http://florestavermelha.files.wordpress.com/2013/05/blender_rios_e_ruas01.jpg<BR>
-http://florestavermelha.files.wordpress.com/2013/05/blender_rios_e_ruas021.jpg
-
-Notice that the changes aimed at completely eliminating the "Timeline" window, that is
-somewhat messy and redundant for video editing - all its controls are now at the VSE window
-and all the controls related to the timeline are in the <b>::velvet_goldmine::</b> addon.
-
-Also, there is new information on the VSE main window and the VSE viewer window related to
-the timeline and strips duration in SMTPE (human-readable), project render and FPS settings.
-
-I also included on the VSE viewer properties the "Sequencer modifiers" and the most relevant
-things that relate to video strips (click on a video strip on the timeline to check it out).
-This is because it seemed easier to control the image from the VSE viewer instead of the VSE timeline.
+Blender has an original space_sequencer, which is the VSE user interface. It is loaded every time the program starts. The use of a modified version of this script brings up a number of controls that exist but are hidden, adds some new and useful info for when you are in the middle of a project and gathers the most relevant strip properties in the Viewer window instead the scattered Strip Properties Panel (this is especially good for color grading). *Get your fix everytime.*
 
 
-<h3>Changes in standard shortcuts (velvet_shortcuts.py)</h3>
+<BR>
+General install instructions
+----------------------------
 
-Beyond adding the new functions/shortcuts, velvet_shortcuts also changes the current standard shortcuts:
+Go to https://github.com/szaszak/blender_velvets/ and click on the "Downlod ZIP" icon (it is the same as [clicking on this link] (https://github.com/szaszak/blender_velvets/archive/master.zip)). You will download a folder called "blender_velvets-master" - all the Blender Velvets addons will be inside it. Then, follow the specific instructions for each plugin below.
+
+| The easiest way to properly configure Blender for video editing and install <BR>the Blender Velvets is by following [this screenshot-by-screenshot guide] (https://szaszak.wordpress.com/linux/blender-como-editor-de-video/). |
+|:------------:|
+
+
+<BR>
+Detailed description for ::velvet_revolver::
+--------------------------------------------
+
+### TODO.
+
+
+<BR>
+Detailed description for ::velvet_goldmine::
+--------------------------------------------
+
+#### To install **::velvet_goldmine::** with the shortcuts:
+
+Open Blender and go to: *File > User Preferences > Addons tab > Install from file > Choose velvet_goldmine.py.* The addon **::velvet_goldmine::** will show up in the list - enable it by clicking on the small box to the right.
+
+To import the set of suggested shortcuts (that also change some of the standard hotkeys), go to: *File > User Preferences > Input tab > Import Key Configuration > Choose velvet_shortcuts.py.* You're done: it will show up in the list and will already be your current shortcut set.
+
+
+#### Changes in the standard shortcuts (**velvet_shortcuts**)
+
+Beyond adding the new functions/shortcuts, **velvet_shortcuts** also changes the current standard ones:
 
 <b>"A"</b> now selects all strips;<BR>
 <b>"Alt+A"</b> now deselects all strips;<BR>
@@ -62,7 +85,7 @@ Beyond adding the new functions/shortcuts, velvet_shortcuts also changes the cur
 <b>"Ctrl+Right Mouse Click"</b> - view all (equivalent to "Home", without having to abandon the mouse);
 
 
-<h3>New functions - the ::velvet_goldmine:: addon (velvet_goldmine.py + velvet_shortcuts.py)</h3>
+#### New functions - the **::velvet_goldmine::** addon
 
 The functions' names and descriptions below should help you understand what they do until I have
 time to make a better documentation. If you want a visual but initial documentation on video,
@@ -76,12 +99,7 @@ It must be said that <b>::velvet_goldmine::</b> normally sets frame_start and fr
 because in almost all the cases, that's what an editor really want - to render the range he has set
 for his timeline. Otherwise, it would be a bit confusing.
 
-Observation 1: Panning audio in Blender only works with mono sources, be warned.
-
-Observation 2: The proxy approach on this script is quite personal, due to the way Blender behaves with
-different FPS sources. I'd rather equalize all source videos FPSs via script (and make them mono, by the
-way) before editing, otherwise it'd be hell. Since I'm at it, I use the same script to make the proxies,
-so <b>::velvet_goldmine::</b> just toggles the strips back to their original, full-sized sources, or to their proxies.
+Observation: Panning audio in Blender only works with mono sources, be warned.
 
 
     "Audio Pan Toggle"
@@ -235,3 +253,29 @@ so <b>::velvet_goldmine::</b> just toggles the strips back to their original, fu
     "Timeline - Zoom to Cursor"
     """Zooms timeline to green ibeam (cursor) if it is over any strips"""
     # Shortcuts: Shift + Right Mouse Click
+    
+
+<BR>
+Detailed description for the modified space_sequencer
+-----------------------------------------------------
+
+<BR>
+<p align="center"><a href="http://florestavermelha.files.wordpress.com/2013/12/projeto_edicao_making_of.jpg" target="_blank"><img src="http://florestavermelha.files.wordpress.com/2013/12/projeto_edicao_making_of.jpg?w=470" alt="projeto_edicao_making_of" width="470" height="263" class="aligncenter size-large wp-image-2032" /></a></p>
+
+To use the modified VSE interface, go to your *\scripts\startup\bl_ui*, that can be found searching the directories of your Blender installation, and replace the **space_sequencer.py** there by the one that comes with the Blender Velvets. It may be wise to create a backup of the original before doing so (Ctrl+C and Ctrl+V will do the job).
+
+The space sequencer modifications aimed at completely eliminating Blender's "Timeline" window, because it just gets messy and redundant when you're using the program for video editing. Everything on its interface that is useful has been copied to the VSE window (the actual timeline); all the relevant controls are now to be accessed via the **::velvet_goldmine::** addon shortcuts.
+
+There is new information displayed on the VSE Main and Viewer windows, related to the project render and FPS settings. It is also easy to check now the duration of strips or of the whole project's timeline in human-readable SMTPE, instead of Blender's original framecount.
+
+The most useful strips properties are now gathered on the VSE Viewer Properties Panel. Click on a strip in your timeline and look at the Viewer to check this out. This way it seems easier to find everything instead of having to search for scattered information hidden in unthinkable places.
+
+
+<BR>
+Detailed description for ::blue_velvet::
+----------------------------------------
+
+### TODO.
+
+<p align="center"><a href="http://florestavermelha.files.wordpress.com/2013/12/projeto_edicao_making_of_para_ardour.jpg" target="_blank"><img src="http://florestavermelha.files.wordpress.com/2013/12/projeto_edicao_making_of_para_ardour.jpg?w=470" alt="projeto_edicao_making_of_para_ardour" width="470" height="264" class="aligncenter size-large wp-image-2031" /></a></p>
+<p align="center"><a href="http://florestavermelha.files.wordpress.com/2013/12/projeto_edicao_making_of_no_ardour.jpg" target="_blank"><img src="http://florestavermelha.files.wordpress.com/2013/12/projeto_edicao_making_of_no_ardour.jpg?w=470" alt="projeto_edicao_making_of_no_ardour" width="470" height="264" class="aligncenter size-large wp-image-2033" /></a></p>
