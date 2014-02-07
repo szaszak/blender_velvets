@@ -22,11 +22,11 @@ bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
     "author": "qazav_szaszak",
-    "version": (1, 0, 20140503),
+    "version": (1, 0, 20140205),
     "blender": (2, 69, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
-    "location": "File > Export > Revolver (.revolver)",
+    "location": "File > External Data > Velvet Revolver",
     "support": "COMMUNITY"}
 
 import bpy
@@ -292,14 +292,14 @@ class Velvet_Revolver_Transcoder(bpy.types.AddonPreferences):
 
 
 def menuEntry(self, context):
-    self.layout.operator(VelvetRevolver.bl_idname, text="Revolver (.revolver)")
+    self.layout.operator(VelvetRevolver.bl_idname, text="Velvet Revolver")
 
 
 revolver_keymaps = []
 
 def register():
     bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_file_export.append(menuEntry)
+    bpy.types.INFO_MT_file_external_data.append(menuEntry)
     
     # Register shortcut for Proxy_Editing_Toggle
     wm = bpy.context.window_manager
@@ -310,7 +310,7 @@ def register():
 
 def unregister():
     bpy.utils.unregister_module(__name__)
-    bpy.types.INFO_MT_file_export.remove(menuEntry)
+    bpy.types.INFO_MT_file_external_data.remove(menuEntry)
     
     # Unregister Proxy_Editing_Toggle shortcut
     for km, kmi in revolver_keymaps:
