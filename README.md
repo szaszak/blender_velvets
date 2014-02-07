@@ -16,7 +16,7 @@ The **Blender Velvets** are a series of Blender Addons (or plugins, if you prefe
 
     ::velvet_revolver:: has been developed over Blender 2.69, but it should work on previous versions.
 
-The **::velvet_revolver::** is designed to make mass proxy generating an easy task for those lazy enough to open a terminal. It can create SD intra-frame (meaning 480p ProRes422 or MJPEG) proxies from all your videos using Blender's own interface. Just point it to a folder and dance to the radio for a while. In case you have multiple FPSs in your footage, notoriously crappy to use in Blender, Revolver can also create full-Res copies of your sources, levelling everything to your chosen FPS. *Get your fix twice: during the preparation for video editing and at the end, before color grading or final rendering.*
+The **::velvet_revolver::** is designed to make mass proxy generating an easy task for those lazy enough to open a terminal. It can create SD intra-frame (meaning 480p ProRes422 or MJPEG) proxies from all your videos using Blender's own interface. Just point it to a folder and dance to the radio for a while. In case you have multiple FPS in your footage, notoriously crappy to use in Blender, Revolver can also create full-Res copies of your sources, levelling everything to your chosen FPS. *Get your fix twice: during the preparation for video editing and at the end, before color grading or final rendering.*
 
 ###### ::velvet_goldmine::
 
@@ -53,14 +53,34 @@ Go to https://github.com/szaszak/blender_velvets/ and click on the "Downlod ZIP"
 Detailed description for ::velvet_revolver::
 --------------------------------------------
 
-### TODO.
+#### To install ::velvet_revolver::
+
+Open Blender and go to: *File > User Preferences > Addons tab > Install from file > Choose velvet_revolver.py.* The addon **::velvet_revolver::** will show up in the list - enable it by clicking on the small box to the right.
+
+On this same screen, click on the arrow before the **::velvet_revolver::** name to show the addon preferences box. Check if the given FFMPEG path is correct. If you have FFMPEG installed on your system, it should have been guessed by the plugin.
+
+If you are using a local FFMPEG however, as may be the case of non-linux users, you will have to point the Revolver to the binary or executable. Click on the folder icon to do so, but *do not attempt do to this step with any .blend file open*, for this **must** be an absolute path. If you had a .blend file open, quit and re-enter Blender before pointing to the binary/executable file.
+
+#### Using the Revolver
+
+You will use the Revolver before starting your project. Put all your videos in one folder so that you can let the computer work and go somewhere else, eh? Go to *"File > External Data > Velvet Revolver"* and find the directory your files are in. Notice the options box on this same window.
+
+<p align="center"><a href="http://florestavermelha.files.wordpress.com/2014/02/revolver.jpg" target="_blank"><img src="http://florestavermelha.files.wordpress.com/2014/02/revolver.jpg" alt="velvet_revolver" width="146" height="220" class="aligncenter" /></a></p>
+
+You can choose to create only 480p proxies of you sources, only full-res copies of them, or both. You **will want** to create full-res copies of the sources if you have videos with different FPS, since Blender is crappy in mixing them and Revolver will level them all with your custom choice. Then you can choose which intra-frame codec you want: ProRes422 or MJPEG.
+
+Finally, choose the resulting FPS (which *must* be the same as your project's) and if you want to deinterlace the videos, change audio samplerate and, if you want to do a hell lot of audio panning inside Blender, force the resulting videos to be mono. But notice: panning audio in Blender is not exported to Ardour via the **::blue_velvet::** plugin.
+
+Hit the "Export to Revolver" button. Proxies will have the original file's name plus *"_proxy"* appended to it. Full-res copies will have *"_PRORES"* or *"_MJPEG"* appended, according to the encoding you chose. All of them will have ".mov" extension. The important thing to have in mind is to let the proxies and their full-res equivalents in the same folder from now on.
+
+Use the proxies to do the cuts of your project. Also, call Shift+F7 in any Blender window to set the project's resolution to 640x368, the proxies' size - this will make your editing and pre-renders fast. Once the cuts are in final version and you're ready to color grade or do a full-res render, press Ctrl+Alt+Shift+P over your timeline and you will notice all your strips now reference to their full-res versions (this is a toggle, so pressing the shortcut again will lead them to being proxies again). Use Shift+F7 to reset your project to full resolution and you're done.
 
 
 <BR>
 Detailed description for ::velvet_goldmine::
 --------------------------------------------
 
-#### To install **::velvet_goldmine::** with the shortcuts:
+#### To install ::velvet_goldmine:: with the shortcuts:
 
 Open Blender and go to: *File > User Preferences > Addons tab > Install from file > Choose velvet_goldmine.py.* The addon **::velvet_goldmine::** will show up in the list - enable it by clicking on the small box to the right.
 
