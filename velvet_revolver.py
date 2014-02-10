@@ -100,7 +100,7 @@ class VideoSource(object):
         self.ffCommand = ffCommand
         self.input = v_source
         self.filepath = filepath
-        self.fps = str(round(fps, 3))
+        self.fps = fps
         self.arate = str(ar)
 
         if deinter:
@@ -142,7 +142,7 @@ class VideoSource(object):
 
         print(callFFMPEG)
         call(callFFMPEG, shell=True)
-        
+
         return {'FINISHED'}
 
 
@@ -169,29 +169,20 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
     )
 
     proxies = BoolProperty(
-        name="Create proxies at SD resolution",
-        description="Create Standard Definition 480p \
-                    proxies with custom FPS set below",
+        name="Create 360p proxies",
+        description="Create 640x368 proxies with same FPS as current scene",
         default=False,
     )
     copies = BoolProperty(
         name="Create copies in intra-frame codec",
-        description="Create full res copies of sources \
-                    in an intra-frame codec (slow)",
+        description="Create full-res copies with same FPS as current scene (slow)",
         default=False,
     )
     v_format = EnumProperty(
         name="Format",
         default="is_prores",
-        description="Intra-frame format for the creation \
-                    of proxies and/or copies",
+        description="Intra-frame format for the creation of proxies and/or copies",
         items=transcode_items
-    )
-    prop_fps = FloatProperty(
-        name="FPS (Beware!)",
-        description="Transcoded videos will have this FPS - \
-                    this *MUST* be the same as your project",
-        default=24.00
     )
     prop_ar = IntProperty(
         name="Audio Sample Rate",
@@ -205,28 +196,29 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
     )
     prop_ac = BoolProperty(
         name="Force mono audio?",
-        description="Forces FFMPEG to transcode videos to mono - easier \
-                    panning in Blender, but usually not recommended",
+        description="Forces FFMPEG to transcode videos to mono - easier panning in Blender, but usually not recommended",
         default=False,
     )
 
     def draw(self, context):
-        layout = self.layout
+        render = context.scene.render
+        fps = render.fps / render.fps_base
 
+        layout = self.layout
         box = layout.box()
         box.label('What to do in selected folder?')
         box.prop(self, 'proxies')
         box.prop(self, 'copies')
         box.label('Proxies and/or copies should be in:')
         box.prop(self, 'v_format')
+
         box = layout.box()
         box.label('Properties for videos:')
-        box.label('FPS *must* be the same as project\'s!')
-        box.prop(self, 'prop_fps')
         box.prop(self, 'prop_ar')
         box.prop(self, 'prop_deint')
         box.prop(self, 'prop_ac')
-
+        box.label("Resulting videos will be %.2f FPS." % fps, icon='ERROR')
+        box.label("Change this in Properties if you want.", icon='BUTS')
 
     @classmethod
     def poll(cls, context):
@@ -240,6 +232,9 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
         videosFolderPath, blenderFile = os.path.split(self.filepath)
         videosFolderPath += os.sep
 
+        render = context.scene.render
+        fps = render.fps / render.fps_base
+
         sources = []
         for i in glob.glob(videosFolderPath + "*.*"):
             if i[-4:].lower() in bpy.path.extensions_movie:
@@ -250,7 +245,7 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
             for source in sources:
                 v_res = "proxy"
                 vs = VideoSource(ffCommand, videosFolderPath, source, v_res,
-                                 self.v_format, self.prop_fps, self.prop_deint,
+                                 self.v_format, fps, self.prop_deint,
                                  self.prop_ar, self.prop_ac)
                 vs.runFF()
 
@@ -258,7 +253,7 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
             for source in sources:
                 v_res = "fullres"
                 vs = VideoSource(ffCommand, videosFolderPath, source, v_res,
-                                 self.v_format, self.prop_fps, self.prop_deint,
+                                 self.v_format, fps, self.prop_deint,
                                  self.prop_ar, self.prop_ac)
                 vs.runFF()
 
@@ -297,21 +292,22 @@ def menuEntry(self, context):
 
 revolver_keymaps = []
 
+
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_external_data.append(menuEntry)
-    
+
     # Register shortcut for Proxy_Editing_Toggle
     wm = bpy.context.window_manager
     km = wm.keyconfigs.addon.keymaps.new('Sequencer', space_type='SEQUENCE_EDITOR', region_type='WINDOW', modal=False)
-    kmi = km.keymap_items.new(Proxy_Editing_Toggle.bl_idname, 'P', 'PRESS', shift=True, ctrl=True, alt=True)    
+    kmi = km.keymap_items.new(Proxy_Editing_Toggle.bl_idname, 'P', 'PRESS', shift=True, ctrl=True, alt=True)
     revolver_keymaps.append((km, kmi))
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
     bpy.types.INFO_MT_file_external_data.remove(menuEntry)
-    
+
     # Unregister Proxy_Editing_Toggle shortcut
     for km, kmi in revolver_keymaps:
         km.keymap_items.remove(kmi)
