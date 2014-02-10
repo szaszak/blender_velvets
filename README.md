@@ -65,11 +65,11 @@ If you are using a local FFMPEG however, as may be the case of non-linux users, 
 
 You will use the Revolver before starting your project. Put all your videos in one folder so that you can let the computer work and go somewhere else, eh? Go to *"File > External Data > Velvet Revolver"* and find the directory your files are in. Notice the options box on this same window.
 
-<p align="center"><a href="http://florestavermelha.files.wordpress.com/2014/02/revolver.jpg" target="_blank"><img src="http://florestavermelha.files.wordpress.com/2014/02/revolver.jpg" alt="velvet_revolver" width="146" height="220" class="aligncenter" /></a></p>
+<p align="center"><a href="http://florestavermelha.files.wordpress.com/2014/02/velvet_revolver1.jpg" target="_blank"><img src="http://florestavermelha.files.wordpress.com/2014/02/velvet_revolver1.jpg" alt="velvet_revolver" width="146" height="220" class="aligncenter" /></a></p>
 
-You can choose to create only 480p proxies of you sources, only full-res copies of them, or both. You **will want** to create full-res copies of the sources if you have videos with different FPS, since Blender is crappy in mixing them and Revolver will level them all with your custom choice. Then you can choose which intra-frame codec you want: ProRes422 or MJPEG.
+You can choose to create only 360p proxies of your sources, only full-res copies of them, or both. You **will want** to create full-res copies of the sources if you have videos with different FPS, since Blender is crappy in mixing them and Revolver will level them all with your custom choice. Then you can choose which intra-frame codec you want: ProRes422 or MJPEG.
 
-Finally, choose the resulting FPS (which *must* be the same as your project's) and if you want to deinterlace the videos, change audio samplerate and, if you want to do a hell lot of audio panning inside Blender, force the resulting videos to be mono. But notice: panning audio in Blender is not exported to Ardour via the **::blue_velvet::** plugin.
+Finally, choose if you want to deinterlace the videos, change audio samplerate and, if you plan to do a hell lot of audio panning inside Blender, force the resulting videos to be mono. But notice: panning audio in Blender is not exported to Ardour via the **::blue_velvet::** plugin. The resulting videos will have the same FPS as your current Scene. So if you want to change the output FPS, go to *Properties > Render > Dimensions* (shortcut Shift+F7) and change the render frame rate.
 
 Hit the "Export to Revolver" button. Proxies will have the original file's name plus *"_proxy"* appended to it. Full-res copies will have *"_PRORES"* or *"_MJPEG"* appended, according to the encoding you chose. All of them will have ".mov" extension. The important thing to have in mind is to let the proxies and their full-res equivalents in the same folder from now on.
 
