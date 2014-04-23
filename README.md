@@ -84,7 +84,7 @@ Detailed description for ::velvet_goldmine::
 
 Open Blender and go to: *File > User Preferences > Addons tab > Install from file > Choose velvet_goldmine.py.* The addon **::velvet_goldmine::** will show up in the list - enable it by clicking on the small box to the right.
 
-To import the set of suggested shortcuts (that also change some of the standard hotkeys), go to: *File > User Preferences > Input tab > Import Key Configuration > Choose velvet_shortcuts.py.* You're done: it will show up in the list and will already be your current shortcut set.
+To import the set of suggested shortcuts (that also change some of the standard hotkeys), go to: *File > User Preferences > Input tab > Import Key Configuration > Choose velvet_shortcuts.py.* Use the 'vintage' version for Blender up to 2.69 and 'new_wave' version for Blender 2.7 onwards. You're done: it will show up in the list and will already be your current shortcut set.
 
 
 #### Changes in the standard shortcuts (**velvet_shortcuts**)
