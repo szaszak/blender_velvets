@@ -18,7 +18,8 @@
 
 # <pep8 compliant>
 
-# velvet [ mod version ] - 20131207
+# velvet [ mod version ] - 20140424
+# To be used with Blender up to version 2.69
 # mod by qazav_szaszak
 
 
