@@ -84,7 +84,7 @@ Detailed description for ::velvet_goldmine::
 
 Open Blender and go to: *File > User Preferences > Addons tab > Install from file > Choose velvet_goldmine.py.* The addon **::velvet_goldmine::** will show up in the list - enable it by clicking on the small box to the right.
 
-To import the set of suggested shortcuts (that also change some of the standard hotkeys), go to: *File > User Preferences > Input tab > Import Key Configuration > Choose velvet_shortcuts.py.* Use the 'vintage' version for Blender up to 2.69 and 'new_wave' version for Blender 2.7 onwards. You're done: it will show up in the list and will already be your current shortcut set.
+To import the set of suggested shortcuts (that also change some of the standard hotkeys), go to: *File > User Preferences > Input tab > Import Key Configuration > Choose velvet_shortcuts.py*. If you're with Blender version 2.69 or below, use the 'vintage_velvet_shortcuts.py' version; for Blender 2.7 onwards, use 'velvet_shortcuts.py'. You're done: it will show up in the list and will already be your current shortcut set.
 
 
 #### Changes in the standard shortcuts (**velvet_shortcuts**)
@@ -282,7 +282,7 @@ Detailed description for the modified space_sequencer
 <BR>
 <p align="center"><a href="http://florestavermelha.files.wordpress.com/2013/12/projeto_edicao_making_of.jpg" target="_blank"><img src="http://florestavermelha.files.wordpress.com/2013/12/projeto_edicao_making_of.jpg?w=470" alt="projeto_edicao_making_of" width="470" height="263" class="aligncenter size-large wp-image-2032" /></a></p>
 
-To use the modified VSE interface, go to your *\scripts\startup\bl_ui*, that can be found searching the directories of your Blender installation, and replace the **space_sequencer.py** there by the one that comes with the Blender Velvets. It may be wise to create a backup of the original before doing so (Ctrl+C and Ctrl+V will do the job).
+To use the modified VSE interface, go to your *\scripts\startup\bl_ui*, that can be found searching the directories of your Blender installation, and replace the **space_sequencer.py** there by the one that comes with the Blender Velvets. Use the "space_sequencer.py" if you're with Blender versions 2.7 and onwards or the "vintage_space_sequencer.py" (rename it to space_sequencer.py in the folder) if you're with Blender 2.9 or below. It may be wise to create a backup of the original before doing so (Ctrl+C and Ctrl+V will do the job).
 
 The space sequencer modifications aimed at completely eliminating Blender's "Timeline" window, because it just gets messy and redundant when you're using the program for video editing. Everything on its interface that is useful has been copied to the VSE window (the actual timeline); all the relevant controls are now to be accessed via the **::velvet_goldmine::** addon shortcuts.
 
