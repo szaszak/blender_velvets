@@ -20,8 +20,8 @@ The **::velvet_revolver::** is designed to make mass proxy generating an easy ta
 
 ###### ::velvet_goldmine::
 
-    ::velvet_goldmine:: has been tested and works on Blender versions: 2.69, 2.68a, 2.66b, 2.66a, 
-    2.66 and 2.65. There is no reason why it should not work on versions between those.
+    ::velvet_goldmine:: has been tested and works on Blender versions: 2.7, 2.69, 2.68a, 2.66b, 
+    2.66a, 2.66 and 2.65. There is no reason why it should not work on versions between those.
 
 The **::velvet_goldmine::** is a bunch of new functions and shortcuts aimed to fasten and loosen the overall hard VSE user interface. To be used with lots of glitter and with its companion, the *velvet_shortcuts*, for one can't dance alone, eh? *Get your fix during the video editing phase*.
 
@@ -97,7 +97,7 @@ Beyond adding the new functions/shortcuts, **velvet_shortcuts** also changes the
 <b>"B"</b> - Border select selects what you want (the box) and discards the rest;<BR>
 <b>"Alt+B"</b> - Border select adds what you want (the box) to current selected strips;<BR>
 <b>"Del"</b> - Delects without prompting for confirmation;<BR>
-<b>"G"</b> - Makes meta-strip without prompting for confirmation;<BR>
+<b>"Ctrl+G"</b> - Makes meta-strip without prompting for confirmation;<BR>
 <b>"Ctrl+S"</b> - Saves the file without prompting for confirmation;<BR>
 <b>"Shift+R"</b> - Refresh Sequencer (cleans cache in RAM);<BR>
 <b>"Left Mouse Click"</b> - now selects strips with linked time by default (audio + video);<BR>
