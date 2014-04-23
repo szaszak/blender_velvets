@@ -18,7 +18,8 @@
 
 
 # To be used with Addon ::velvet_goldmine::
-# ::velvet goldmine:: version - 20131124
+# ::velvet goldmine:: version - 20140423
+# To be used with Blender versions up to 2.69
 # Author: qazav_szaszak
 
 
