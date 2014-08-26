@@ -14,8 +14,9 @@ The **Blender Velvets** are a series of Blender Addons (or plugins, if you prefe
 
 ###### ::velvet_revolver::
 
-    ::velvet_revolver:: has been developed over Blender 2.69,
-    but it should work on previous versions.
+    ::velvet_revolver:: has been tested and works on Blender versions:
+    2.71, 2.69.
+    There is no reason why it should not work on versions between those.
 
 The **::velvet_revolver::** is designed to make mass proxy generating an easy task for those lazy enough to open a terminal. It can create SD intra-frame (meaning 480p ProRes422 or MJPEG) proxies from all your videos using Blender's own interface. Just point it to a folder and dance to the radio for a while. In case you have multiple FPS in your footage, notoriously crappy to use in Blender, Revolver can also create full-Res copies of your sources, levelling everything to your chosen FPS. *Get your fix twice: during the preparation for video editing and at the end, before color grading or final rendering.*
 
