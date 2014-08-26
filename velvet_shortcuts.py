@@ -18,8 +18,8 @@
 
 
 # To be used with Addon ::velvet_goldmine::
-# ::velvet goldmine:: version - 20140423
-# To be used with Blender versions 2.7 and on
+# ::velvet goldmine:: version - 20140826
+# To be used with Blender versions 2.71 and on
 # Author: qazav_szaszak
 
 
