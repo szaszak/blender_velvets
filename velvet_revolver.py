@@ -22,7 +22,7 @@ bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
     "author": "qazav_szaszak",
-    "version": (1, 0, 20140205),
+    "version": (1, 0, 20140826),
     "blender": (2, 69, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
@@ -169,12 +169,12 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
     )
 
     proxies = BoolProperty(
-        name="Create 360p proxies",
+        name="360p proxies",
         description="Create 640x368 proxies with same FPS as current scene",
         default=False,
     )
     copies = BoolProperty(
-        name="Create copies in intra-frame codec",
+        name="Full-res copies in intra-frame codec",
         description="Create full-res copies with same FPS as current scene (slow)",
         default=False,
     )
@@ -206,19 +206,19 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
 
         layout = self.layout
         box = layout.box()
-        box.label('What to do in selected folder?')
-        box.prop(self, 'proxies')
-        box.prop(self, 'copies')
+        box.label('What to do in selected folder? Create...')               
+        box.prop(self, 'proxies')        
+        box.prop(self, 'copies')        
         box.label('Proxies and/or copies should be in:')
         box.prop(self, 'v_format')
+        box.label("Resulting videos will have %.2f FPS." % fps)
+        box.label("You can change the FPS at Properties.")        
 
         box = layout.box()
         box.label('Properties for videos:')
         box.prop(self, 'prop_ar')
         box.prop(self, 'prop_deint')
         box.prop(self, 'prop_ac')
-        box.label("Resulting videos will be %.2f FPS." % fps, icon='ERROR')
-        box.label("Change this in Properties if you want.", icon='BUTS')
 
     @classmethod
     def poll(cls, context):
