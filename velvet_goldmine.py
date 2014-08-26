@@ -25,7 +25,7 @@ bl_info = {
     "name": "velvet_goldmine ::",
     "description": "Glamorous new shortcuts for video editing in Blender VSE",
     "author": "qazav_szaszak",
-    "version": (1, 0, 20131116),
+    "version": (1, 0, 20140826),
     "blender": (2, 69, 0),
     "warning": "TO BE USED WITH LOTS OF GLITTER",
     "category": ":",
