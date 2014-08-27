@@ -31,6 +31,7 @@ bl_info = {
 
 import bpy
 import os
+import glob
 from subprocess import call
 
 
@@ -51,13 +52,18 @@ class Proxy_Editing_Toggle(bpy.types.Operator):
             return bpy.context.sequences is not None
 
     def execute(self, context):
+
+        # Making strips' paths absolute is necessary for the script's execution.
+        bpy.ops.file.make_paths_absolute()
+        
         proxy_end = "_proxy.mov"
         prores_end = "_PRORES.mov"
         mjpeg_end = "_MJPEG.mov"
 
         for s in bpy.context.sequences:
             if (s.type == "SOUND") or (s.type == "MOVIE"):
-                f_name = s.filepath[:-10]
+                print("Checking source... \n" + s.filepath)
+                f_name = s.filepath[:-10]                
 
                 # if strip is a proxy and has correspondent fullres files
                 if s.filepath.endswith(proxy_end):
@@ -66,8 +72,13 @@ class Proxy_Editing_Toggle(bpy.types.Operator):
                     elif os.path.isfile(f_name + mjpeg_end):
                         s.filepath = f_name + mjpeg_end
                     elif glob.glob(s.filepath[:-10] + ".*"):
+                        # if strip's filepath doesn't end with '_MJPEG.mov' or 
+                        # '_PRORES.mov', script will look for files in folder
+                        # with the same name as the strip in the timeline,
+                        # independent of file's extension (i.e. .mov, .avi etc).                        
                         s.filepath = glob.glob(s.filepath[:-10] + ".*")[0]
                     else:
+                        print("No full-res files found for" + f_name + ".")
                         pass
                 # or strip is a fullres that has correspondent proxy files
                 elif s.filepath.endswith(prores_end) and \
@@ -84,6 +95,9 @@ class Proxy_Editing_Toggle(bpy.types.Operator):
                         s.filepath = glob.glob(s.filepath[:-ext_len] + "_proxy.*")[0]
                     else:
                         pass
+
+        # Make all paths relative; behaviour tends to be standard in Blender
+        bpy.ops.file.make_paths_relative()
 
         return {'FINISHED'}
 
@@ -153,7 +167,6 @@ class VideoSource(object):
 from bpy_extras.io_utils import ExportHelper
 from bpy.props import StringProperty, EnumProperty, IntProperty, FloatProperty, BoolProperty
 from shutil import which
-import glob
 
 
 class VelvetRevolver(bpy.types.Operator, ExportHelper):
