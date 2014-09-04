@@ -102,13 +102,13 @@ Beyond adding the new functions/shortcuts, **velvet_shortcuts** also changes the
 <b>"B"</b> - Border select selects what you want (the box) and discards the rest;<BR>
 <b>"Alt+B"</b> - Border select adds what you want (the box) to current selected strips;<BR>
 <b>"Del"</b> - Deletes without prompting for confirmation (in MacOS: fn + Del);<BR>
-<b>"Shift + Del"</b> - Zooms to selected strips (added for MacOS support; replaces for NumPad Del);<BR>
 <b>"Ctrl+G"</b> - Makes meta-strip without prompting for confirmation;<BR>
 <b>"Ctrl+S"</b> - Saves the file without prompting for confirmation;<BR>
 <b>"Shift+R"</b> - Refresh Sequencer (cleans cache in RAM);<BR>
 <b>"Left Mouse Click"</b> - now selects strips with linked time by default (audio + video);<BR>
 <b>"Ctrl+Left Mouse Click"</b> - selects strips disregarding linked time;<BR>
-<b>"Ctrl+Right Mouse Click"</b> - view all (equivalent to "Home", without having to abandon the mouse);
+<b>"Ctrl+Right Mouse Click"</b> - view all (equivalent to "Home", without having to abandon the mouse);<BR>
+<b>"Shift + Home"</b> - Zooms to selected strips (added for MacOS support; replaces for NumPad Del);
 
 
 #### New functions - the **::velvet_goldmine::** addon
