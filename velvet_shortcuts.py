@@ -184,6 +184,8 @@ kmi = km.keymap_items.new('sequencer.meta_separate', 'G', 'PRESS', alt=True)
 kmi = km.keymap_items.new('sequencer.view_all', 'HOME', 'PRESS')
 kmi = km.keymap_items.new('sequencer.view_all', 'RIGHTMOUSE', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('sequencer.view_selected', 'NUMPAD_PERIOD', 'PRESS')
+kmi = km.keymap_items.new('sequencer.view_selected', 'HOME', 'PRESS', shift=True)
+kmi = km.keymap_items.new('sequencer.view_selected', 'DEL', 'PRESS', shift=True)
 kmi = km.keymap_items.new('sequencer.strip_jump', 'PAGE_UP', 'PRESS')
 kmi.properties.next = True
 kmi.properties.center = False
