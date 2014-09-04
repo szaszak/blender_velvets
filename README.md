@@ -101,7 +101,8 @@ Beyond adding the new functions/shortcuts, **velvet_shortcuts** also changes the
 <b>"Spacebar"</b> now plays the video (animation);<BR>
 <b>"B"</b> - Border select selects what you want (the box) and discards the rest;<BR>
 <b>"Alt+B"</b> - Border select adds what you want (the box) to current selected strips;<BR>
-<b>"Del"</b> - Delects without prompting for confirmation;<BR>
+<b>"Del"</b> - Deletes without prompting for confirmation (in MacOS: fn + Del);<BR>
+<b>"Shift + Del"</b> - Zooms to selected strips (added for MacOS support; replaces for NumPad Del);<BR>
 <b>"Ctrl+G"</b> - Makes meta-strip without prompting for confirmation;<BR>
 <b>"Ctrl+S"</b> - Saves the file without prompting for confirmation;<BR>
 <b>"Shift+R"</b> - Refresh Sequencer (cleans cache in RAM);<BR>
@@ -150,6 +151,7 @@ Observation: Panning audio in Blender only works with mono sources, be warned.
     "Delete Direct"
     """Deletes without prompting for confirmation"""
     # Shortcut: Delete
+    # Shortcut for MacOS: Fn + Delete
 
     "Fade In - Strip Start"
     """Creates a one second fade in (for audio and/or video) at strip start"""
@@ -186,22 +188,27 @@ Observation: Panning audio in Blender only works with mono sources, be warned.
     "Screens - Change to Animation"
     """Changes view to selected screens"""
     # Shortcuts: Ctrl + Shift + F2 - Animation
+    # Does not work on Mac
 
     "Screens - Change to Compositing"
     """Changes view to selected screens"""
     # Shortcuts: Ctrl + Shift + F3 - Compositing
+    # Does not work on Mac
 
     "Screens - Change to Motion Tracking"
     """Changes view to selected screens"""
     # Shortcuts: Ctrl + Shift + F4 - Motion Tracking
+    # Does not work on Mac
 
     "Screens - Change to Video Editing"
     """Changes view to selected screens"""
     # Shortcuts: Ctrl + Shift + F1 - Video Editing
+    # Does not work on Mac
 
     "Scene toggle"
     """Toggles between existing Scenes"""
     # Shortcuts: Ctrl + '
+    # Does not work on Mac and Windows
 
     "Strips - Adjust to Cursor"
     """Adjusts selected strips to where the cursor is in the timeline"""
@@ -222,10 +229,12 @@ Observation: Panning audio in Blender only works with mono sources, be warned.
     "Strips - Jump to Next"
     """Jumps cursor to next beginning/end of strip"""
     # Shortcut: Ctrl + PgUp
+    # Shortcut for MacOS: Fn + Ctrl + UpArrow
 
     "Strips - Jump to Previous"
     """Jumps cursor to previous beginning/end of strip"""
     # Shortcut: Ctrl + PgDown
+    # Shortcut for MacOS: Fn + Ctrl + DownArrow
 
     "Strips - Concatenate Selected (Same channel)"
     """Concatenates selected strips in channel (only works for 1 channel)"""
@@ -262,23 +271,27 @@ Observation: Panning audio in Blender only works with mono sources, be warned.
     "Timeline - View Selected Closer"
     """Alternative to View Selected (closer view)"""
     # Shortcuts: End
+    # Shortcut for MacOS: Fn + RightArrow
 
     "Timeline - Zoom In 10s"
     """Zooms in aproximatelly 10s of Timeline"""
     # Shortcuts: Ctrl + Home
+    # Shortcut for MacOS: Fn + Ctrl + LeftArrow
 
     "Timeline - Zoom Out 10s"
     """Zooms out aproximatelly 10s of Timeline"""
     # Shortcuts: Ctrl + End; Ctrl + Shift + Right Mouse Click
+    # Shortcut for MacOS: Fn + Ctrl + RightArrow; Ctrl + Shift + Right Mouse Click
 
     "Timeline - Zoom Out XY Axis"
     """Zooms out aproximatelly 10s of Timeline + Y Axis"""
     # Shortcuts: Ctrl + Shift + End
+    # Shortcut for MacOS: Fn + Ctrl + Shift + RightArrow
 
     "Timeline - Zoom to Cursor"
     """Zooms timeline to green ibeam (cursor) if it is over any strips"""
     # Shortcuts: Shift + Right Mouse Click
-    
+   
 
 <BR>
 Detailed description for the modified space_sequencer
