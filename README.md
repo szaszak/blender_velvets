@@ -108,7 +108,7 @@ Beyond adding the new functions/shortcuts, **velvet_shortcuts** also changes the
 <b>"Left Mouse Click"</b> - now selects strips with linked time by default (audio + video);<BR>
 <b>"Ctrl+Left Mouse Click"</b> - selects strips disregarding linked time;<BR>
 <b>"Ctrl+Right Mouse Click"</b> - view all (equivalent to "Home", without having to abandon the mouse);<BR>
-<b>"Shift + Home"</b> - Zooms to selected strips (added for MacOS support; replaces for NumPad Del);
+<b>"Shift + Home"</b> - Zooms to selected strips (added for MacOS support; MacOS shortcut is Fn + Shift + LeftArrow);
 
 
 #### New functions - the **::velvet_goldmine::** addon
