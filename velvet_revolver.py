@@ -180,8 +180,7 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
     """Mass create proxies and/or intra-frame copies from original files"""
     bl_idname = "export.revolver"
     bl_label = "Export to Revolver"
-    filename_ext = ".revolver"
-    filter_movie = BoolProperty(default=True, options={'HIDDEN'})
+    filename_ext = ".revolver"    
 
     transcode_items = (
         ('is_prores', 'ProRes422', ''),
@@ -276,6 +275,9 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
                                  self.v_format, fps, self.prop_deint,
                                  self.prop_ar, self.prop_ac)
                 vs.runFF()
+
+        if not self.proxies and not self.copies:
+            print("No action selected for Velvet Revolver. Aborting.")
 
         return {'FINISHED'}
 
