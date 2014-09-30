@@ -22,11 +22,12 @@ bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
     "author": "qazav_szaszak",
-    "version": (1, 0, 20140828),
+    "version": (1, 0, 20140930),
     "blender": (2, 69, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
     "location": "File > External Data > Velvet Revolver",
+    "url": "blendervelvets.org",
     "support": "COMMUNITY"}
 
 import bpy
@@ -39,12 +40,12 @@ from subprocess import call
 ######## VSE TIMELINE TOGGLE PROXIES <-> FULLRES
 ######## ----------------------------------------------------------------------
 
-class Proxy_Editing_Toggle(bpy.types.Operator):
-    """Toggle filepath of current strips between Proxies / FullRes files"""
-    bl_idname = "sequencer.proxy_editing_toggle"
-    bl_label = "Proxy Editing Toggle"
+class Proxy_Editing_ToProxy(bpy.types.Operator):
+    """Change filepaths of current strips to proxy files (_proxy.mov)"""
+    bl_idname = "sequencer.proxy_editing_toproxy"
+    bl_label = "Proxy Editing - Change to Proxies"
     bl_options = {'REGISTER', 'UNDO'}
-    # Shortcuts: Ctrl + Alt + Shift + P
+    # Shortcuts: Ctrl + Alt + P
 
     @classmethod
     def poll(cls, context):
@@ -53,36 +54,21 @@ class Proxy_Editing_Toggle(bpy.types.Operator):
 
     def execute(self, context):
 
-        # Making strips' paths absolute is necessary for the script's execution.
+        # Making strips' paths absolute is necessary for script's execution.
         bpy.ops.file.make_paths_absolute()
-        
+
         proxy_end = "_proxy.mov"
         prores_end = "_PRORES.mov"
         mjpeg_end = "_MJPEG.mov"
 
         for s in bpy.context.sequences:
-            if (s.type == "SOUND") or (s.type == "MOVIE"):                
-                f_name = s.filepath[:-10]                
+            if (s.type == "SOUND") or (s.type == "MOVIE"):
+                f_name = s.filepath[:-10]
 
-                # if strip is a proxy and has correspondent fullres files
+                # if strip is already a proxy, do nothing
                 if s.filepath.endswith(proxy_end):
-                    print("Checking full-res file for '" + s.filepath + "'...")
-                    if os.path.isfile(f_name + prores_end):
-                        s.filepath = f_name + prores_end
-                        print("OK.")
-                    elif os.path.isfile(f_name + mjpeg_end):
-                        s.filepath = f_name + mjpeg_end
-                        print("OK.")
-                    elif glob.glob(s.filepath[:-10] + ".*"):
-                        # if strip's filepath doesn't end with '_MJPEG.mov' or 
-                        # '_PRORES.mov', script will look for files in folder
-                        # with the same name as the strip in the timeline,
-                        # independent of file's extension (i.e. .mov, .avi etc).                        
-                        s.filepath = glob.glob(s.filepath[:-10] + ".*")[0]
-                        print("OK.")
-                    else:
-                        print("No full-res file found for" + f_name + ".")
-                        pass
+                    print("Strip '" + s.filepath + "' is already a proxy.")
+                    pass
                 # or strip is a fullres that has correspondent proxy files
                 elif s.filepath.endswith(prores_end) and \
                         os.path.isfile(f_name[:-1] + proxy_end):
@@ -95,13 +81,69 @@ class Proxy_Editing_Toggle(bpy.types.Operator):
                 else:
                     # for fullres files without _PRORES or _MJPEG in their name
                     ext_len = len(s.filepath.split(".")[-1]) + 1
+                    # search in folder for any file with the same name appended
+                    # by "_proxy" and with recognizeable movie extension
                     if glob.glob(s.filepath[:-ext_len] + "_proxy.*") and \
-                            s.filepath[-ext_len:] in bpy.path.extensions_movie:
+                            s.filepath[-ext_len:].lower() in bpy.path.extensions_movie:
                         s.filepath = glob.glob(s.filepath[:-ext_len] + "_proxy.*")[0]
                         print("Proxy file for '" + s.filepath + "' is OK.")
                     else:
-                        print("No proxy file found for '" + f_name + "'.")
+                        print("No proxy file found for '" + s.filepath + "'.")
                         pass
+
+        # Make all paths relative; behaviour tends to be standard in Blender
+        bpy.ops.file.make_paths_relative()
+
+        return {'FINISHED'}
+
+
+class Proxy_Editing_ToFullRes(bpy.types.Operator):
+    """Change filepaths of current strips back to full-resolution files"""
+    bl_idname = "sequencer.proxy_editing_tofullres"
+    bl_label = "Proxy Editing - Change to Full Resolution"
+    bl_options = {'REGISTER', 'UNDO'}
+    # Shortcuts: Ctrl + Shift + P
+
+    @classmethod
+    def poll(cls, context):
+        if bpy.context.sequences:
+            return bpy.context.sequences is not None
+
+    def execute(self, context):
+
+        # Making strips' paths absolute is necessary for script's execution.
+        bpy.ops.file.make_paths_absolute()
+        
+        proxy_end = "_proxy.mov"
+        prores_end = "_PRORES.mov"
+        mjpeg_end = "_MJPEG.mov"
+
+        for s in bpy.context.sequences:
+            if (s.type == "SOUND") or (s.type == "MOVIE"):
+                f_name = s.filepath[:-10]
+
+                # if strip is a proxy and has correspondent fullres files
+                if s.filepath.endswith(proxy_end):
+                    print("Checking full-res file for '" + s.filepath + "'...")
+                    if os.path.isfile(f_name + prores_end):
+                        s.filepath = f_name + prores_end
+                        print("OK.")
+                    elif os.path.isfile(f_name + mjpeg_end):
+                        s.filepath = f_name + mjpeg_end
+                        print("OK.")
+                    elif glob.glob(s.filepath[:-10] + ".*"):
+                        # if strip's filepath doesn't end with '_MJPEG.mov' or
+                        # '_PRORES.mov', script will look for files in folder
+                        # with the same name as the strip in the timeline,
+                        # independent of file's extension (ie. .mov, .avi etc).
+                        s.filepath = glob.glob(s.filepath[:-10] + ".*")[0]
+                        print("OK.")
+                    else:
+                        print("No full-res file found for" + f_name + ".")
+                        pass
+                else:
+                    print("Strip " + s.filepath + " is not a proxy.")
+                    pass
 
         # Make all paths relative; behaviour tends to be standard in Blender
         bpy.ops.file.make_paths_relative()
@@ -135,6 +177,7 @@ class VideoSource(object):
             self.achannels = ""
 
         if v_res == "proxy":
+            # Proxy files generated by Velvet Revolver end with "_proxy.mov"
             self.v_output = self.input[:-4] + "_proxy.mov"
             if v_format == "is_prores":
                 self.format = "-probesize 5000000 -s 640x368 -c:v prores \
@@ -180,7 +223,7 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
     """Mass create proxies and/or intra-frame copies from original files"""
     bl_idname = "export.revolver"
     bl_label = "Export to Revolver"
-    filename_ext = ".revolver"    
+    filename_ext = ".revolver"
 
     transcode_items = (
         ('is_prores', 'ProRes422', ''),
@@ -225,13 +268,13 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
 
         layout = self.layout
         box = layout.box()
-        box.label('What to do in selected folder? Create...')               
-        box.prop(self, 'proxies')        
-        box.prop(self, 'copies')        
+        box.label('What to do in selected folder? Create...')
+        box.prop(self, 'proxies')
+        box.prop(self, 'copies')
         box.label('Proxies and/or copies should be in:')
         box.prop(self, 'v_format')
         box.label("Resulting videos will have %.2f FPS." % fps)
-        box.label("You can change the FPS at Properties.")        
+        box.label("You can change the FPS at Properties.")
 
         box = layout.box()
         box.label('Properties for videos:')
@@ -319,10 +362,11 @@ def register():
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_external_data.append(menuEntry)
 
-    # Register shortcut for Proxy_Editing_Toggle
+    # Register shortcut for Proxy_Editing
     wm = bpy.context.window_manager
     km = wm.keyconfigs.addon.keymaps.new('Sequencer', space_type='SEQUENCE_EDITOR', region_type='WINDOW', modal=False)
-    kmi = km.keymap_items.new(Proxy_Editing_Toggle.bl_idname, 'P', 'PRESS', shift=True, ctrl=True, alt=True)
+    kmi = km.keymap_items.new(Proxy_Editing_ToFullRes.bl_idname, 'P', 'PRESS', shift=True, ctrl=True)
+    kmi = km.keymap_items.new(Proxy_Editing_ToProxy.bl_idname, 'P', 'PRESS', ctrl=True, alt=True)
     revolver_keymaps.append((km, kmi))
 
 
@@ -330,7 +374,7 @@ def unregister():
     bpy.utils.unregister_module(__name__)
     bpy.types.INFO_MT_file_external_data.remove(menuEntry)
 
-    # Unregister Proxy_Editing_Toggle shortcut
+    # Unregister Proxy_Editing shortcut
     for km, kmi in revolver_keymaps:
         km.keymap_items.remove(kmi)
     revolver_keymaps.clear()
