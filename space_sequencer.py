@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-# velvet [ mod version ] - 20140826
+# velvet [ mod version ] - 20141003
 # To be used with Blender version 2.71 and onwards
 # mod by qazav_szaszak
 
@@ -70,7 +70,7 @@ class SEQUENCER_HT_header(Header):
         row.template_header()
 
         SEQUENCER_MT_editor_menus.draw_collapsible(context, layout)
-        
+
 #---------------------------------------------------------------------------------------------NEW
         if st.view_type == 'PREVIEW':
             rd = context.scene.render
@@ -139,6 +139,9 @@ class SEQUENCER_HT_header(Header):
             smpte = bpy.utils.smpte_from_frame
             toolsettings = context.tool_settings
 
+            render = bpy.context.scene.render
+            fps = round((render.fps / render.fps_base), 3)
+
             row = layout.row(align=True)
             row.prop(scene, "frame_preview_start", text="Start")
             row.prop(scene, "frame_preview_end", text="End")
@@ -146,23 +149,11 @@ class SEQUENCER_HT_header(Header):
 
             # Show timeline "start | end" values
             col = layout.column()
-            col.label(" %s | %s " % (smpte(scene.frame_start),
-                                     smpte(scene.frame_end)))
-
-            # Show selected strips "(duration) start | end" values
-            col = layout.column()
-            if context.sequences:
-                sel = [ sel for sel in bpy.context.sequences if sel.select ]
-                if sel:
-                    fe = 1
-                    fs = []
-                    for s in sel:
-                        fs.append(s.frame_start + s.frame_offset_start)
-                        if fe < s.frame_final_end:
-                            fe = s.frame_final_end
-                    fs = sorted(fs)[0]
-                    dur = fe - fs
-                    col.label(" (%s) %s | %s " % (smpte(dur), smpte(fs), smpte(fe)))
+            # Remove initial "00" from smpte if timeline is less than 1h
+            if scene.frame_end < fps * 3540: # 3540 is 60s x 59m
+                col.label("Timeline Start: %s | Length: %s " % (smpte(scene.frame_start)[3:], smpte(scene.frame_end)[3:]))
+            else:
+                col.label("Timeline Start: %s | Length: %s " % (smpte(scene.frame_start), smpte(scene.frame_end)))
 
             layout.prop(scene, "sync_mode", text="")
 
@@ -490,7 +481,7 @@ class SequencerButtonsPanel_Output():
     def poll(cls, context):
         return cls.has_preview(context)
 
-
+'''
 class SEQUENCER_PT_edit(SequencerButtonsPanel, Panel):
     bl_label = "Edit Strip"
 
@@ -555,7 +546,7 @@ class SEQUENCER_PT_edit(SequencerButtonsPanel, Panel):
             col.label(text=iface_("Original Dimension: %dx%d") % (elem.orig_width, elem.orig_height), translate=False)
         else:
             col.label(text="Original Dimension: None")
-
+'''
 
 class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
     bl_label = "Effect Strip"
@@ -865,7 +856,7 @@ class SEQUENCER_PT_mask(SequencerButtonsPanel, Panel):
             end = mask.frame_end
             layout.label(text=iface_("Original frame range: %d-%d (%d)") % (sta, end, end - sta + 1), translate=False)
 
-
+'''
 class SEQUENCER_PT_filter(SequencerButtonsPanel, Panel):
     bl_label = "Filter"
 
@@ -918,8 +909,8 @@ class SEQUENCER_PT_filter(SequencerButtonsPanel, Panel):
         col.prop(strip, "color_saturation", text="Saturation")
         col.prop(strip, "color_multiply", text="Multiply")
         col.prop(strip, "use_float")
-
-
+'''
+'''
 class SEQUENCER_PT_proxy(SequencerButtonsPanel, Panel):
     bl_label = "Proxy / Timecode"
 
@@ -968,7 +959,7 @@ class SEQUENCER_PT_proxy(SequencerButtonsPanel, Panel):
                 col.label(text="Use timecode index:")
 
                 col.prop(strip.proxy, "timecode")
-
+'''
 
 class SEQUENCER_PT_preview(SequencerButtonsPanel_Output, Panel):
     bl_label = "Scene Preview/Render"
@@ -1007,7 +998,7 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
             col.prop(st, "show_separate_color")
         col.prop(st, "proxy_render_size")
 
-
+'''
 class SEQUENCER_PT_modifiers(SequencerButtonsPanel, Panel):
     bl_label = "Modifiers"
 
@@ -1063,7 +1054,7 @@ class SEQUENCER_PT_modifiers(SequencerButtonsPanel, Panel):
                     col = box.column()
                     col.prop(mod, "bright")
                     col.prop(mod, "contrast")
-
+'''
 #---------------------------------------------------------------------------------------------NEW
 
 class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
@@ -1077,7 +1068,11 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
         scene = context.scene
         frame_current = scene.frame_current
         sequencer = scene.sequence_editor
-        
+
+        render = bpy.context.scene.render
+        fps = round((render.fps / render.fps_base), 3)
+        smpte = bpy.utils.smpte_from_frame
+
         if strip:
             stype = strip.type
 
@@ -1093,7 +1088,7 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
                 sub.prop(strip, "blend_alpha", text="Opacity", slider=True)
                 row.prop(strip, "mute", toggle=True, icon='RESTRICT_VIEW_ON' if strip.mute else 'RESTRICT_VIEW_OFF', text="")
                 row.prop(strip, "lock", toggle=True, icon='LOCKED' if strip.lock else 'UNLOCKED', text="")
-        
+
                 layout.prop(strip, "use_translation", text="Image Offset")
                 if strip.use_translation:
                     col = layout.column(align=True)
@@ -1119,7 +1114,7 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
                 sub = row.row(align=True)
                 sub.prop(strip, "color_saturation", text="Saturation")
                 sub.prop(strip, "color_multiply", text="Multiply")
-        
+
                 #------------------------------------
 
                 #------------------------------------
@@ -1135,7 +1130,7 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
                 #col.prop(strip, "use_flip_y", text="Y") # Original
                 col.prop(strip, "use_flip_x", text="Flip X")
                 col.prop(strip, "use_flip_y", text="Flip Y")
-        
+
                 split = layout.split(percentage=0.5)
                 #col = split.column()
                 #col.prop(strip, "use_premultiply")
@@ -1267,7 +1262,7 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
                 split.label(text="Resolution: %dx%d" % (elem.orig_width, elem.orig_height))
             else:
                 split.label(text="")
-            
+
             #split.label(text="Name:")
             split.prop(strip, "channel")
 
@@ -1277,11 +1272,33 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
             sub.prop(strip, "frame_start", text="Start")
             sub.prop(strip, "frame_final_duration")
             #sub.prop(strip, "channel")
-            #------------------------------------
 
+            #----------------------------------------------
+            # Section "Strip Duration (Start|End)" in SMPTE
+            #----------------------------------------------
+            col = layout.column()
+            if context.sequences:
+                sel = [ sel for sel in bpy.context.sequences if sel.select ]
+                if sel:
+                    fe = 1
+                    fs = []
+                    for s in sel:
+                        fs.append(s.frame_start + s.frame_offset_start)
+                        if fe < s.frame_final_end:
+                            fe = s.frame_final_end
+                    fs = sorted(fs)[0]
+                    dur = fe - fs
+                    # Remove initial "00" from smpte if strip is less than 1h
+                    if dur < fps * 3540: # 3540 is 60s x 59m
+                        col.label("Length: %s     ( %s | %s ) " %
+                                 (smpte(dur)[3:], smpte(fs)[3:], smpte(fe)[3:]))
+                    else:
+                        col.label("Length: %s     ( %s | %s ) " %
+                                 (smpte(dur), smpte(fs), smpte(fe)))
 
-
-            #------------------------------------
+            #----------------------------------------------
+            # Section "Set Render Size / Crossfade sounds"
+            #----------------------------------------------
             # XXX note strip.type is never equal to 'EFFECT', look at seq_type_items within rna_sequencer.c
             if stype == 'EFFECT':
                 #pass
@@ -1301,6 +1318,9 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
                 split.label(text="Path:")
                 split.prop(strip, "filepath", text="")
                 layout.separator()
+                if stype == 'IMAGE':                    
+                    split.prop(strip, "directory", text="")
+                    layout.operator("sequencer.change_path")
                 # layout.operator("sequencer.movie_change")
                 layout.operator("sequencer.rendersize")
             elif stype == 'SOUND':
