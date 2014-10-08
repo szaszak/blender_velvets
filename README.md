@@ -99,6 +99,7 @@ Beyond adding the new functions/shortcuts, **velvet_shortcuts** also changes the
 <b>"A"</b> now selects all strips;<BR>
 <b>"Alt+A"</b> now deselects all strips;<BR>
 <b>"Spacebar"</b> now plays the video (animation);<BR>
+<b>"Shift+Alt+Spacebar"</b> now plays the video (animation) in reverse;<BR>
 <b>"B"</b> - Border select selects what you want (the box) and discards the rest;<BR>
 <b>"Alt+B"</b> - Border select adds what you want (the box) to current selected strips;<BR>
 <b>"Del"</b> - Deletes without prompting for confirmation (in MacOS: fn + Del);<BR>
