@@ -17,8 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-# velvet [ mod version ] - 20141003
-# To be used with Blender version 2.71 and onwards
+# velvet [ mod version ] - 20141013
+# To be used with Blender version 2.72 and onwards
 # mod by qazav_szaszak
 
 
@@ -65,11 +65,17 @@ class SEQUENCER_HT_header(Header):
         layout = self.layout
 
         st = context.space_data
+        scene = context.scene
 
         row = layout.row(align=True)
         row.template_header()
 
         SEQUENCER_MT_editor_menus.draw_collapsible(context, layout)
+        
+        
+        row = layout.row(align=True)
+        row.prop(scene, "use_preview_range", text="", toggle=True)
+        row.prop(scene, "lock_frame_selection_to_range", text="", toggle=True)
 
 #---------------------------------------------------------------------------------------------NEW
         if st.view_type == 'PREVIEW':
@@ -112,7 +118,7 @@ class SEQUENCER_HT_header(Header):
             #layout.prop(st, "preview_channels", expand=True, text="")
             #layout.prop(st, "display_channel", text="Channel") # Channel
 
-            ed = context.scene.sequence_editor
+            ed = scene.sequence_editor
             if ed:
                 row = layout.row(align=True)
                 row.prop(ed, "show_overlay", text="", icon='GHOST_ENABLED') # Ghost
@@ -134,7 +140,6 @@ class SEQUENCER_HT_header(Header):
         layout.separator()
         if st.view_type == 'SEQUENCER':
 
-            scene = bpy.context.scene
             screen = context.screen
             smpte = bpy.utils.smpte_from_frame
             toolsettings = context.tool_settings
@@ -195,6 +200,7 @@ class SEQUENCER_MT_editor_menus(Menu):
             layout.menu("SEQUENCER_MT_select")
             layout.menu("SEQUENCER_MT_marker")
             layout.menu("SEQUENCER_MT_add")
+            layout.menu("SEQUENCER_MT_frame")
             layout.menu("SEQUENCER_MT_strip")
 
 
@@ -276,6 +282,13 @@ class SEQUENCER_MT_select(Menu):
 
         layout.operator("sequencer.select_active_side", text="Strips to the Left").side = 'LEFT'
         layout.operator("sequencer.select_active_side", text="Strips to the Right").side = 'RIGHT'
+        op = layout.operator("sequencer.select", text="All strips to the Left")
+        op.left_right = 'LEFT'
+        op.linked_time = True
+        op = layout.operator("sequencer.select", text="All strips to the Right")
+        op.left_right = 'RIGHT'
+        op.linked_time = True
+
         layout.separator()
         layout.operator("sequencer.select_handles", text="Surrounding Handles").side = 'BOTH'
         layout.operator("sequencer.select_handles", text="Left Handle").side = 'LEFT'
@@ -308,6 +321,16 @@ class SEQUENCER_MT_change(Menu):
         layout.operator_menu_enum("sequencer.change_effect_input", "swap")
         layout.operator_menu_enum("sequencer.change_effect_type", "type")
         layout.operator("sequencer.change_path", text="Path/Files")
+
+
+class SEQUENCER_MT_frame(Menu):
+    bl_label = "Frame"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("anim.previewrange_clear")
+        layout.operator("anim.previewrange_set")
 
 
 class SEQUENCER_MT_add(Menu):
@@ -357,6 +380,7 @@ class SEQUENCER_MT_add_effect(Menu):
         layout.operator("sequencer.effect_strip_add", text="Alpha Under").type = 'ALPHA_UNDER'
         layout.operator("sequencer.effect_strip_add", text="Cross").type = 'CROSS'
         layout.operator("sequencer.effect_strip_add", text="Gamma Cross").type = 'GAMMA_CROSS'
+        layout.operator("sequencer.effect_strip_add", text="Gaussian Blur").type = 'GAUSSIAN_BLUR'
         layout.operator("sequencer.effect_strip_add", text="Multiply").type = 'MULTIPLY'
         layout.operator("sequencer.effect_strip_add", text="Over Drop").type = 'OVER_DROP'
         layout.operator("sequencer.effect_strip_add", text="Wipe").type = 'WIPE'
@@ -563,7 +587,7 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
         return strip.type in {'ADD', 'SUBTRACT', 'ALPHA_OVER', 'ALPHA_UNDER',
                               'CROSS', 'GAMMA_CROSS', 'MULTIPLY', 'OVER_DROP',
                               'WIPE', 'GLOW', 'TRANSFORM', 'COLOR', 'SPEED',
-                              'MULTICAM'}
+                              'MULTICAM', 'GAUSSIAN_BLUR'}
 
     def draw(self, context):
         layout = self.layout
@@ -658,10 +682,13 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
         col = layout.column(align=True)
         if strip.type == 'SPEED':
             col.prop(strip, "multiply_speed")
-        elif strip.type in {'CROSS', 'GAMMA_CROSS', 'WIPE'}:
+        elif strip.type in {'CROSS', 'GAMMA_CROSS', 'WIPE', 'ALPHA_OVER', 'ALPHA_UNDER', 'OVER_DROP'}:
             col.prop(strip, "use_default_fade", "Default fade")
             if not strip.use_default_fade:
                 col.prop(strip, "effect_fader", text="Effect fader")
+        elif strip.type == 'GAUSSIAN_BLUR':
+            col.prop(strip, "size_x")
+            col.prop(strip, "size_y")
 
 
 class SEQUENCER_PT_input(SequencerButtonsPanel, Panel):
@@ -764,9 +791,10 @@ class SEQUENCER_PT_sound(SequencerButtonsPanel, Panel):
         strip = act_strip(context)
         sound = strip.sound
 
-        layout.template_ID(strip, "sound", open="sound.open")
+        # TODO: add support to handle SOUND datablock in sequencer soundstrips... For now, hide this useless thing!
+        # layout.template_ID(strip, "sound", open="sound.open")
 
-        layout.separator()
+        # layout.separator()
         layout.prop(strip, "filepath", text="")
 
         if sound is not None:
