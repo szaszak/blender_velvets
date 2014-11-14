@@ -17,8 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-# velvet [ mod version ] - 20141013
-# To be used with Blender version 2.72 and onwards
+# velvet [ mod version ] - 20141114
+# To be used with Blender version 2.72, 2.72b and onwards
 # mod by qazav_szaszak
 
 
