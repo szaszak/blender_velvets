@@ -17,8 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-# Modified Space Sequencer version date: 20141008
-# To be used with Blender versions 2.72 and onwards
+# Modified Space Sequencer version date: 20141114
+# To be used with Blender versions 2.72, 2.72b and onwards
 # Check documentation at http://blendervelvets.org
 # Author: qazav_szaszak
 
