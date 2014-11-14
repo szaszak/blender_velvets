@@ -38,7 +38,7 @@ You can edit in Blender, but there's no way you will get decent audio out of it.
 ###### ::modified_space_sequencer::
 
     the modified space_sequencer has been tested and works on Blender versions:
-    2.72, 2.71, 2.70, 2.69, 2.68a, 2.66b, 2.66a, 2.66 and 2.65.
+    2.72b, 2.72, 2.71, 2.70, 2.69, 2.68a, 2.66b, 2.66a, 2.66 and 2.65.
     There is no reason why it should not work on versions between those.
 
 Blender has an original space_sequencer, which is the VSE user interface. It is loaded every time the program starts. The use of a modified version of this script brings up a number of controls that exist but are hidden, adds some new and useful info for when you are in the middle of a project and gathers the most relevant strip properties in the Viewer window instead the scattered Strip Properties Panel (this is especially good for color grading). *Get your fix everytime.*
