@@ -107,6 +107,7 @@ Beyond adding the new functions/shortcuts, **velvet_shortcuts** also changes the
 <b>"Ctrl+S"</b> - Saves the file without prompting for confirmation;<BR>
 <b>"Shift+R"</b> - Refresh Sequencer (cleans cache in RAM);<BR>
 <b>"Left Mouse Click"</b> - now selects strips with linked time by default (audio + video);<BR>
+<b>"Left Mouse Click" on the timeline</b> - now selects all strips on the left/right of the cursor;<BR>
 <b>"Ctrl+Left Mouse Click"</b> - selects strips disregarding linked time;<BR>
 <b>"Ctrl+Right Mouse Click"</b> - view all (equivalent to "Home", without having to abandon the mouse);<BR>
 <b>"Shift + Home"</b> - Zooms to selected strips (added for MacOS support; MacOS shortcut is Fn + Shift + LeftArrow);
