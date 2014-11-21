@@ -25,8 +25,8 @@ bl_info = {
     "name": "velvet_goldmine ::",
     "description": "Glamorous new shortcuts for video editing in Blender VSE",
     "author": "qazav_szaszak",
-    "version": (1, 0, 20140826),
-    "blender": (2, 69, 0),
+    "version": (1, 0, 20141121),
+    "blender": (2, 71, 0),
     "warning": "TO BE USED WITH LOTS OF GLITTER",
     "category": ":",
     "location": "Sequencer",
@@ -876,7 +876,7 @@ class Timeline_Select_Inside_Preview(bpy.types.Operator):
     bl_idname = "sequencer.timeline_preview_select"
     bl_label = "Timeline - Select Inside Preview"
     bl_options = {'REGISTER', 'UNDO'}
-    # Shortcut: Ctrl + Alt + Shift + A
+    # Shortcut: Ctrl + Shift + A
 
     @classmethod
     def poll(cls, context):
