@@ -23,7 +23,7 @@ The **::velvet_revolver::** is designed to make mass proxy generating an easy ta
 ###### ::velvet_goldmine::
 
     ::velvet_goldmine:: has been tested and works on Blender versions:
-    2.71, 2.7, 2.69, 2.68a, 2.66b, 2.66a, 2.66 and 2.65.
+    2.72b, 2.71, 2.7, 2.69, 2.68a, 2.66b, 2.66a, 2.66 and 2.65.
     There is no reason why it should not work on versions between those.
 
 The **::velvet_goldmine::** is a bunch of new functions and shortcuts aimed to fasten and loosen the overall hard VSE user interface. To be used with lots of glitter and with its companion, the *velvet_shortcuts*, for one can't dance alone, eh? *Get your fix during the video editing phase*.
@@ -268,7 +268,7 @@ Observation: Panning audio in Blender only works with mono sources, be warned.
 
     "Timeline - Select Inside Preview"
     """Selects only the strips inside Timeline preview"""
-    # Shortcut: Ctrl + Alt + Shift + A
+    # Shortcut: Ctrl + Shift + A
 
     "Timeline - View Selected Closer"
     """Alternative to View Selected (closer view)"""
