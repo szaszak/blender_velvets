@@ -244,7 +244,7 @@ kmi = km.keymap_items.new('sequencer.timeline_start_in_current', 'S', 'PRESS', s
 kmi = km.keymap_items.new('sequencer.timeline_start_in_one', 'S', 'PRESS', alt=True)
 kmi = km.keymap_items.new('sequencer.timeline_loop_selected', 'L', 'PRESS', shift=True, ctrl=True, alt=True)
 kmi = km.keymap_items.new('sequencer.timeline_preview_select', 'A', 'PRESS', shift=True, ctrl=True)
-kmi = km.keymap_items.new('sequencer.view_selected_closer', 'END', 'PRESS')
+kmi = km.keymap_items.new('sequencer.view_selected_context', 'END', 'PRESS')
 kmi = km.keymap_items.new('sequencer.timeline_zoom_in_10s', 'HOME', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('sequencer.timeline_zoom_out_10s', 'END', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('sequencer.timeline_zoom_out_10s', 'RIGHTMOUSE', 'PRESS', shift=True, ctrl=True)
