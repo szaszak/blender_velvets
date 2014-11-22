@@ -133,6 +133,14 @@ Observation: Panning audio in Blender only works with mono sources, be warned.
     "Audio Pan Toggle"
     """Toggles audio pan between 0.0, 1.0 and -1.0 for selected strips"""
     # Shortcut: Ctrl + P
+    
+    "Audio - Show Waveform"
+    """Shows the audio waveform in selected strips (toggle)"""
+    # Shortcut: W
+    
+    "Audio - Hide Waveform"
+    """Shows the audio waveform in selected strips (toggle)"""
+    # Shortcut: Alt + W
 
     "Cut and delete - Left"
     """Cuts selected strips, deletes to the left"""
@@ -209,7 +217,7 @@ Observation: Panning audio in Blender only works with mono sources, be warned.
 
     "Scene toggle"
     """Toggles between existing Scenes"""
-    # Shortcuts: Ctrl + '
+    # Shortcuts: Shift + TAB
     # Does not work on Mac and Windows
 
     "Strips - Adjust to Cursor"
@@ -241,10 +249,6 @@ Observation: Panning audio in Blender only works with mono sources, be warned.
     "Strips - Concatenate Selected (Same channel)"
     """Concatenates selected strips in channel (only works for 1 channel)"""
     # Shortcut: Shift + C
-
-    "Strips - Show Waveform"
-    """Shows the audio waveform in selected strips (toggle)"""
-    # Shortcut: W
 
     "Timeline - Adjust End"
     """Adjusts VSE Timeline according to last video"""
