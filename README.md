@@ -274,8 +274,8 @@ Observation: Panning audio in Blender only works with mono sources, be warned.
     """Selects only the strips inside Timeline preview"""
     # Shortcut: Ctrl + Shift + A
 
-    "Timeline - View Selected Closer"
-    """Alternative to View Selected (closer view)"""
+    "Timeline - View Selected Context"
+    """Alternative to View Selected (context view)"""
     # Shortcuts: End
     # Shortcut for MacOS: Fn + RightArrow
 
