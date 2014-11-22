@@ -916,10 +916,10 @@ class Timeline_Select_Inside_Preview(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class Timeline_View_Selected_Closer(bpy.types.Operator):
-    """Alternative to View Selected (closer view)"""
-    bl_idname = "sequencer.view_selected_closer"
-    bl_label = "Timeline - View Selected Closer"
+class Timeline_View_Selected_Context(bpy.types.Operator):
+    """Alternative to View Selected (context view)"""
+    bl_idname = "sequencer.view_selected_context"
+    bl_label = "Timeline - View Selected Context"
     bl_options = {'REGISTER', 'UNDO'}
     # Shortcuts: End
 
@@ -928,8 +928,12 @@ class Timeline_View_Selected_Closer(bpy.types.Operator):
         return bpy.context.scene is not None
 
     def execute(self, context):
-        sequencer = bpy.ops.sequencer
+        '''sequencer = bpy.ops.sequencer
         sequencer.view_zoom_ratio(ratio=0.02)
+        sequencer.view_selected()'''
+        
+        sequencer = bpy.ops.sequencer
+        sequencer.view_all_preview()
         sequencer.view_selected()
 
         return {'FINISHED'}
