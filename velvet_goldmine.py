@@ -25,7 +25,7 @@ bl_info = {
     "name": "velvet_goldmine ::",
     "description": "Glamorous new shortcuts for video editing in Blender VSE",
     "author": "qazav_szaszak",
-    "version": (1, 0, 20141121),
+    "version": (1, 0, 20141122),
     "blender": (2, 71, 0),
     "warning": "TO BE USED WITH LOTS OF GLITTER",
     "category": ":",
@@ -53,6 +53,48 @@ class Audio_Pan_Toggle(bpy.types.Operator):
                     i.pan = -1.0
                 else:
                     i.pan = 0.0
+
+        return {'FINISHED'}
+
+
+class Audio_Strips_Show_Waveform(bpy.types.Operator):
+    """Shows the audio waveform in selected strips"""
+    bl_idname = "sequencer.strips_show_waveform"
+    bl_label = "Audio Strips - Show Waveform"
+    bl_options = {'REGISTER', 'UNDO'}
+    # Shortcut: W
+
+    @classmethod
+    def poll(cls, context):
+        return bpy.context.scene is not None
+
+    def execute(self, context):
+
+        for strip in bpy.context.selected_sequences:
+            if (strip.type == "SOUND"):
+                if (strip.show_waveform is False):
+                    strip.show_waveform = True
+
+        return {'FINISHED'}
+
+
+class Audio_Strips_Hide_Waveform(bpy.types.Operator):
+    """Hides the audio waveform in selected strips"""
+    bl_idname = "sequencer.strips_hide_waveform"
+    bl_label = "Audio Strips - Hide Waveform"
+    bl_options = {'REGISTER', 'UNDO'}
+    # Shortcut: Alt + W
+
+    @classmethod
+    def poll(cls, context):
+        return bpy.context.scene is not None
+
+    def execute(self, context):
+
+        for strip in bpy.context.selected_sequences:
+            if (strip.type == "SOUND"):
+                if (strip.show_waveform is True):
+                    strip.show_waveform = False
 
         return {'FINISHED'}
 
@@ -498,7 +540,7 @@ class Scene_Toggle(bpy.types.Operator):
     bl_idname = "screen.scene_toggle"
     bl_label = "Scene toggle"
     bl_options = {'REGISTER', 'UNDO'}
-    # Shortcuts: Ctrl + '
+    # Shortcuts: Shift + TAB
 
     @classmethod
     def poll(cls, context):
@@ -724,29 +766,6 @@ class Strips_Concatenate_Selected(bpy.types.Operator):
                 gap = (strip.frame_start + strip.frame_offset_start) - base
                 strip.frame_start -= gap
                 base += i[1]
-
-        return {'FINISHED'}
-
-
-class Strips_Waveform_Toggle(bpy.types.Operator):
-    """Shows the audio waveform in selected strips (toggle)"""
-    bl_idname = "sequencer.strips_show_waveform"
-    bl_label = "Strips - Show Waveform"
-    bl_options = {'REGISTER', 'UNDO'}
-    # Shortcut: Ctrl + Alt + Shift + W
-
-    @classmethod
-    def poll(cls, context):
-        return bpy.context.scene is not None
-
-    def execute(self, context):
-
-        for strip in bpy.context.selected_sequences:
-            if (strip.type == "SOUND"):
-                if (strip.show_waveform is False):
-                    strip.show_waveform = True
-                else:
-                    strip.show_waveform = False
 
         return {'FINISHED'}
 
