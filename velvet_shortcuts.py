@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-# Modified Space Sequencer version date: 20141121
+# Modified Space Sequencer version date: 20141122
 # To be used with Blender versions 2.72, 2.72b and onwards
 # Check documentation at http://blendervelvets.org
 # Author: qazav_szaszak
@@ -228,7 +228,7 @@ kmi = km.keymap_items.new('sequencer.marker_delete_closest', 'M', 'PRESS', alt=T
 kmi = km.keymap_items.new('sequencer.marker_goto_left', 'LEFT_ARROW', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('sequencer.marker_goto_right', 'RIGHT_ARROW', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('sequencer.resolution_percentage_toggle', 'R', 'PRESS', shift=True, ctrl=True, alt=True)
-kmi = km.keymap_items.new('screen.scene_toggle', 'QUOTE', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('screen.scene_toggle', 'TAB', 'PRESS', shift=True)
 kmi = km.keymap_items.new('sequencer.strips_adjust_to_cursor', 'C', 'PRESS', shift=True, ctrl=True, alt=True)
 kmi = km.keymap_items.new('sequencer.strips_adjust_to_timelinestart', 'S', 'PRESS', shift=True, ctrl=True, alt=True)
 kmi = km.keymap_items.new('sequencer.strip_up', 'UP_ARROW', 'PRESS', alt=True)
