@@ -237,6 +237,7 @@ kmi = km.keymap_items.new('sequencer.strip_jump_next', 'PAGE_UP', 'PRESS', ctrl=
 kmi = km.keymap_items.new('sequencer.strip_jump_previous', 'PAGE_DOWN', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('sequencer.strips_concatenate_selected', 'C', 'PRESS', shift=True)
 kmi = km.keymap_items.new('sequencer.strips_show_waveform', 'W', 'PRESS')
+kmi = km.keymap_items.new('sequencer.strips_hide_waveform', 'W', 'PRESS', alt=True)
 kmi = km.keymap_items.new('sequencer.timeline_adjust_endof', 'E', 'PRESS', alt=True)
 kmi = km.keymap_items.new('sequencer.timeline_end_in_current', 'E', 'PRESS', shift=True)
 kmi = km.keymap_items.new('sequencer.timeline_start_in_current', 'S', 'PRESS', shift=True, alt=True)
