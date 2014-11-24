@@ -25,7 +25,7 @@ bl_info = {
     "name": "velvet_goldmine ::",
     "description": "Glamorous new shortcuts for video editing in Blender VSE",
     "author": "qazav_szaszak",
-    "version": (1, 0, 20141122),
+    "version": (1, 0, 20141123),
     "blender": (2, 71, 0),
     "warning": "TO BE USED WITH LOTS OF GLITTER",
     "category": ":",
@@ -578,22 +578,23 @@ class Strips_Adjust_To_Cursor(bpy.types.Operator):
 
     def execute(self, context):
         scene = bpy.context.scene
-        selectedStrips = bpy.context.selected_sequences
 
-        reference = 1
-        for strip in selectedStrips:
-            if strip.frame_final_end > reference:
-                reference = strip.frame_final_end
-
-        for strip in selectedStrips:
+        selectedStrips = []
+        for strip in bpy.context.selected_sequences:
             stripStart = strip.frame_start + strip.frame_offset_start
-            if stripStart < reference:
-                reference = stripStart
+            selectedStrips.append([stripStart, strip.channel, strip.name])
+
+        # reference is lowest (most to the left) stripStart of selected strips
+        reference = sorted(selectedStrips)[0][0]
 
         gap = reference - scene.frame_current
 
         for strip in bpy.context.selected_sequences:
             strip.frame_start -= gap
+
+        # places strips back to their original channels or they'll be scattered
+        for s in selectedStrips:
+            scene.sequence_editor.sequences_all[s[2]].channel = s[1]
 
         return {'FINISHED'}
 
@@ -611,22 +612,24 @@ class Strips_Adjust_To_Start(bpy.types.Operator):
 
     def execute(self, context):
         scene = bpy.context.scene
-        selectedStrips = bpy.context.selected_sequences
 
-        reference = 1
-        for strip in selectedStrips:
-            if strip.frame_final_end > reference:
-                reference = strip.frame_final_end
-
-        for strip in selectedStrips:
+        selectedStrips = []
+        for strip in bpy.context.selected_sequences:
             stripStart = strip.frame_start + strip.frame_offset_start
-            if stripStart < reference:
-                reference = stripStart
+            selectedStrips.append([stripStart, strip.channel, strip.name])
+
+        # reference is lowest (most to the left) stripStart of selected strips
+        reference = sorted(selectedStrips)[0][0]
 
         gap = reference - scene.frame_preview_start
 
         for strip in bpy.context.selected_sequences:
             strip.frame_start -= gap
+
+        # places strips back to their original channels or they'll be scattered
+        for s in selectedStrips:
+            scene.sequence_editor.sequences_all[s[2]].channel = s[1]
+
         return {'FINISHED'}
 
 
