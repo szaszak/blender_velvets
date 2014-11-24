@@ -194,6 +194,11 @@ Observation: Panning audio in Blender only works with mono sources, be warned.
     "Save Direct"
     """Saves current file without prompting for confirmation"""
     # Shortcut: Ctrl + S
+    
+    "Scene toggle"
+    """Toggles between existing Scenes"""
+    # Shortcuts: Shift + TAB
+    # May not work on Mac
 
     "Screens - Change to Animation"
     """Changes view to selected screens"""
@@ -214,11 +219,6 @@ Observation: Panning audio in Blender only works with mono sources, be warned.
     """Changes view to selected screens"""
     # Shortcuts: Ctrl + Shift + F1 - Video Editing
     # Does not work on Mac
-
-    "Scene toggle"
-    """Toggles between existing Scenes"""
-    # Shortcuts: Shift + TAB
-    # Does not work on Mac and Windows
 
     "Strips - Adjust to Cursor"
     """Adjusts selected strips to where the cursor is in the timeline"""
