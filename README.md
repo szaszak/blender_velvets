@@ -135,11 +135,11 @@ Observation: Panning audio in Blender only works with mono sources, be warned.
     # Shortcut: Ctrl + P
     
     "Audio - Show Waveform"
-    """Shows the audio waveform in selected strips (toggle)"""
+    """Shows the audio waveform in selected strips"""
     # Shortcut: W
     
     "Audio - Hide Waveform"
-    """Shows the audio waveform in selected strips (toggle)"""
+    """Hides the audio waveform in selected strips"""
     # Shortcut: Alt + W
 
     "Cut and delete - Left"
