@@ -22,7 +22,7 @@ bl_info = {
     "name": "blue_velvet ::",
     "description": "An exporter of Blender's VSE audio timeline to Ardour",
     "author": "qazav_szaszak",
-    "version": (1, 0, 20131114),
+    "version": (1, 0, 20141127),
     "blender": (2, 68, 0),
     "warning": "War, children, it's just a shot away.",
     "category": ":",
