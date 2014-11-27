@@ -30,8 +30,9 @@ The **::velvet_goldmine::** is a bunch of new functions and shortcuts aimed to f
 
 ###### ::blue_velvet::
 
-    ::blue_velvet:: has been developed over Blender 2.69,
-    but it should work on previous versions.
+    ::blue_velvet:: has been tested and works on Blender versions:
+    2.72b with Ardour 3.5.403, 2.69 with Ardour 3.2
+    There is no reason why it should not work on versions between those.
 
 You can edit in Blender, but there's no way you will get decent audio out of it. The program was simply not made for DAW uses, so stop whining. What **::blue_velvet::** does is to get your finished timeline and export the audio cuts directly to Ardour, the correct program to deal with them. *Get your fix when your video is ready for blasting the audio to maximum volume.*
 
