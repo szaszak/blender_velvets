@@ -17,9 +17,9 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-# velvet [ mod version ] - 20141114
-# To be used with Blender version 2.72, 2.72b and onwards
-# mod by qazav_szaszak
+# Space Sequencer - Modified version. Version: 20150112
+# blendervelvets.org // https://github.com/szaszak/blender_velvets
+# To be used with Blender version 2.72 and 2.72b
 
 
 import bpy
@@ -1104,8 +1104,8 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
         if strip:
             stype = strip.type
 
-        #------------------------------------
-            if stype == 'MOVIE' or stype == 'IMAGE':
+        #------------------------------------            
+            if strip.type not in {'SOUND'}:
                 split = layout.split(percentage=0.3)
                 split.label(text="Blend:")
                 split.prop(strip, "blend_type", text="")
@@ -1185,10 +1185,10 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
 
 #-----------------------------------------------------------------------------
 
-            elif stype == 'COLOR':
+            if stype == 'COLOR':
                 layout.prop(strip, "color")
 
-            elif stype == 'WIPE':
+            if stype == 'WIPE':
                 col = layout.column()
                 col.prop(strip, "transition_type")
                 col.label(text="Direction:")
@@ -1199,7 +1199,7 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
                 if strip.transition_type in {'SINGLE', 'DOUBLE'}:
                     col.prop(strip, "angle")
 
-            elif stype == 'GLOW':
+            if stype == 'GLOW':
                 flow = layout.column_flow()
                 flow.prop(strip, "threshold", slider=True)
                 flow.prop(strip, "clamp", slider=True)
@@ -1210,7 +1210,7 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
                 row.prop(strip, "quality", slider=True)
                 row.prop(strip, "use_only_boost")
 
-            elif stype == 'SPEED':
+            if stype == 'SPEED':
                 layout.prop(strip, "use_default_fade", "Stretch to input strip length")
                 if not strip.use_default_fade:
                     layout.prop(strip, "use_as_speed")
@@ -1220,7 +1220,7 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
                         layout.prop(strip, "speed_factor", text="Frame number")
                         layout.prop(strip, "scale_to_length")
 
-            elif stype == 'TRANSFORM':
+            if stype == 'TRANSFORM':
                 layout = self.layout
                 col = layout.column()
 
@@ -1250,7 +1250,7 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
                 #col.label(text="Rotation:")
                 col.prop(strip, "rotation_start", text="Rotation")
 
-            elif stype == 'MULTICAM':
+            if stype == 'MULTICAM':
                 layout.prop(strip, "multicam_source")
 
                 row = layout.row(align=True)
@@ -1266,7 +1266,8 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
             col = layout.column(align=True)
             if stype == 'SPEED':
                 col.prop(strip, "multiply_speed")
-            elif stype in {'CROSS', 'GAMMA_CROSS', 'WIPE'}:
+            
+            if stype in {'CROSS', 'GAMMA_CROSS', 'WIPE'}:
                 col.prop(strip, "use_default_fade", "Default fade")
                 if not strip.use_default_fade:
                     col.prop(strip, "effect_fader", text="Effect fader")
@@ -1274,6 +1275,9 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+            #----------------------------------------------
+            # Section "Name, resolution, channel, length"
+            #----------------------------------------------
             row = layout.column()
             sub = row.row()
             sub.prop(strip, "name", text="")
