@@ -51,7 +51,7 @@ General install instructions
 
 Go to https://github.com/szaszak/blender_velvets/ and click on the "Downlod ZIP" icon (it is the same as [clicking on this link] (https://github.com/szaszak/blender_velvets/archive/master.zip)). You will download a folder called "blender_velvets-master" - all the Blender Velvets addons will be inside it. Then, follow the specific instructions for each plugin below.
 
-| The easiest way to properly configure Blender for video editing and install <BR>the Blender Velvets is by following [this screenshot-by-screenshot guide] (https://szaszak.wordpress.com/linux/blender-como-editor-de-video/). |
+| The easiest way to properly configure Blender for video editing and install <BR>the Blender Velvets is by following the screenshot-by-screenshot guides at [blendervelvets.org] (http://blendervelvets.org/). |
 |:------------:|
 
 
