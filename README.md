@@ -18,7 +18,7 @@ The **Blender Velvets** are a series of Blender Addons (or plugins, if you prefe
     2.72b, 2.71, 2.69.
     There is no reason why it should not work on versions between those.
 
-The **::velvet_revolver::** is designed to make mass proxy generating an easy task for those lazy enough to open a terminal. It can create SD intra-frame (meaning 480p ProRes422 or MJPEG) proxies from all your videos using Blender's own interface. Just point it to a folder and dance to the radio for a while. In case you have multiple FPS in your footage, notoriously crappy to use in Blender, Revolver can also create full-Res copies of your sources, levelling everything to your chosen FPS. *Get your fix twice: during the preparation for video editing and at the end, before color grading or final rendering.*
+The **::velvet_revolver::** is designed to make mass proxy generating an easy task for those lazy enough to open a terminal. It can create SD intra-frame (meaning 480p ProRes422 or MJPEG) proxies from all your videos using Blender's own interface. Just point it to a folder and dance to the radio for a while. In case you have multiple FPS in your footage, notoriously crappy to use in Blender, Revolver can also create full-Res copies of your sources, levelling everything to your chosen FPS. *Read the full documentation at [Velvet Revolver's webpage](http://blendervelvets.org/en/velvet-revolver/) (in English, Portuguese, Spanish and French).*
 
 ###### ::velvet_goldmine::
 
@@ -26,7 +26,7 @@ The **::velvet_revolver::** is designed to make mass proxy generating an easy ta
     2.72b, 2.71, 2.7, 2.69, 2.68a, 2.66b, 2.66a, 2.66 and 2.65.
     There is no reason why it should not work on versions between those.
 
-The **::velvet_goldmine::** is a bunch of new functions and shortcuts aimed to fasten and loosen the overall hard VSE user interface. To be used with lots of glitter and with its companion, the *velvet_shortcuts*, for one can't dance alone, eh? *Get your fix during the video editing phase*.
+The **::velvet_goldmine::** is a bunch of new functions and shortcuts aimed to fasten and loosen the overall hard VSE user interface. To be used with lots of glitter and with its companion, the *velvet_shortcuts*, for one can't dance alone, eh? *Read the full documentation at [Velvet Goldmine's webpage](http://blendervelvets.org/en/velvet-goldmine/) (in English, Portuguese, Spanish and French).*
 
 ###### ::blue_velvet::
 
@@ -34,7 +34,7 @@ The **::velvet_goldmine::** is a bunch of new functions and shortcuts aimed to f
     2.72b with Ardour 3.5.403, 2.69 with Ardour 3.2
     There is no reason why it should not work on versions between those.
 
-You can edit in Blender, but there's no way you will get decent audio out of it. The program was simply not made for DAW uses, so stop whining. What **::blue_velvet::** does is to get your finished timeline and export the audio cuts directly to Ardour, the correct program to deal with them. *Get your fix when your video is ready for blasting the audio to maximum volume.*
+You can edit in Blender, but there's no way you will get decent audio out of it. The program was simply not made for DAW uses, so stop whining. What **::blue_velvet::** does is to get your finished timeline and export the audio cuts directly to Ardour, the correct program to deal with them. *Read the full documentation at [Blue Velvet's webpage](http://blendervelvets.org/en/blue-velvet/) (in English, Portuguese, Spanish and French).*
 
 ###### ::modified_space_sequencer::
 
@@ -42,56 +42,34 @@ You can edit in Blender, but there's no way you will get decent audio out of it.
     2.72b, 2.72, 2.71, 2.70, 2.69, 2.68a, 2.66b, 2.66a, 2.66 and 2.65.
     There is no reason why it should not work on versions between those.
 
-Blender has an original space_sequencer, which is the VSE user interface. It is loaded every time the program starts. The use of a modified version of this script brings up a number of controls that exist but are hidden, adds some new and useful info for when you are in the middle of a project and gathers the most relevant strip properties in the Viewer window instead the scattered Strip Properties Panel (this is especially good for color grading). *Get your fix everytime.*
+Blender has an original space_sequencer, which is the VSE user interface. It is loaded every time the program starts. The use of a modified version of this script brings up a number of controls that exist but are hidden, adds some new and useful info for when you are in the middle of a project and gathers the most relevant strip properties in the Viewer window instead the scattered Strip Properties Panel (this is especially good for color grading). *Read the full documentation at the [Modified Space Sequencer webpage](http://blendervelvets.org/en/space-sequencer/) (in English, Portuguese, Spanish and French).*
 
 
 <BR>
 General install instructions
 ----------------------------
 
-Go to https://github.com/szaszak/blender_velvets/ and click on the "Downlod ZIP" icon (it is the same as [clicking on this link] (https://github.com/szaszak/blender_velvets/archive/master.zip)). You will download a folder called "blender_velvets-master" - all the Blender Velvets addons will be inside it. Then, follow the specific instructions for each plugin below.
-
-| The easiest way to properly configure Blender for video editing and install <BR>the Blender Velvets is by following the screenshot-by-screenshot guides at [blendervelvets.org] (http://blendervelvets.org/). |
-|:------------:|
+Detailed instructions for installing the addons can be found on [this dedicated page](http://blendervelvets.org/en/blender-config/) (see [this section](http://blendervelvets.org/en/blender-config/#addons_install)). Instructions on how to use each addon can be seen on their respective pages at [blendervelvets.org](http://blendervelvets.org/) (in English, Portuguese, Spanish and French). 
 
 
 <BR>
-Detailed description for ::velvet_revolver::
+::velvet_revolver:: shortcuts cheatsheet
 --------------------------------------------
 
-#### To install ::velvet_revolver::
+Shortcuts for ::velvet_revolver:: are:
 
-Open Blender and go to: *File > User Preferences > Addons tab > Install from file > Choose velvet_revolver.py.* The addon **::velvet_revolver::** will show up in the list - enable it by clicking on the small box to the right.
+    "Proxy Editing - Change to Proxies"
+    """Change filepaths of current strips to proxy files (_proxy.mov)"""
+    # Shortcut:  Ctrl + Alt + P
 
-On this same screen, click on the arrow before the **::velvet_revolver::** name to show the addon preferences box. Check if the given FFMPEG path is correct. If you have FFMPEG installed on your system, it should have been guessed by the plugin.
-
-If you are using a local FFMPEG however, as may be the case of non-linux users, you will have to point the Revolver to the binary or executable. Click on the folder icon to do so, but *do not attempt do to this step with any .blend file open*, for this **must** be an absolute path. If you had a .blend file open, quit and re-enter Blender before pointing to the binary/executable file.
-
-#### Using the Revolver
-
-You will use the Revolver before starting your project. Put all your videos in one folder so that you can let the computer work and go somewhere else, eh? Go to *"File > External Data > Velvet Revolver"* and find the directory your files are in. Notice the options box on this same window.
-
-<p align="center"><a href="http://florestavermelha.files.wordpress.com/2014/02/velvet_revolver1.jpg" target="_blank"><img src="http://florestavermelha.files.wordpress.com/2014/02/velvet_revolver1.jpg" alt="velvet_revolver" width="146" height="220" class="aligncenter" /></a></p>
-
-You can choose to create only 360p proxies of your sources, only full-res copies of them, or both. You **will want** to create full-res copies of the sources if you have videos with different FPS, since Blender is crappy in mixing them and Revolver will level them all with your custom choice. Then you can choose which intra-frame codec you want: ProRes422 or MJPEG.
-
-Finally, choose if you want to deinterlace the videos, change audio samplerate and, if you plan to do a hell lot of audio panning inside Blender, force the resulting videos to be mono. But notice: panning audio in Blender is not exported to Ardour via the **::blue_velvet::** plugin. The resulting videos will have the same FPS as your current Scene. So if you want to change the output FPS, go to *Properties > Render > Dimensions* (shortcut Shift+F7) and change the render frame rate.
-
-Hit the "Export to Revolver" button. Proxies will have the original file's name plus *"_proxy"* appended to it. Full-res copies will have *"_PRORES"* or *"_MJPEG"* appended, according to the encoding you chose. All of them will have ".mov" extension. The important thing to have in mind is to let the proxies and their full-res equivalents in the same folder from now on.
-
-Use the proxies to do the cuts of your project. Also, call Shift+F7 in any Blender window to set the project's resolution to 640x368, the proxies' size - this will make your editing and pre-renders fast. Once the cuts are in final version and you're ready to color grade or do a full-res render, press Ctrl+Alt+Shift+P over your timeline and you will notice all your strips now reference to their full-res versions (this is a toggle, so pressing the shortcut again will lead them to being proxies again). Use Shift+F7 to reset your project to full resolution and you're done.
+    "Proxy Editing - Change to Full Resolution"
+    """Change filepaths of current strips back to full-resolution files"""
+    # Shortcut:  Ctrl + Shift + P
 
 
 <BR>
-Detailed description for ::velvet_goldmine::
+::velvet_goldmine:: shortcuts cheatsheet
 --------------------------------------------
-
-#### To install ::velvet_goldmine:: with the shortcuts:
-
-Open Blender and go to: *File > User Preferences > Addons tab > Install from file > Choose velvet_goldmine.py.* The addon **::velvet_goldmine::** will show up in the list - enable it by clicking on the small box to the right.
-
-To import the set of suggested shortcuts (that also change some of the standard hotkeys), go to: *File > User Preferences > Input tab > Import Key Configuration > Choose velvet_shortcuts.py*. If you're with Blender version 2.69 or below, use the 'vintage_velvet_shortcuts.py' version; for Blender 2.7 onwards, use 'velvet_shortcuts.py'. You're done: it will show up in the list and will already be your current shortcut set.
-
 
 #### Changes in the standard shortcuts (**velvet_shortcuts**)
 
@@ -115,21 +93,6 @@ Beyond adding the new functions/shortcuts, **velvet_shortcuts** also changes the
 
 
 #### New functions - the **::velvet_goldmine::** addon
-
-The functions' names and descriptions below should help you understand what they do until I have
-time to make a better documentation. If you want a visual but initial documentation on video,
-see this link: http://florestavermelha.org/2013/02/28/blender-novas-funcoes-o-video-explicativo/
-
-Highlights go to markers improved controls (easy removal of closest) and navigation; easier audio
-control (waveform and panning) and elimination of the need for a "Timeline" window because all
-the timeline can now be controlled directly from the VSE window via shortcuts.
-
-It must be said that <b>::velvet_goldmine::</b> normally sets frame_start and frame_preview_start together,
-because in almost all the cases, that's what an editor really want - to render the range he has set
-for his timeline. Otherwise, it would be a bit confusing.
-
-Observation: Panning audio in Blender only works with mono sources, be warned.
-
 
     "Audio Pan Toggle"
     """Toggles audio pan between 0.0, 1.0 and -1.0 for selected strips"""
@@ -299,28 +262,3 @@ Observation: Panning audio in Blender only works with mono sources, be warned.
     """Zooms timeline to green ibeam (cursor) if it is over any strips"""
     # Shortcuts: Shift + Right Mouse Click
    
-
-<BR>
-Detailed description for the modified space_sequencer
------------------------------------------------------
-
-<BR>
-<p align="center"><a href="http://florestavermelha.files.wordpress.com/2013/12/projeto_edicao_making_of.jpg" target="_blank"><img src="http://florestavermelha.files.wordpress.com/2013/12/projeto_edicao_making_of.jpg?w=470" alt="projeto_edicao_making_of" width="470" height="263" class="aligncenter size-large wp-image-2032" /></a></p>
-
-To use the modified VSE interface, go to your *\scripts\startup\bl_ui*, that can be found searching the directories of your Blender installation, and replace the **space_sequencer.py** there by the one that comes with the Blender Velvets. Use the "space_sequencer.py" if you're with Blender versions 2.7 and onwards or the "vintage_space_sequencer.py" (rename it to space_sequencer.py in the folder) if you're with Blender 2.9 or below. It may be wise to create a backup of the original before doing so (Ctrl+C and Ctrl+V will do the job).
-
-The space sequencer modifications aimed at completely eliminating Blender's "Timeline" window, because it just gets messy and redundant when you're using the program for video editing. Everything on its interface that is useful has been copied to the VSE window (the actual timeline); all the relevant controls are now to be accessed via the **::velvet_goldmine::** addon shortcuts.
-
-There is new information displayed on the VSE Main and Viewer windows, related to the project render and FPS settings. It is also easy to check now the duration of strips or of the whole project's timeline in human-readable SMTPE, instead of Blender's original framecount.
-
-The most useful strips properties are now gathered on the VSE Viewer Properties Panel. Click on a strip in your timeline and look at the Viewer to check this out. This way it seems easier to find everything instead of having to search for scattered information hidden in unthinkable places.
-
-
-<BR>
-Detailed description for ::blue_velvet::
-----------------------------------------
-
-### TODO.
-
-<p align="center"><a href="http://florestavermelha.files.wordpress.com/2013/12/projeto_edicao_making_of_para_ardour.jpg" target="_blank"><img src="http://florestavermelha.files.wordpress.com/2013/12/projeto_edicao_making_of_para_ardour.jpg?w=470" alt="projeto_edicao_making_of_para_ardour" width="470" height="264" class="aligncenter size-large wp-image-2031" /></a></p>
-<p align="center"><a href="http://florestavermelha.files.wordpress.com/2013/12/projeto_edicao_making_of_no_ardour.jpg" target="_blank"><img src="http://florestavermelha.files.wordpress.com/2013/12/projeto_edicao_making_of_no_ardour.jpg?w=470" alt="projeto_edicao_making_of_no_ardour" width="470" height="264" class="aligncenter size-large wp-image-2033" /></a></p>
