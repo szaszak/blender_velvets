@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+		# ##### BEGIN GPL LICENSE BLOCK #####
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -22,12 +22,12 @@ bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
     "author": "qazav_szaszak",
-    "version": (1, 0, 20141120),
-    "blender": (2, 69, 0),
+    "version": (1, 0, 20150122),
+    "blender": (2, 72, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
     "location": "File > External Data > Velvet Revolver",
-    "url": "blendervelvets.org",
+    "url": "http://blendervelvets.org",
     "support": "COMMUNITY"}
 
 import bpy
@@ -57,38 +57,52 @@ class Proxy_Editing_ToProxy(bpy.types.Operator):
         # Making strips' paths absolute is necessary for script's execution.
         bpy.ops.file.make_paths_absolute()
 
-        proxy_end = "_proxy.mov"
-        prores_end = "_PRORES.mov"
-        mjpeg_end = "_MJPEG.mov"
+        def checkProxyFile(f_path, ref):
+            ''' Checks for (and returns) correspondent proxy file that may or 
+            may not have the same extension as the original full_res file '''
+            base_path, ext = os.path.splitext(f_path)
+            proxy_file = base_path[:ref] + "_proxy" + ext            
+            # ...and the proxy file has same extension as the fullres
+            if os.path.isfile(proxy_file):
+                return proxy_file
+            # ...or the proxy file has different extension than fullres
+            else:
+                for e in bpy.path.extensions_movie:
+                    proxy_file = base_path[:ref] + "_proxy" + e
+                    if os.path.isfile(proxy_file):
+                        return proxy_file
 
         for s in bpy.context.sequences:
             if (s.type == "SOUND") or (s.type == "MOVIE"):
-                f_name = s.filepath[:-10]
+            
+                f_path = s.filepath
 
                 # if strip is already a proxy, do nothing
-                if s.filepath.endswith(proxy_end):
-                    print("Strip '" + s.filepath + "' is already a proxy.")
+                if "_proxy." in f_path:
+                    print("Strip '" + f_path + "' is already a proxy.")
                     pass
-                # or strip is a fullres that has correspondent proxy files
-                elif s.filepath.endswith(prores_end) and \
-                        os.path.isfile(f_name[:-1] + proxy_end):
-                    s.filepath = f_name[:-1] + proxy_end
-                    print("Proxy file for '" + s.filepath + "' is OK.")
-                elif s.filepath.endswith(mjpeg_end) and \
-                        os.path.isfile(f_name + proxy_end):
-                    s.filepath = f_name + proxy_end
-                    print("Proxy file for '" + s.filepath + "' is OK.")
-                else:
-                    # for fullres files without _PRORES or _MJPEG in their name
-                    ext_len = len(s.filepath.split(".")[-1]) + 1
+
+                # or strip is a fullres that has correspondent proxy files...
+                elif "_PRORES." in f_path:
+                    s.filepath = checkProxyFile(f_path, -7)
+                    print("Proxy file for '" + f_path + "' is OK.")
+
+                elif "_MJPEG." in f_path:
+                    s.filepath = checkProxyFile(f_path, -6)
+                    print("Proxy file for '" + f_path + "' is OK.")
+
+                # for fullres files without _PRORES or _MJPEG in their name
+                else:                    
+                    base_path, ext = os.path.splitext(f_path)
+                    ext_len = len(ext) + 1
                     # search in folder for any file with the same name appended
                     # by "_proxy" and with recognizeable movie extension
-                    if glob.glob(s.filepath[:-ext_len] + "_proxy.*") and \
-                            s.filepath[-ext_len:].lower() in bpy.path.extensions_movie:
-                        s.filepath = glob.glob(s.filepath[:-ext_len] + "_proxy.*")[0]
-                        print("Proxy file for '" + s.filepath + "' is OK.")
+                    if glob.glob(base_path + "_proxy.*") and \
+                            ext.lower() in bpy.path.extensions_movie:
+                        s.filepath = glob.glob(base_path + "_proxy.*")[0]
+                        print("Proxy file for '" + f_path + "' is OK.")
                     else:
-                        print("No proxy file found for '" + s.filepath + "'.")
+                        print("No proxy file found for '" + f_path + "'.")
                         pass
 
         # Make all paths relative; behaviour tends to be standard in Blender
@@ -113,36 +127,35 @@ class Proxy_Editing_ToFullRes(bpy.types.Operator):
 
         # Making strips' paths absolute is necessary for script's execution.
         bpy.ops.file.make_paths_absolute()
-        
-        proxy_end = "_proxy.mov"
-        prores_end = "_PRORES.mov"
-        mjpeg_end = "_MJPEG.mov"
 
         for s in bpy.context.sequences:
             if (s.type == "SOUND") or (s.type == "MOVIE"):
-                f_name = s.filepath[:-10]
+                f_path = s.filepath
 
                 # if strip is a proxy and has correspondent fullres files
-                if s.filepath.endswith(proxy_end):
-                    print("Checking full-res file for '" + s.filepath + "'...")
-                    if os.path.isfile(f_name + prores_end):
-                        s.filepath = f_name + prores_end
-                        print("OK.")
-                    elif os.path.isfile(f_name + mjpeg_end):
-                        s.filepath = f_name + mjpeg_end
-                        print("OK.")
-                    elif glob.glob(s.filepath[:-10] + ".*"):
+                if "_proxy." in f_path:
+                    print("Checking full-res file for '" + f_path + "'...")
+                    base_path, ext = os.path.splitext(f_path)
+                    f_name = base_path[:-6]
+
+                    if glob.glob(f_name + "_PRORES.*"):
+                        s.filepath = glob.glob(f_name + "_PRORES.*")[0]
+                        print("Full-res file found.")
+                    elif glob.glob(f_name + "_MJPEG.*"):
+                        s.filepath = glob.glob(f_name + "_MJPEG.*")[0]
+                        print("Full-res file found.")
+                    elif glob.glob(f_name + ".*"):
                         # if strip's filepath doesn't end with '_MJPEG.mov' or
                         # '_PRORES.mov', script will look for files in folder
                         # with the same name as the strip in the timeline,
-                        # independent of file's extension (ie. .mov, .avi etc).
-                        s.filepath = glob.glob(s.filepath[:-10] + ".*")[0]
-                        print("OK.")
+                        # independent of file's extension (ie: .mov, .avi etc).
+                        s.filepath = glob.glob(f_name + ".*")[0]
+                        print("Full-res file found.")
                     else:
-                        print("No full-res file found for" + f_name + ".")
+                        print("No full-res file found for " + f_name + ".")
                         pass
                 else:
-                    print("Strip " + s.filepath + " is not a proxy.")
+                    print("Strip " + f_path + " is not a proxy.")
                     pass
 
         # Make all paths relative; behaviour tends to be standard in Blender
