@@ -24,9 +24,9 @@ import bpy
 bl_info = {
     "name": "velvet_goldmine ::",
     "description": "Glamorous new shortcuts for video editing in Blender VSE",
-    "author": "qazav_szaszak",
-    "version": (1, 0, 20141123),
-    "blender": (2, 71, 0),
+    "author": "szaszak - http://blendervelvets.org",
+    "version": (1, 0, 20150125),
+    "blender": (2, 73, 0),
     "warning": "TO BE USED WITH LOTS OF GLITTER",
     "category": ":",
     "location": "Sequencer",
@@ -297,9 +297,15 @@ class Markers_Delete_Closest(bpy.types.Operator):
         scene = bpy.context.scene
         currentFrame = scene.frame_current
         marker = scene.timeline_markers
+        markers = []
+
+        def nameMarker(n):
+            for m in marker:
+                if m.frame == markers[n]:
+                    markerName = m.name
+            return markerName
 
         if (len(marker) != 0):
-            markers = []
             for i in scene.timeline_markers:
                 markers.append(i.frame)
 
@@ -310,23 +316,27 @@ class Markers_Delete_Closest(bpy.types.Operator):
 
             if (idx == 0):
                 # cursor before all markers, remove first
-                markerFrame = "F_" + str(markers[1])
+                markerName = nameMarker(1)
             elif (idx == (len(markers)-1)):
                 # cursor after all markers, remove last
-                markerFrame = "F_" + str(markers[-2])
+                markerName = nameMarker(-2)
             else:
                 # cursor on a marker, remove current or
                 # cursor between markers, remove closest
                 sum1 = markers[idx] - markers[idx-1]
                 sum2 = markers[idx+1] - markers[idx]
                 if (sum1 < sum2):
-                    markerFrame = "F_" + str(markers[idx-1])
+                    markerName = nameMarker(idx-1)
                 else:
-                    markerFrame = "F_" + str(markers[idx+1])
-            marker.remove(marker[markerFrame])
+                    markerName = nameMarker(idx+1)
+
+            marker.remove(marker[markerName])
+
             return {'FINISHED'}
+
         else:
             print("There are no markers in the timeline!")
+
             return {'CANCELLED'}
 
 
@@ -406,23 +416,6 @@ class Markers_Goto_Right(bpy.types.Operator):
         else:
             scene.frame_current = scene.frame_end
             return {'FINISHED'}
-
-
-class Metastrip_Make_Direct(bpy.types.Operator):
-    """Makes Meta Strip without prompting for confirmation"""
-    bl_idname = "sequencer.meta_make_direct"
-    bl_label = "MetaStrip - Make Direct"
-    bl_options = {'REGISTER', 'UNDO'}
-    # Shortcut: Ctrl + G
-
-    @classmethod
-    def poll(cls, context):
-        return bpy.context.scene is not None
-
-    def execute(self, context):
-        bpy.ops.sequencer.meta_make()
-
-        return {'FINISHED'}
 
 
 class Render_Resolution_Percentage_Toggle(bpy.types.Operator):
@@ -673,70 +666,6 @@ class Strips_Channel_Down(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class Strips_Jump_To_Next(bpy.types.Operator):
-    """Jumps cursor to next beginning/end of strip"""
-    bl_idname = "sequencer.strip_jump_next"
-    bl_label = "Strips - Jump to Next"
-    bl_options = {'REGISTER', 'UNDO'}
-    # Shortcut: Ctrl + PgUp
-
-    @classmethod
-    def poll(cls, context):
-        return bpy.context.scene is not None
-
-    def execute(self, context):
-        scene = bpy.context.scene
-        currentFrame = scene.frame_current
-
-        references = []
-        for i in scene.sequence_editor.sequences:
-            stripStart = i.frame_start + i.frame_offset_start
-            references.append(stripStart)
-            references.append(i.frame_final_end)
-
-        references.append(currentFrame)
-
-        references = sorted(set(references))
-        idx = references.index(currentFrame)
-
-        if (idx != (len(references)-1)):
-            scene.frame_current = references[idx+1]
-
-        return {'FINISHED'}
-
-
-class Strips_Jump_To_Previous(bpy.types.Operator):
-    """Jumps cursor to previous beginning/end of strip"""
-    bl_idname = "sequencer.strip_jump_previous"
-    bl_label = "Strips - Jump to Previous"
-    bl_options = {'REGISTER', 'UNDO'}
-    # Shortcut: Ctrl + PgDown
-
-    @classmethod
-    def poll(cls, context):
-        return bpy.context.scene is not None
-
-    def execute(self, context):
-        scene = bpy.context.scene
-        currentFrame = scene.frame_current
-
-        references = []
-        for sequence in scene.sequence_editor.sequences:
-            stripStart = sequence.frame_start + sequence.frame_offset_start
-            references.append(stripStart)
-            references.append(sequence.frame_final_end)
-
-        references.append(currentFrame)
-
-        references = sorted(set(references))
-        idx = references.index(currentFrame)
-
-        if (idx != 0):
-            scene.frame_current = references[idx-1]
-
-        return {'FINISHED'}
-
-
 class Strips_Concatenate_Selected(bpy.types.Operator):
     """Concatenates selected strips in channel (only works for 1 channel)"""
     bl_idname = "sequencer.strips_concatenate_selected"
@@ -811,8 +740,10 @@ class Timeline_End_In_Current(bpy.types.Operator):
 
     def execute(self, context):
         scene = bpy.context.scene
-        scene.frame_end = scene.frame_current
-        scene.frame_preview_end = scene.frame_current
+        # the -1 below is because we want the scene to end where the cursor is
+        # positioned, not one frame after it (as scene.frame_current behaves)
+        scene.frame_end = scene.frame_current - 1
+        scene.frame_preview_end = scene.frame_current - 1
 
         return {'FINISHED'}
 
@@ -894,7 +825,7 @@ class Timeline_Loop_Selected(bpy.types.Operator):
 
 
 class Timeline_Select_Inside_Preview(bpy.types.Operator):
-    """Selects only the strips inside Timeline preview"""
+    """Selects only the strips that start inside Timeline preview"""
     bl_idname = "sequencer.timeline_preview_select"
     bl_label = "Timeline - Select Inside Preview"
     bl_options = {'REGISTER', 'UNDO'}
