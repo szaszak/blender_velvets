@@ -21,9 +21,9 @@
 bl_info = {
     "name": "blue_velvet ::",
     "description": "An exporter of Blender's VSE audio timeline to Ardour",
-    "author": "qazav_szaszak",
-    "version": (1, 0, 20141127),
-    "blender": (2, 68, 0),
+    "author": "szaszak - http://blendervelvets.org",
+    "version": (1, 0, 20150125),
+    "blender": (2, 73, 0),
     "warning": "War, children, it's just a shot away.",
     "category": ":",
     "location": "File > Export > Ardour (.ardour)",
@@ -103,8 +103,17 @@ def getAudioTimeline(ar, fps):
             position = toSamples(position, ar, fps)
             length = i.frame_final_end - (i.frame_start + i.frame_offset_start)
             length = toSamples(length, ar, fps)
-            base_name, ext = i.name.split(".")
             folder, name = os.path.split(i.filepath)
+
+            # the "try/except" below is necessary in case if user has changed
+            # the strip's name to "any anything" instead of the original
+            # "anything.001" or "anything.wav", the script would fail with the
+            # error "ValueError: need more than 1 value to unpack"
+            try:
+                base_name, ext = i.name.split(".")
+            except ValueError:
+                base_name = i.name
+                foo, ext = name.split(".")
 
             if (i.channel < 10): # To keep track order: 3 will become 03.
                 channel = "0" + str(i.channel)
