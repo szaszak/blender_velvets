@@ -1,4 +1,4 @@
-		# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -21,13 +21,12 @@
 bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
-    "author": "qazav_szaszak",
-    "version": (1, 0, 20150122),
-    "blender": (2, 72, 0),
+    "author": "szaszak - http://blendervelvets.org",
+    "version": (1, 0, 20150125),
+    "blender": (2, 73, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
     "location": "File > External Data > Velvet Revolver",
-    "url": "http://blendervelvets.org",
     "support": "COMMUNITY"}
 
 import bpy
@@ -61,7 +60,7 @@ class Proxy_Editing_ToProxy(bpy.types.Operator):
             ''' Checks for (and returns) correspondent proxy file that may or 
             may not have the same extension as the original full_res file '''
             base_path, ext = os.path.splitext(f_path)
-            proxy_file = base_path[:ref] + "_proxy" + ext            
+            proxy_file = base_path[:ref] + "_proxy" + ext
             # ...and the proxy file has same extension as the fullres
             if os.path.isfile(proxy_file):
                 return proxy_file
@@ -92,7 +91,7 @@ class Proxy_Editing_ToProxy(bpy.types.Operator):
                     print("Proxy file for '" + f_path + "' is OK.")
 
                 # for fullres files without _PRORES or _MJPEG in their name
-                else:                    
+                else:
                     base_path, ext = os.path.splitext(f_path)
                     ext_len = len(ext) + 1
                     # search in folder for any file with the same name appended
