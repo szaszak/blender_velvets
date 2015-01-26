@@ -25,7 +25,7 @@ bl_info = {
     "name": "velvet_goldmine ::",
     "description": "Glamorous new shortcuts for video editing in Blender VSE",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (1, 0, 20150125),
+    "version": (1, 0, 20150126),
     "blender": (2, 73, 0),
     "warning": "TO BE USED WITH LOTS OF GLITTER",
     "category": ":",
@@ -583,7 +583,10 @@ class Strips_Adjust_To_Cursor(bpy.types.Operator):
         gap = reference - scene.frame_current
 
         for strip in bpy.context.selected_sequences:
-            strip.frame_start -= gap
+            try:
+                strip.frame_start -= gap
+            except AttributeError:
+                pass
 
         # places strips back to their original channels or they'll be scattered
         for s in selectedStrips:
@@ -617,7 +620,10 @@ class Strips_Adjust_To_Start(bpy.types.Operator):
         gap = reference - scene.frame_preview_start
 
         for strip in bpy.context.selected_sequences:
-            strip.frame_start -= gap
+            try:
+                strip.frame_start -= gap
+            except AttributeError:
+                pass
 
         # places strips back to their original channels or they'll be scattered
         for s in selectedStrips:
