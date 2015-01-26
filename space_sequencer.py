@@ -923,8 +923,8 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel_Output, Panel):
 
     @classmethod
     def poll(cls, context):
-        if not cls.has_sequencer(context):
-            return False
+        #if not cls.has_sequencer(context):
+        #    return False
 
         strip = act_strip(context)
         if not strip:
