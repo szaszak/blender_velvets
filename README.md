@@ -15,7 +15,7 @@ The **Blender Velvets** are a series of Blender Addons (or plugins, if you prefe
 ###### ::velvet_revolver::
 
     ::velvet_revolver:: has been tested and works on Blender versions:
-    2.72b, 2.71, 2.69.
+    2.73a and 2.72b (ffmpeg 2.5.3); 2.71, 2.69.
     There is no reason why it should not work on versions between those.
 
 The **::velvet_revolver::** is designed to make mass proxy generating an easy task for those lazy enough to open a terminal. It can create SD intra-frame (meaning 480p ProRes422 or MJPEG) proxies from all your videos using Blender's own interface. Just point it to a folder and dance to the radio for a while. In case you have multiple FPS in your footage, notoriously crappy to use in Blender, Revolver can also create full-Res copies of your sources, levelling everything to your chosen FPS. *Read the full documentation at [Velvet Revolver's webpage](http://blendervelvets.org/en/velvet-revolver/) (in English, Portuguese, Spanish and French).*
@@ -23,7 +23,7 @@ The **::velvet_revolver::** is designed to make mass proxy generating an easy ta
 ###### ::velvet_goldmine::
 
     ::velvet_goldmine:: has been tested and works on Blender versions:
-    2.72b, 2.71, 2.7, 2.69, 2.68a, 2.66b, 2.66a, 2.66 and 2.65.
+    2.73a, 2.72b, 2.71, 2.7, 2.69, 2.68a, 2.66b, 2.66a, 2.66 and 2.65.
     There is no reason why it should not work on versions between those.
 
 The **::velvet_goldmine::** is a bunch of new functions and shortcuts aimed to fasten and loosen the overall hard VSE user interface. To be used with lots of glitter and with its companion, the *velvet_shortcuts*, for one can't dance alone, eh? *Read the full documentation at [Velvet Goldmine's webpage](http://blendervelvets.org/en/velvet-goldmine/) (in English, Portuguese, Spanish and French).*
@@ -31,7 +31,7 @@ The **::velvet_goldmine::** is a bunch of new functions and shortcuts aimed to f
 ###### ::blue_velvet::
 
     ::blue_velvet:: has been tested and works on Blender versions:
-    2.72b with Ardour 3.5.403, 2.69 with Ardour 3.2
+    2.73a and 2.72b (ffmpeg 2.5.3 and Ardour 3.5.403); 2.69 (Ardour 3.2)
     There is no reason why it should not work on versions between those.
 
 You can edit in Blender, but there's no way you will get decent audio out of it. The program was simply not made for DAW uses, so stop whining. What **::blue_velvet::** does is to get your finished timeline and export the audio cuts directly to Ardour, the correct program to deal with them. *Read the full documentation at [Blue Velvet's webpage](http://blendervelvets.org/en/blue-velvet/) (in English, Portuguese, Spanish and French).*
@@ -39,7 +39,7 @@ You can edit in Blender, but there's no way you will get decent audio out of it.
 ###### ::modified_space_sequencer::
 
     the modified space_sequencer has been tested and works on Blender versions:
-    2.72b, 2.72, 2.71, 2.70, 2.69, 2.68a, 2.66b, 2.66a, 2.66 and 2.65.
+    2.73a, 2.72b, 2.72, 2.71, 2.70, 2.69, 2.68a, 2.66b, 2.66a, 2.66 and 2.65.
     There is no reason why it should not work on versions between those.
 
 Blender has an original space_sequencer, which is the VSE user interface. It is loaded every time the program starts. The use of a modified version of this script brings up a number of controls that exist but are hidden, adds some new and useful info for when you are in the middle of a project and gathers the most relevant strip properties in the Viewer window instead the scattered Strip Properties Panel (this is especially good for color grading). *Read the full documentation at the [Modified Space Sequencer webpage](http://blendervelvets.org/en/space-sequencer/) (in English, Portuguese, Spanish and French).*
@@ -82,7 +82,6 @@ Beyond adding the new functions/shortcuts, **velvet_shortcuts** also changes the
 <b>"B"</b> - Border select selects what you want (the box) and discards the rest;<BR>
 <b>"Alt+B"</b> - Border select adds what you want (the box) to current selected strips;<BR>
 <b>"Del"</b> - Deletes without prompting for confirmation (in MacOS: fn + Del);<BR>
-<b>"Ctrl+G"</b> - Makes meta-strip without prompting for confirmation;<BR>
 <b>"Ctrl+S"</b> - Saves the file without prompting for confirmation;<BR>
 <b>"Shift+R"</b> - Refresh Sequencer (cleans cache in RAM);<BR>
 <b>"Left Mouse Click"</b> - now selects strips with linked time by default (audio + video);<BR>
@@ -147,10 +146,6 @@ Beyond adding the new functions/shortcuts, **velvet_shortcuts** also changes the
     """Moves cursor to right marker position"""
     # Shortcut: Ctrl + RightArrow
 
-    "MetaStrip - Make Direct"
-    """Makes Meta Strip without prompting for confirmation"""
-    # Shortcut: Ctrl + G
-
     "Render - Resolution Toggle"
     """Toggle between 30, 60 and 100 values in Resolution Percentage"""
     # Shortcut: Ctrl + Alt + Shift + R
@@ -199,16 +194,6 @@ Beyond adding the new functions/shortcuts, **velvet_shortcuts** also changes the
     "Strips - Channel Down"
     """Moves selected strip one channel down"""
     # Shortcut: Alt + DownArrow
-
-    "Strips - Jump to Next"
-    """Jumps cursor to next beginning/end of strip"""
-    # Shortcut: Ctrl + PgUp
-    # Shortcut for MacOS: Fn + Ctrl + UpArrow
-
-    "Strips - Jump to Previous"
-    """Jumps cursor to previous beginning/end of strip"""
-    # Shortcut: Ctrl + PgDown
-    # Shortcut for MacOS: Fn + Ctrl + DownArrow
 
     "Strips - Concatenate Selected (Same channel)"
     """Concatenates selected strips in channel (only works for 1 channel)"""
