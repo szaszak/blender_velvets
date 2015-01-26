@@ -124,8 +124,8 @@ kmi = km.keymap_items.new('screen.screen_full_area', 'DOWN_ARROW', 'PRESS', ctrl
 kmi = km.keymap_items.new('screen.screen_full_area', 'SPACE', 'PRESS', shift=True)
 kmi = km.keymap_items.new('screen.screen_full_area', 'F10', 'PRESS', alt=True)
 kmi_props_setattr(kmi.properties, 'use_hide_panels', True)
-kmi = km.keymap_items.new('screen.screen_full_area', 'NONE', 'ANY')
-kmi_props_setattr(kmi.properties, 'use_hide_panels', True)
+#kmi = km.keymap_items.new('screen.screen_full_area', 'NONE', 'ANY')
+#kmi_props_setattr(kmi.properties, 'use_hide_panels', True)
 kmi = km.keymap_items.new('screen.screenshot', 'F3', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('screen.screencast', 'F3', 'PRESS', alt=True)
 kmi = km.keymap_items.new('screen.region_quadview', 'Q', 'PRESS', ctrl=True, alt=True)
@@ -365,11 +365,3 @@ kmi = km.keymap_items.new('sequencer.timeline_zoom_out_10s', 'END', 'PRESS', ctr
 kmi = km.keymap_items.new('sequencer.timeline_zoom_out_10s', 'RIGHTMOUSE', 'PRESS', shift=True, ctrl=True)
 kmi = km.keymap_items.new('sequencer.timeline_zoom_out_xy', 'END', 'PRESS', shift=True, ctrl=True)
 kmi = km.keymap_items.new('sequencer.timeline_zoom_to_cursor', 'RIGHTMOUSE', 'PRESS', shift=True)
-
-# Map Timeline
-km = kc.keymaps.new('Timeline', space_type='TIMELINE', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('time.start_frame_set', 'S', 'PRESS')
-kmi = km.keymap_items.new('time.end_frame_set', 'E', 'PRESS')
-kmi = km.keymap_items.new('time.view_all', 'HOME', 'PRESS')
-kmi = km.keymap_items.new('time.view_all', 'NDOF_BUTTON_FIT', 'PRESS')
