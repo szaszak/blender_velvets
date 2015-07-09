@@ -423,7 +423,7 @@ class Render_Resolution_Percentage_Toggle(bpy.types.Operator):
     bl_idname = "sequencer.resolution_percentage_toggle"
     bl_label = "Render - Resolution Toggle"
     bl_options = {'REGISTER', 'UNDO'}
-    # Shortcut: Ctrl + Alt + Shift + R
+    # Shortcut: Ctrl + Alt + R
 
     @classmethod
     def poll(cls, context):
