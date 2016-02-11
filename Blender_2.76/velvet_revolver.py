@@ -22,7 +22,7 @@ bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (1, 0, 20151028),
+    "version": (1, 0, 20160210),
     "blender": (2, 76, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
@@ -71,9 +71,11 @@ class Proxy_Editing_ToProxy(bpy.types.Operator):
                     if os.path.isfile(proxy_file):
                         return proxy_file
 
-        for s in bpy.context.sequences:
+        #for s in bpy.context.sequences:
+        scene = bpy.context.scene
+        for s in scene.sequence_editor.sequences_all:
             if (s.type == "SOUND") or (s.type == "MOVIE"):
-            
+
                 f_path = s.filepath
 
                 # if strip is already a proxy, do nothing
@@ -127,7 +129,9 @@ class Proxy_Editing_ToFullRes(bpy.types.Operator):
         # Making strips' paths absolute is necessary for script's execution.
         bpy.ops.file.make_paths_absolute()
 
-        for s in bpy.context.sequences:
+        #for s in bpy.context.sequences:
+        scene = bpy.context.scene
+        for s in scene.sequence_editor.sequences_all:
             if (s.type == "SOUND") or (s.type == "MOVIE"):
                 f_path = s.filepath
 
