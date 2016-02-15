@@ -110,7 +110,7 @@ def getAudioTimeline(ar, fps):
             # "anything.001" or "anything.wav", the script would fail with the
             # error "ValueError: need more than 1 value to unpack"
             try:
-                base_name, ext = i.name.split(".")
+                base_name, ext = i.name.rsplit(".", maxsplit = 1)
             except ValueError:
                 base_name = i.name
                 foo, ext = name.split(".")
