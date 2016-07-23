@@ -12,7 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, ProMA 02110-1301, USA.
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
 
@@ -25,7 +25,7 @@ bl_info = {
     "name": "velvet_goldmine ::",
     "description": "Glamorous new shortcuts for video editing in Blender VSE",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (1, 0, 20160328),
+    "version": (1, 0, 20160722),
     "blender": (2, 77, 0),
     "warning": "TO BE USED WITH LOTS OF GLITTER",
     "category": ":",
@@ -226,8 +226,9 @@ class Fade_In_Strip_Start(bpy.types.Operator):
         return bpy.context.scene is not None
 
     def execute(self, context):
-        render = bpy.context.scene.render
-        fps = render.fps / render.fps_base
+        fps = bpy.context.scene.render.fps
+        #render = bpy.context.scene.render
+        #fps = render.fps / render.fps_base
 
         for strip in bpy.context.selected_sequences:
             keyframePosition1 = strip.frame_offset_start + strip.frame_start
@@ -261,8 +262,9 @@ class Fade_Out_Strip_End(bpy.types.Operator):
         return bpy.context.scene is not None
 
     def execute(self, context):
-        render = bpy.context.scene.render
-        fps = render.fps / render.fps_base
+        fps = bpy.context.scene.render.fps
+        #render = bpy.context.scene.render
+        #fps = render.fps / render.fps_base
 
         for strip in bpy.context.selected_sequences:
             keyframePosition1 = strip.frame_final_end
