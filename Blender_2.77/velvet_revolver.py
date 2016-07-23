@@ -22,7 +22,7 @@ bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (1, 0, 20160229),
+    "version": (1, 0, 20160722),
     "blender": (2, 76, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
@@ -91,7 +91,11 @@ class Proxy_Editing_ToProxy(bpy.types.Operator):
                     s.filepath = checkProxyFile(f_path, -6)
                     print("Proxy file for '" + f_path + "' is OK.")
 
-                # for fullres files without _PRORES or _MJPEG in their name
+                elif "_h264." in f_path:
+                    s.filepath = checkProxyFile(f_path, -5)
+                    print("Proxy file for '" + f_path + "' is OK.")
+
+                # for fullres files without _PRORES or _MJPEG or _h264 in name
                 else:
                     base_path, ext = os.path.splitext(f_path)
                     ext_len = len(ext) + 1
@@ -124,7 +128,11 @@ class Proxy_Editing_ToProxy(bpy.types.Operator):
                     s.sound.filepath = checkProxyFile(f_path, -6)
                     print("Proxy file for '" + f_path + "' is OK.")
 
-                # for fullres files without _PRORES or _MJPEG in their name
+                elif "_h264." in f_path:
+                    s.sound.filepath = checkProxyFile(f_path, -5)
+                    print("Proxy file for '" + f_path + "' is OK.")
+
+                # for fullres files without _PRORES or _MJPEG or _h264 in name
                 else:
                     base_path, ext = os.path.splitext(f_path)
                     ext_len = len(ext) + 1
@@ -179,11 +187,15 @@ class Proxy_Editing_ToFullRes(bpy.types.Operator):
                     elif glob.glob(f_name + "_MJPEG.*"):
                         s.filepath = glob.glob(f_name + "_MJPEG.*")[0]
                         print("Full-res file found.")
+                    elif glob.glob(f_name + "_h264.*"):
+                        s.filepath = glob.glob(f_name + "_h264.*")[0]
+                        print("Full-res file found.")
                     elif glob.glob(f_name + ".*"):
-                        # if strip's filepath doesn't end with '_MJPEG.mov' or
-                        # '_PRORES.mov', script will look for files in folder
-                        # with the same name as the strip in the timeline,
-                        # independent of file's extension (ie: .mov, .avi etc).
+                        # if strip's filepath doesn't end with '_MJPEG.mov',
+                        # '_PRORES.mov' or '_h264.mov', script will look for
+                        # files in folder with the same name as the strip in
+                        # the timeline, independent of file's extension
+                        # (ie: .mov, .avi etc).
                         s.filepath = glob.glob(f_name + ".*")[0]
                         print("Full-res file found.")
                     else:
@@ -208,6 +220,8 @@ class Proxy_Editing_ToFullRes(bpy.types.Operator):
                         print("Full-res file found.")
                     elif glob.glob(f_name + "_MJPEG.*"):
                         s.sound.filepath = glob.glob(f_name + "_MJPEG.*")[0]
+                    elif glob.glob(f_name + "_h264.*"):
+                        s.sound.filepath = glob.glob(f_name + "_h264.*")[0]
                         print("Full-res file found.")
                     elif glob.glob(f_name + ".*"):
                         s.sound.filepath = glob.glob(f_name + ".*")[0]
@@ -230,8 +244,7 @@ class Proxy_Editing_ToFullRes(bpy.types.Operator):
 ######## ----------------------------------------------------------------------
 
 class VideoSource(object):
-    """Uses video source to run FFMPEG and create
-       proxies or full-res intra-frame copies"""
+    """Uses video source to run FFMPEG and create proxies or full-res copies"""
     def __init__(self, ffCommand, filepath, v_source, v_res, v_format,
                  fps, deinter, ar, ac):
         self.ffCommand = ffCommand
@@ -257,19 +270,29 @@ class VideoSource(object):
                 self.format = "-probesize 5000000 -s 640x368 -c:v prores \
                                -profile:v 0 -qscale:v 13 -vendor ap10 \
                                -pix_fmt yuv422p10le -acodec pcm_s16be"
-            else:  # v_format == "is_mjpeg":
+            elif v_format == "is_mjpeg":
                 self.format = "-probesize 5000000 -s 640x368 -c:v mjpeg \
                                -qscale:v 5 -acodec pcm_s16be"
+            else: # v_format == "is_h264":
+                self.format = "-probesize 5000000 -s 640x368 -c:v libx264 \
+                               -preset ultrafast -c:a copy"
         else:  # v_res == "fullres"
             if v_format == "is_prores":
                 self.v_output = self.input[:-4] + "_PRORES.mov"
                 self.format = "-probesize 5000000 -c:v prores -profile:v 3 \
                                -qscale:v 5 -vendor ap10 -pix_fmt yuv422p10le \
                                -acodec pcm_s16be"
-            else:  # v_format == "is_mjpeg":
+            elif v_format == "is_mjpeg":
                 self.v_output = self.input[:-4] + "_MJPEG.mov"
                 self.format = "-probesize 5000000 -c:v mjpeg -qscale:v 1 \
                                -acodec pcm_s16be"
+            else: # v_format == "is_h264":
+                self.v_output = self.input[:-4] + "_h264.mkv"
+                self.format = "-probesize 5000000 -c:v libx264 -preset ultrafast \
+                               -c:a copy"
+
+
+
 
     def runFF(self):
         # Due to spaces, the command entries (ffCommand, input and output) have
@@ -301,17 +324,19 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
 
     transcode_items = (
         ('is_prores', 'ProRes422', ''),
-        ('is_mjpeg', 'MJPEG', '')
+        ('is_mjpeg', 'MJPEG', ''),
+        ('is_h264', 'h264 (experimental)', '')
     )
 
+    copies = BoolProperty(
+        #name="Full-res copies in intra-frame codec",
+        name="Full-res copies",
+        description="Create full-res copies with same FPS as current scene (slow)",
+        default=False,
+    )
     proxies = BoolProperty(
         name="360p proxies",
         description="Create 640x368 proxies with same FPS as current scene",
-        default=False,
-    )
-    copies = BoolProperty(
-        name="Full-res copies in intra-frame codec",
-        description="Create full-res copies with same FPS as current scene (slow)",
         default=False,
     )
     v_format = EnumProperty(
@@ -337,8 +362,9 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
     )
 
     def draw(self, context):
-        render = context.scene.render
-        fps = render.fps / render.fps_base
+        fps = context.scene.render.fps
+        #render = context.scene.render
+        #fps = render.fps / render.fps_base
 
         layout = self.layout
         box = layout.box()
@@ -368,8 +394,9 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
         videosFolderPath, blenderFile = os.path.split(self.filepath)
         videosFolderPath += os.sep
 
-        render = context.scene.render
-        fps = render.fps / render.fps_base
+        fps = context.scene.render.fps
+        #render = context.scene.render
+        #fps = render.fps / render.fps_base
 
         sources = []
         for i in glob.glob(videosFolderPath + "*.*"):
