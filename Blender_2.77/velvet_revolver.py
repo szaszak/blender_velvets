@@ -22,8 +22,8 @@ bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (1, 0, 20160722),
-    "blender": (2, 76, 0),
+    "version": (1, 0, 20161111),
+    "blender": (2, 77, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
     "location": "File > External Data > Velvet Revolver",
@@ -275,7 +275,9 @@ class VideoSource(object):
                                -qscale:v 5 -acodec pcm_s16be"
             else: # v_format == "is_h264":
                 self.format = "-probesize 5000000 -s 640x368 -c:v libx264 \
-                               -preset ultrafast -c:a copy"
+                               -c:a copy"
+				# -preset ultrafast was having problems 
+				# dealing with ProRes422 from Final Cut
         else:  # v_res == "fullres"
             if v_format == "is_prores":
                 self.v_output = self.input[:-4] + "_PRORES.mov"
@@ -287,9 +289,10 @@ class VideoSource(object):
                 self.format = "-probesize 5000000 -c:v mjpeg -qscale:v 1 \
                                -acodec pcm_s16be"
             else: # v_format == "is_h264":
-                self.v_output = self.input[:-4] + "_h264.mkv"
-                self.format = "-probesize 5000000 -c:v libx264 -preset ultrafast \
-                               -c:a copy"
+                self.v_output = self.input[:-4] + "_h264_test.mkv"
+                self.format = "-probesize 5000000 -c:v libx264 -c:a copy"
+				# -preset ultrafast was having problems 
+				# dealing with ProRes422 from Final Cut
 
 
 
