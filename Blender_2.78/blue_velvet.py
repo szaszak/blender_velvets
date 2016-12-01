@@ -23,7 +23,7 @@ bl_info = {
     "description": "An exporter of Blender's VSE audio timeline to Ardour",
     "author": "szaszak - http://blendervelvets.org",
     "version": (1, 0, 20160328),
-    "blender": (2, 77, 0),
+    "blender": (2, 78, 0),
     "warning": "War, children, it's just a shot away.",
     "category": ":",
     "location": "File > Export > Ardour (.ardour)",
