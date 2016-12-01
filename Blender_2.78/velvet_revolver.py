@@ -22,8 +22,8 @@ bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (1, 0, 20161111),
-    "blender": (2, 77, 0),
+    "version": (1, 0, 20161201),
+    "blender": (2, 78, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
     "location": "File > External Data > Velvet Revolver",
@@ -275,7 +275,7 @@ class VideoSource(object):
                                -qscale:v 5 -acodec pcm_s16be"
             else: # v_format == "is_h264":
                 self.format = "-probesize 5000000 -s 640x368 -c:v libx264 \
-                               -c:a copy"
+                               -pix_fmt yuv420p -c:a copy"
 				# -preset ultrafast was having problems 
 				# dealing with ProRes422 from Final Cut
         else:  # v_res == "fullres"
@@ -290,7 +290,8 @@ class VideoSource(object):
                                -acodec pcm_s16be"
             else: # v_format == "is_h264":
                 self.v_output = self.input[:-4] + "_h264.mkv"
-                self.format = "-probesize 5000000 -c:v libx264 -c:a copy"
+                self.format = "-probesize 5000000 -c:v libx264 \
+                               -pix_fmt yuv420p -c:a copy"
 				# -preset ultrafast was having problems 
 				# dealing with ProRes422 from Final Cut
 
@@ -412,7 +413,8 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
                 # Also: 'sources' should be sorted by filesize, so that
                 # smaller files are transcoded first (create this as an option:
                 # sort by filesize, sort by name).
-                if "_proxy." not in i and "_MJPEG." not in i and "_PRORES." not in i:
+                if "_proxy." not in i and "_MJPEG." not in i \
+                   and "_PRORES." not in i and "_h264" not in i:
                     sources.append(i)
 
         if self.proxies:
