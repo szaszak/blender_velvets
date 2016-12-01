@@ -831,19 +831,33 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
                 row.prop(strip, "mute", toggle=True, icon='RESTRICT_VIEW_ON' if strip.mute else 'RESTRICT_VIEW_OFF', text="")
                 row.prop(strip, "lock", toggle=True, icon='LOCKED' if strip.lock else 'UNLOCKED', text="")
 
-                layout.prop(strip, "use_translation", text="Image Offset")
+                split = layout.split(percentage=0.5)
+                col = layout.column()
+                col = split.column()
+                #layout.prop(strip, "use_translation", text="Image Offset")
+                col.prop(strip, "use_translation", text="Image Offset")
                 if strip.use_translation:
                     col = layout.column(align=True)
                     col.prop(strip.transform, "offset_x", text="X")
                     col.prop(strip.transform, "offset_y", text="Y")
 
-                layout.prop(strip, "use_crop", text="Image Crop")
+                #layout.prop(strip, "use_crop", text="Image Crop")
+                col.prop(strip, "use_crop", text="Image Crop")
                 if strip.use_crop:
                     col = layout.column(align=True)
                     col.prop(strip.crop, "max_y")
                     col.prop(strip.crop, "min_x")
                     col.prop(strip.crop, "min_y")
                     col.prop(strip.crop, "max_x")
+
+                col = split.column()
+                if stype == 'MOVIECLIP':
+                    #col.label(text="Tracker:")
+                    col.prop(strip, "stabilize2d")
+
+                    #col = layout.column()
+                    #col.label(text="Distortion:")
+                    col.prop(strip, "undistort")
 
                 #col = layout.column()
                 #col.label(text="Colors:")
