@@ -18,7 +18,7 @@
 
 # Space Sequencer - Modified version
 # http://blendervelvets.org
-# Version 20161115
+# Version 20161201
 # To be used with Blender 2.78
 
 # <pep8 compliant>
@@ -948,18 +948,29 @@ class SEQUENCER_PT_strip_data(SequencerButtonsPanel_Output, Panel):
             #----------------------------------------------
             # XXX note strip.type is never equal to 'EFFECT', look at seq_type_items within rna_sequencer.c
             if stype == 'EFFECT':
-                #pass
+                pass
+                # layout.separator()
+                # layout.operator("sequencer.effect_change")
+                # layout.operator("sequencer.effect_reassign_inputs")
+
+            # stype "IMAGE" is now together with "MOVIE" (see block below "SCENE")
+            elif stype == 'IMAGE':
                 layout.separator()
-                layout.operator("sequencer.effect_change")
-                layout.operator("sequencer.effect_reassign_inputs")
-            #elif stype == 'IMAGE':
-            #    layout.separator()
-            #    layout.operator("sequencer.image_change")
-            #    layout.operator("sequencer.rendersize")
+                # layout.operator("sequencer.image_change")
+                split = layout.split(percentage=0.2)
+                split.label(text="Path:")
+                split.prop(strip, "directory", text="")
+
+                layout.prop(strip.colorspace_settings, "name")
+                layout.prop(strip, "alpha_mode")
+
+                layout.operator("sequencer.change_path").filter_image = True
+                layout.operator("sequencer.rendersize")
+
             elif stype == 'SCENE':
-                #pass
-                layout.separator()
-                layout.operator("sequencer.scene_change", text="Change Scene")
+                pass
+                # layout.separator()
+                # layout.operator("sequencer.scene_change", text="Change Scene")
             elif stype == 'MOVIE' or stype == 'IMAGE':
                 split = layout.split(percentage=0.2)
                 split.label(text="Path:")
@@ -1120,56 +1131,20 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel_Output, Panel):
 
 
 #-------------------------------------------------------------------------------
-# Scene is now at SequencerButtonsPanel_Output so the whole block is here
+# Scene/SequencerModifiers are now SequencerButtonsPanel_Output so block is here
 #-------------------------------------------------------------------------------
-class SEQUENCER_PT_scene(SequencerButtonsPanel_Output, Panel):
-    bl_label = "Scene"
+class SEQUENCER_PT_modifiers(SequencerButtonsPanel_Output, Panel):
+    bl_label = "Sequencer Modifiers"
 
+    # Note: Added Poll to try to errors when empty Scene is the current Scene.
+    # This still needs improvement because when creating a 'full copy'
+    # of scene, erros still show up.
     @classmethod
     def poll(cls, context):
-        #if not cls.has_sequencer(context):
-        #    return False
-
-        strip = act_strip(context)
-        if not strip:
+        if bpy.context.sequences is None or len(bpy.context.sequences) is 0:
             return False
-
-        return (strip.type == 'SCENE')
-
-    def draw(self, context):
-        layout = self.layout
-
-        strip = act_strip(context)
-
-        layout.template_ID(strip, "scene")
-
-        scene = strip.scene
-        layout.prop(strip, "use_sequence")
-
-        if not strip.use_sequence:
-            layout.label(text="Camera Override")
-            layout.template_ID(strip, "scene_camera")
-
-            layout.prop(strip, "use_grease_pencil", text="Show Grease Pencil")
-
-        if scene:
-            layout.prop(scene, "audio_volume", text="Audio Volume")
-
-        if not strip.use_sequence:
-            if scene:
-                # Warning, this is not a good convention to follow.
-                # Expose here because setting the alpha from the 'Render' menu is very inconvenient.
-                layout.label("Preview")
-                layout.prop(scene.render, "alpha_mode")
-
-        if scene:
-            sta = scene.frame_start
-            end = scene.frame_end
-            layout.label(text=iface_("Original frame range: %d-%d (%d)") % (sta, end, end - sta + 1), translate=False)
-
-
-class SEQUENCER_PT_sequencer_modifiers(SequencerButtonsPanel_Output, Panel):
-    bl_label = "Sequencer Modifiers"
+        else:
+            return True
 
     def draw(self, context):
         layout = self.layout
@@ -1241,6 +1216,53 @@ class SEQUENCER_PT_sequencer_modifiers(SequencerButtonsPanel_Output, Panel):
                         col.prop(mod, "key")
                         col.prop(mod, "offset")
                         col.prop(mod, "gamma")
+
+
+class SEQUENCER_PT_scene(SequencerButtonsPanel_Output, Panel):
+    bl_label = "Scene"
+
+    @classmethod
+    def poll(cls, context):
+        if not cls.has_preview(context):
+        #if not cls.has_sequencer(context):
+            return False
+
+        strip = act_strip(context)
+        if not strip:
+            return False
+
+        return (strip.type == 'SCENE')
+
+    def draw(self, context):
+        layout = self.layout
+
+        strip = act_strip(context)
+
+        layout.template_ID(strip, "scene")
+
+        scene = strip.scene
+        layout.prop(strip, "use_sequence")
+
+        if not strip.use_sequence:
+            layout.label(text="Camera Override")
+            layout.template_ID(strip, "scene_camera")
+
+            layout.prop(strip, "use_grease_pencil", text="Show Grease Pencil")
+
+        if scene:
+            layout.prop(scene, "audio_volume", text="Audio Volume")
+
+        if not strip.use_sequence:
+            if scene:
+                # Warning, this is not a good convention to follow.
+                # Expose here because setting the alpha from the 'Render' menu is very inconvenient.
+                layout.label("Preview")
+                layout.prop(scene.render, "alpha_mode")
+
+        if scene:
+            sta = scene.frame_start
+            end = scene.frame_end
+            layout.label(text=iface_("Original frame range: %d-%d (%d)") % (sta, end, end - sta + 1), translate=False)
 
 
 # ============================= CLOSE NEW BLOCK =============================
