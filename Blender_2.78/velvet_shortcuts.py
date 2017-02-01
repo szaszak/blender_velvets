@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-# Velvet Shortcuts version date: 20161115
+# Velvet Shortcuts version date: 20170201
 # To be used with Blender versions 2.78
 # Check documentation at http://blendervelvets.org
 # Author: szaszak
@@ -51,7 +51,7 @@ kmi = km.keymap_items.new('wm.open_mainfile', 'F1', 'PRESS')
 kmi = km.keymap_items.new('wm.link', 'O', 'PRESS', ctrl=True, alt=True)
 kmi = km.keymap_items.new('wm.append', 'F1', 'PRESS', shift=True)
 kmi = km.keymap_items.new('wm.save_mainfile_direct', 'S', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('wm.save_mainfile', 'W', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('wm.save_mainfile', 'S', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('wm.save_as_mainfile', 'S', 'PRESS', shift=True, ctrl=True)
 kmi = km.keymap_items.new('wm.save_as_mainfile', 'F2', 'PRESS')
 kmi = km.keymap_items.new('wm.save_as_mainfile', 'S', 'PRESS', ctrl=True, alt=True)
