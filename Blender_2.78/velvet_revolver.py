@@ -22,7 +22,7 @@ bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (1, 0, 20161201),
+    "version": (1, 0, 20170203),
     "blender": (2, 78, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
@@ -366,9 +366,9 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
     )
 
     def draw(self, context):
-        fps = context.scene.render.fps
-        #render = context.scene.render
-        #fps = render.fps / render.fps_base
+        #fps = context.scene.render.fps
+        render = context.scene.render
+        fps = round(render.fps / render.fps_base, 2)
 
         layout = self.layout
         box = layout.box()
@@ -398,9 +398,9 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
         videosFolderPath, blenderFile = os.path.split(self.filepath)
         videosFolderPath += os.sep
 
-        fps = context.scene.render.fps
-        #render = context.scene.render
-        #fps = render.fps / render.fps_base
+        #fps = context.scene.render.fps
+        render = context.scene.render
+        fps = round(render.fps / render.fps_base, 2)
 
         sources = []
         for i in glob.glob(videosFolderPath + "*.*"):
