@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-# Velvet Shortcuts version date: 20170201
+# Velvet Shortcuts version date: 20170203
 # To be used with Blender versions 2.78
 # Check documentation at http://blendervelvets.org
 # Author: szaszak
@@ -223,6 +223,7 @@ kmi = km.keymap_items.new('sequencer.offset_clear', 'O', 'PRESS', alt=True)
 kmi = km.keymap_items.new('sequencer.duplicate_move', 'D', 'PRESS', shift=True)
 kmi = km.keymap_items.new('sequencer.delete', 'X', 'PRESS')
 kmi = km.keymap_items.new('sequencer.delete_direct', 'DEL', 'PRESS')
+kmi = km.keymap_items.new('sequencer.delete_direct_gaps', 'DEL', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('sequencer.copy', 'C', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('sequencer.paste', 'V', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('sequencer.images_separate', 'Y', 'PRESS')
@@ -347,11 +348,14 @@ kmi = km.keymap_items.new('sequencer.marker_goto_left', 'LEFT_ARROW', 'PRESS', c
 kmi = km.keymap_items.new('sequencer.marker_goto_right', 'RIGHT_ARROW', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('sequencer.resolution_percentage_toggle', 'R', 'PRESS', ctrl=True, alt=True)
 kmi = km.keymap_items.new('screen.scene_toggle', 'TAB', 'PRESS', shift=True)
+kmi = km.keymap_items.new('sequencer.slight_desync_adjust', 'D', 'PRESS', shift=True, ctrl=True, alt=True)
 kmi = km.keymap_items.new('sequencer.strips_adjust_to_cursor', 'C', 'PRESS', shift=True, ctrl=True, alt=True)
 kmi = km.keymap_items.new('sequencer.strips_adjust_to_timelinestart', 'S', 'PRESS', shift=True, ctrl=True, alt=True)
 kmi = km.keymap_items.new('sequencer.strip_up', 'UP_ARROW', 'PRESS', alt=True)
 kmi = km.keymap_items.new('sequencer.strip_down', 'DOWN_ARROW', 'PRESS', alt=True)
 kmi = km.keymap_items.new('sequencer.strips_concatenate_selected', 'C', 'PRESS', shift=True)
+kmi = km.keymap_items.new('sequencer.strips_deinterlace', 'I', 'PRESS', shift=True, ctrl=True)
+kmi = km.keymap_items.new('sequencer.strips_deinterlace_off', 'I', 'PRESS', ctrl=True, alt=True)
 kmi = km.keymap_items.new('sequencer.strips_show_waveform', 'W', 'PRESS')
 kmi = km.keymap_items.new('sequencer.strips_hide_waveform', 'W', 'PRESS', alt=True)
 kmi = km.keymap_items.new('sequencer.timeline_adjust_endof', 'E', 'PRESS', alt=True)
