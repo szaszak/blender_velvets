@@ -25,7 +25,7 @@ bl_info = {
     "name": "velvet_goldmine ::",
     "description": "Glamorous new shortcuts for video editing in Blender VSE",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (1, 0, 20161115),
+    "version": (1, 0, 20170203),
     "blender": (2, 78, 0),
     "warning": "TO BE USED WITH LOTS OF GLITTER",
     "category": ":",
@@ -211,6 +211,37 @@ class Delete_Direct(bpy.types.Operator):
 
     def execute(self, context):
         bpy.ops.sequencer.delete()
+        return {'FINISHED'}
+
+
+class Delete_Direct_Gaps(bpy.types.Operator):
+    """Deletes removing gaps without prompting for confirmation"""
+    bl_idname = "sequencer.delete_direct_gaps"
+    bl_label = "Delete Direct - Gaps"
+    bl_options = {'REGISTER', 'UNDO'}
+    # Shortcut: Ctrl + Delete
+
+    @classmethod
+    def poll(cls, context):
+        return bpy.context.scene is not None
+
+    def execute(self, context):
+        scene = bpy.context.scene
+        orig_pos = scene.frame_current
+        updated_pos = []
+
+        for i in bpy.context.selected_sequences:
+            updated_pos.append(i.frame_offset_start + i.frame_start)
+
+        new_pos = sorted(set(updated_pos))[0]
+
+        # Places i-beam at beginning of selected strips, deletes them,
+        # then remove gaps and return i-beam to original position
+        bpy.ops.sequencer.delete()
+        scene.frame_set(new_pos)
+        bpy.ops.sequencer.gap_remove()
+        scene.frame_set(orig_pos)
+
         return {'FINISHED'}
 
 
@@ -562,6 +593,43 @@ class Scene_Toggle(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class Slight_Desync_Adjust(bpy.types.Operator):
+    """Adjust selected audio strips that are 
+    1 frame bigger than its movies"""
+    bl_idname = "sequencer.slight_desync_adjust"
+    bl_label = "Slight Desync Adjust"
+    bl_options = {'REGISTER', 'UNDO'}
+    # Shortcut: Ctrl + Alt + Shift + D
+
+    @classmethod
+    def poll(cls, context):
+        return bpy.context.scene is not None
+
+    def execute(self, context):
+        sel_seq = bpy.context.selected_sequences
+
+        sounds = [s for s in sel_seq if s.type == 'SOUND']
+        movies = [m for m in sel_seq if m.type == 'MOVIE']
+
+        for sound in sounds:        
+            ss = sound.frame_offset_start + sound.frame_start
+            se = sound.frame_final_end
+            sp = sound.sound.filepath
+
+            for movie in movies:
+                ms = movie.frame_offset_start + movie.frame_start
+                me = movie.frame_final_end
+                mp = movie.filepath
+
+                # Checks if both strips have the same filepath, start
+                # at the same frame and have a difference of 1 between
+                # their final frames - if so, remove 1 frame from audio   
+                if ss == ms and sp == mp and (se - me == 1):
+                    sound.frame_final_end -= 1
+
+        return {'FINISHED'}
+
+
 class Strips_Adjust_To_Cursor(bpy.types.Operator):
     """Adjusts selected strips to where the cursor is in the timeline"""
     bl_idname = "sequencer.strips_adjust_to_cursor"
@@ -744,6 +812,48 @@ class Strips_Concatenate_Selected(bpy.types.Operator):
                 gap = (strip.frame_start + strip.frame_offset_start) - base
                 strip.frame_start -= gap
                 base += i[1]
+
+        return {'FINISHED'}
+
+
+class Strips_Deinterlace_Selected(bpy.types.Operator):
+    """Deinterlace selected movie strips"""
+    bl_idname = "sequencer.strips_deinterlace"
+    bl_label = "Video Strips - Deinterlace Selected"
+    bl_options = {'REGISTER', 'UNDO'}
+    # Shortcut: Ctrl + Shift + I
+
+    @classmethod
+    def poll(cls, context):
+        return bpy.context.scene is not None
+
+    def execute(self, context):
+
+        for strip in bpy.context.selected_sequences:
+            if (strip.type == "MOVIE"):
+                if (strip.use_deinterlace is False):
+                    strip.use_deinterlace = True
+
+        return {'FINISHED'}
+
+
+class Strips_Remove_Deinterlace(bpy.types.Operator):
+    """Remove deinterlace from selected movie strips"""
+    bl_idname = "sequencer.strips_deinterlace_off"
+    bl_label = "Video Strips - Remove Deinterlace"
+    bl_options = {'REGISTER', 'UNDO'}
+    # Shortcut: Ctrl + Alt + I
+
+    @classmethod
+    def poll(cls, context):
+        return bpy.context.scene is not None
+
+    def execute(self, context):
+
+        for strip in bpy.context.selected_sequences:
+            if (strip.type == "MOVIE"):
+                if (strip.use_deinterlace is True):
+                    strip.use_deinterlace = False
 
         return {'FINISHED'}
 
