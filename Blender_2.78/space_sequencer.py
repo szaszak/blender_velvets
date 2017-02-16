@@ -18,7 +18,7 @@
 
 # Space Sequencer - Modified version
 # http://blendervelvets.org
-# Version 20161201
+# Version 20170216
 # To be used with Blender 2.78
 
 # <pep8 compliant>
@@ -124,7 +124,8 @@ class SEQUENCER_HT_header(Header):
 
             # layout.separator()
             # the order below is inverted on the original space_sequencer:
-            layout.prop(st, "show_backdrop")
+            # show_backdrop moved to Playback menu (created for Velvets)
+            # layout.prop(st, "show_backdrop")
             layout.operator("sequencer.refresh_all")
         else:
             if st.view_type == 'SEQUENCER_PREVIEW':
@@ -228,6 +229,7 @@ class SEQUENCER_MT_editor_menus(Menu):
             layout.menu("SEQUENCER_MT_add")
             layout.menu("SEQUENCER_MT_frame")
             layout.menu("SEQUENCER_MT_strip")
+            layout.menu("SEQUENCER_MT_playback")
 
 
 class SEQUENCER_MT_view_toggle(Menu):
@@ -547,6 +549,24 @@ class SEQUENCER_MT_strip(Menu):
 
         layout.operator("sequencer.swap_data")
         layout.menu("SEQUENCER_MT_change")
+
+
+class SEQUENCER_MT_playback(Menu):
+    bl_label = "Playback"
+
+    def draw(self, context):
+        layout = self.layout
+
+        screen = context.screen
+        scene = context.scene
+
+        layout.separator()
+        layout.prop(screen, "use_follow")
+        layout.prop(context.space_data, "show_backdrop")
+        layout.separator()
+
+        layout.prop(scene, "use_audio")
+        layout.prop(scene, "use_audio_scrub")
 
 
 class SequencerButtonsPanel:
