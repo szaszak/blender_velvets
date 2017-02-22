@@ -22,7 +22,7 @@ bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (1, 0, 20170203),
+    "version": (1, 0, 20170222),
     "blender": (2, 78, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
@@ -33,7 +33,9 @@ import bpy
 import os
 import glob
 from subprocess import call
-
+from shutil import which
+from bpy_extras.io_utils import ExportHelper
+from bpy.props import StringProperty, EnumProperty, IntProperty, FloatProperty, BoolProperty
 
 ######## ----------------------------------------------------------------------
 ######## VSE TIMELINE TOGGLE PROXIES <-> FULLRES
@@ -276,9 +278,9 @@ class VideoSource(object):
             else: # v_format == "is_h264":
                 self.format = "-probesize 5000000 -s 640x368 -c:v libx264 \
                                -pix_fmt yuv420p -c:a copy"
-				# -preset ultrafast was having problems 
-				# dealing with ProRes422 from Final Cut
-        else:  # v_res == "fullres"
+                # -preset ultrafast was having problems 
+                # dealing with ProRes422 from Final Cut
+        else: # v_res == "fullres"
             if v_format == "is_prores":
                 self.v_output = self.input[:-4] + "_PRORES.mov"
                 self.format = "-probesize 5000000 -c:v prores -profile:v 3 \
@@ -292,10 +294,8 @@ class VideoSource(object):
                 self.v_output = self.input[:-4] + "_h264.mkv"
                 self.format = "-probesize 5000000 -c:v libx264 \
                                -pix_fmt yuv420p -c:a copy"
-				# -preset ultrafast was having problems 
-				# dealing with ProRes422 from Final Cut
-
-
+                # -preset ultrafast was having problems 
+                # dealing with ProRes422 from Final Cut
 
 
     def runFF(self):
@@ -315,11 +315,6 @@ class VideoSource(object):
 ######## VELVET REVOLVER MAIN CLASS
 ######## ----------------------------------------------------------------------
 
-from bpy_extras.io_utils import ExportHelper
-from bpy.props import StringProperty, EnumProperty, IntProperty, FloatProperty, BoolProperty
-from shutil import which
-
-
 class VelvetRevolver(bpy.types.Operator, ExportHelper):
     """Mass create proxies and/or intra-frame copies from original files"""
     bl_idname = "export.revolver"
@@ -327,13 +322,12 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
     filename_ext = ".revolver"
 
     transcode_items = (
-        ('is_prores', 'ProRes422', ''),
         ('is_mjpeg', 'MJPEG', ''),
+        ('is_prores', 'ProRes422', ''),
         ('is_h264', 'h264 (experimental)', '')
     )
 
     copies = BoolProperty(
-        #name="Full-res copies in intra-frame codec",
         name="Full-res copies",
         description="Create full-res copies with same FPS as current scene (slow)",
         default=False,
@@ -345,7 +339,7 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
     )
     v_format = EnumProperty(
         name="Format",
-        default="is_prores",
+        default="is_mjpeg",
         description="Intra-frame format for the creation of proxies and/or copies",
         items=transcode_items
     )
