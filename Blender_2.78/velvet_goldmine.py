@@ -25,7 +25,7 @@ bl_info = {
     "name": "velvet_goldmine ::",
     "description": "Glamorous new shortcuts for video editing in Blender VSE",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (1, 0, 20170203),
+    "version": (1, 0, 20170225),
     "blender": (2, 78, 0),
     "warning": "TO BE USED WITH LOTS OF GLITTER",
     "category": ":",
@@ -611,7 +611,7 @@ class Slight_Desync_Adjust(bpy.types.Operator):
         sounds = [s for s in sel_seq if s.type == 'SOUND']
         movies = [m for m in sel_seq if m.type == 'MOVIE']
 
-        for sound in sounds:        
+        for sound in sounds:
             ss = sound.frame_offset_start + sound.frame_start
             se = sound.frame_final_end
             sp = sound.sound.filepath
@@ -623,9 +623,9 @@ class Slight_Desync_Adjust(bpy.types.Operator):
 
                 # Checks if both strips have the same filepath, start
                 # at the same frame and have a difference of 1 between
-                # their final frames - if so, remove 1 frame from audio   
+                # their final frames - if so, remove 1 frame from audio
                 if ss == ms and sp == mp and (se - me == 1):
-                    sound.frame_final_end -= 1
+                    sound.animation_offset_end += 1
 
         return {'FINISHED'}
 
