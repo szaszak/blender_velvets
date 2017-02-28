@@ -22,7 +22,7 @@ bl_info = {
     "name": "velvet_revolution ::",
     "description": "Pack your stuff to go",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (1, 0, 20170222),
+    "version": (1, 0, 20170227),
     "blender": (2, 78, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
@@ -95,6 +95,41 @@ def sanity_check(scenes):
     return sanity
 
 
+def copy_keyframes(current_strip, scene1, scene2):
+    # First, select strip
+    cs = current_strip
+    cs.select = True
+
+    # Go to sequence's copy and select the same strip
+    bpy.context.screen.scene = scene2
+    for i in bpy.context.sequences:
+        if i.name == cs.name:
+            i.select = True
+
+    # Copy that strip's keyframes
+    area = bpy.context.area
+    old_type = area.type
+    area.type = 'GRAPH_EDITOR'
+
+    #bpy.data.scenes[-1].frame_current = 0
+    bpy.ops.graph.select_leftright(mode='RIGHT', extend=False)
+    bpy.ops.graph.copy()
+
+    area.type = old_type
+
+    # Change back to previous scene and replace those keyframes
+    bpy.context.screen.scene = bpy.data.scenes[scene1.name]
+
+    area = bpy.context.area
+    old_type = area.type
+    area.type = 'GRAPH_EDITOR'
+    # bpy.data.scenes['Scene'].frame_current = 0
+    bpy.ops.graph.select_leftright(mode='RIGHT', extend=False)
+    bpy.ops.graph.paste(offset='NONE' , merge='OVER_ALL')
+
+    area.type = old_type
+
+
 def pack_your_stuff(scenes, export_path, sec_margin):
     render = bpy.context.scene.render
     fps = render.fps / render.fps_base
@@ -119,6 +154,13 @@ def pack_your_stuff(scenes, export_path, sec_margin):
     for scene in scenes:
         # We're forcing the change of scene here so that files are not skipped
         bpy.context.screen.scene = bpy.data.scenes[scene.name]
+
+        # Position cursor at the frame 0 and create a full copy of scene
+        # This copy will be necessary for copying the keyframes
+        bpy.data.scenes[scene.name].frame_current = 0
+        bpy.ops.scene.new(type='FULL_COPY')
+        bpy.context.screen.scene = bpy.data.scenes[scene.name]
+
         for seq in bpy.context.sequences:
 
             if seq.type == 'SOUND': 
@@ -158,6 +200,9 @@ def pack_your_stuff(scenes, export_path, sec_margin):
                         call(callFFMPEG, shell=True)
                         audio_pool.append(new_name)
 
+                    # Update keyframes for strip
+                    copy_keyframes(seq, scene, bpy.data.scenes[-1])
+                    
                     # Update change in timeline
                     seq.sound.filepath = new_path
 
@@ -225,11 +270,18 @@ def pack_your_stuff(scenes, export_path, sec_margin):
                 # Prepare infos for replacing strip
                 new_position = seq.frame_final_start - new_offset_start
                 original_channel = seq.channel
+ 
+                # Update keyframes for strip
+                copy_keyframes(seq, scene, bpy.data.scenes[-1])
+
                 # Replace strip's path to point to the new one. We temporarily
                 # position it at channel 35 so that when we clear its offsets, it
                 # won't bump into another strip and be replaced at an odd channel
                 seq.channel = 35
-                seq.name = new_name
+                # The name of the strips cannot be changed if we want the
+                # keyframes to be pasted back to them accordingly. Maybe
+                # a bug in the API?
+                #seq.name = new_name
                 seq.filepath = new_path
                 # Clear all possible offsets and reposition strip
                 seq.animation_offset_start = 0
@@ -239,6 +291,10 @@ def pack_your_stuff(scenes, export_path, sec_margin):
                 # Reposition strip
                 seq.frame_start = new_position
                 seq.channel = original_channel
+
+        # Remove previously created backup scene for keyframe copying
+        bpy.context.screen.scene = bpy.data.scenes[-1]
+        bpy.ops.scene.delete()
 
         print("Strips for %s packed." % (scene.name))
 
