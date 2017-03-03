@@ -22,7 +22,7 @@ bl_info = {
     "name": "velvet_revolution ::",
     "description": "Pack your stuff to go",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (1, 0, 20170227),
+    "version": (1, 0, 20170303),
     "blender": (2, 78, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
@@ -214,14 +214,17 @@ def pack_your_stuff(scenes, export_path, sec_margin):
                 if not os.path.exists(new_f):
                     os.mkdir(new_f)
 
-                # If images do not exist in new folder yet, copy them
-                # Images in image strips can be acessed with a loop on
+                # If images do not exist in new folder yet, copy them.
+                # Images within image strips can be acessed with a loop on
                 # seq.elements; they are stored at seq.directory
                 new_f += os.sep
                 for e in seq.elements:
                     new_image = new_f + e.filename
                     if not os.path.isfile(new_image):
                         copyfile(seq.directory+e.filename, new_image)
+
+                # Update keyframes for strip
+                copy_keyframes(seq, scene, bpy.data.scenes[-1])
 
                 # Update change in timeline
                 seq.directory = new_f
@@ -279,7 +282,8 @@ def pack_your_stuff(scenes, export_path, sec_margin):
                 # won't bump into another strip and be replaced at an odd channel
                 seq.channel = 35
                 # The name of the strips cannot be changed if we want the
-                # keyframes to be pasted back to them accordingly. Maybe
+                # keyframes to be pasted back to them accordingly. Even if
+                # the name is changed AFTER copying the keyframes. Maybe
                 # a bug in the API?
                 #seq.name = new_name
                 seq.filepath = new_path
