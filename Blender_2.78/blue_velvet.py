@@ -22,7 +22,7 @@ bl_info = {
     "name": "blue_velvet ::",
     "description": "An exporter of Blender's VSE audio timeline to Ardour",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (1, 0, 20160328),
+    "version": (1, 0, 20170827),
     "blender": (2, 78, 0),
     "warning": "War, children, it's just a shot away.",
     "category": ":",
@@ -57,9 +57,9 @@ def checkFPS():
     return fps, timecode
 
 
-def checkSampleFormat():
+def checkSampleFormat(sampleFormat):
     '''Check Sample Format's compatibility with Ardour'''
-    sampleFormat = bpy.context.user_preferences.system.audio_sample_format
+    # sampleFormat = bpy.context.user_preferences.system.audio_sample_format
     if (sampleFormat == "S16"):
         sampleFormat = "FormatInt16"
     elif (sampleFormat == "S24"):
@@ -501,12 +501,12 @@ from xml.dom.minidom import parseString
 
 
 def createXML(sources, startFrame, endFrame, fps, timecode, audioRate,
-              ardourBasename, audiosFolder):
+              sampleFormat, ardourBasename, audiosFolder):
     '''Creates full Ardour XML to be written to a file'''
     global idCounter
     sources, repeated, tracks, idCounter = getAudioTimeline(audioRate, fps)
     tracks = sorted(set(tracks))[::-1]
-    sampleFormat = checkSampleFormat()
+    sampleFormat = checkSampleFormat(sampleFormat)
     ardourStart = toSamples((startFrame-1), audioRate, fps)
     ardourEnd = toSamples((endFrame-1), audioRate, fps)
 
@@ -601,7 +601,7 @@ from shutil import which
 from subprocess import call
 
 
-def runFFMPEG(ffCommand, sources, audioRate, outputFolder):
+def runFFMPEG(ffCommand, sources, audioRate, sampleFormat, outputFolder):
     if not os.path.exists(ffCommand):
         raise RuntimeError(
             "You don't seem to have FFMPEG on your system. Either"
@@ -610,6 +610,14 @@ def runFFMPEG(ffCommand, sources, audioRate, outputFolder):
 
     if (os.path.exists(outputFolder) is False):
         os.mkdir(outputFolder)
+
+    # Choose audio codec for ffmpeg according to blender project
+    if sampleFormat == "S16":
+        acodec = "pcm_s16le"
+    elif sampleFormat == "S24":
+        acodec = "pcm_s24le"
+    elif sampleFormat == "FLOAT":
+        acodec = "pcm_f32le"        
 
     for source in sources:
         basename, ext = os.path.splitext(source['name'])
@@ -623,8 +631,8 @@ def runFFMPEG(ffCommand, sources, audioRate, outputFolder):
 
         # Due to spaces, the command entries (ffCommand, input and output) have
         # to be read as strings by the call command, thus the escapings below
-        callFFMPEG = "\"%s\" -i \"%s\" -y -vn -ar %i -ac \"%s\" \"%s\"" \
-                     % (ffCommand, input, audioRate, audioChannels, output)
+        callFFMPEG = "\"%s\" -i \"%s\" -y -vn -ar %i -ac \"%s\" -acodec \"%s\" \"%s\"" \
+                     % (ffCommand, input, audioRate, audioChannels, acodec, output)
         print(callFFMPEG)
         call(callFFMPEG, shell=True)
 
@@ -661,6 +669,7 @@ class ExportArdour(bpy.types.Operator, ExportHelper):
         preferences = bpy.context.user_preferences
         system = preferences.system
         audioRate = int(system.audio_sample_rate.split("_")[1])
+        sampleFormat = system.audio_sample_format
 
         audiosFolderPath, ardourFile = os.path.split(self.filepath)
         ardourBasename = os.path.splitext(ardourFile)[0]
@@ -668,11 +677,11 @@ class ExportArdour(bpy.types.Operator, ExportHelper):
 
         sources = []
         Session, sources = createXML(sources, startFrame, endFrame, fps,
-                                     timecode, audioRate, ardourBasename,
-                                     audiosFolder)
+                                     timecode, audioRate, sampleFormat,
+                                     ardourBasename, audiosFolder)
 
         ffCommand = preferences.addons['blue_velvet'].preferences.ffCommand
-        runFFMPEG(ffCommand, sources, audioRate, audiosFolder)
+        runFFMPEG(ffCommand, sources, audioRate, sampleFormat, audiosFolder)
 
         writeXML(self.filepath, Session)
 
