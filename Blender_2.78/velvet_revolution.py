@@ -22,9 +22,10 @@ bl_info = {
     "name": "velvet_revolution ::",
     "description": "Pack your stuff to go",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (1, 0, 20170303),
-    "blender": (2, 78, 0),
-    "warning": "Bang! Bang! That awful sound.",
+    "version": (1, 0, 20171103),
+    "blender": (2, 79, 0),
+    #"warning": "Revolution in their minds, the children start to march",
+    "warning": "I can tell you lies. You can't get enough. Make a true believer of anyone, anyone, anyone.",
     "category": ":",
     "location": "File > External Data > Velvet Revolution",
     "support": "COMMUNITY"}
@@ -123,6 +124,7 @@ def copy_keyframes(current_strip, scene1, scene2):
     area = bpy.context.area
     old_type = area.type
     area.type = 'GRAPH_EDITOR'
+
     # bpy.data.scenes['Scene'].frame_current = 0
     bpy.ops.graph.select_leftright(mode='RIGHT', extend=False)
     bpy.ops.graph.paste(offset='NONE' , merge='OVER_ALL')
@@ -201,10 +203,15 @@ def pack_your_stuff(scenes, export_path, sec_margin):
                         audio_pool.append(new_name)
 
                     # Update keyframes for strip
-                    copy_keyframes(seq, scene, bpy.data.scenes[-1])
+                    #copy_keyframes(seq, scene, bpy.data.scenes[-1])
                     
                     # Update change in timeline
                     seq.sound.filepath = new_path
+                    
+                    # It seems s_path is getting all mixed up when running
+                    # the script, mixing filepaths from different strips.
+                    # That's why we're reseting s_path here:
+                    s_path = ""
 
             elif seq.type == 'IMAGE':
                 # Check if original images' directory exists; else create it
@@ -224,12 +231,19 @@ def pack_your_stuff(scenes, export_path, sec_margin):
                         copyfile(seq.directory+e.filename, new_image)
 
                 # Update keyframes for strip
-                copy_keyframes(seq, scene, bpy.data.scenes[-1])
+                #copy_keyframes(seq, scene, bpy.data.scenes[-1])
 
                 # Update change in timeline
                 seq.directory = new_f
 
+                # It seems s_path is getting all mixed up when running
+                # the script, mixing filepaths from different strips.
+                # That's why we're reseting s_path here:
+                s_path = ""
+
             elif seq.type == 'MOVIE':
+                #s_path = bpy.path.abspath(seq.filepath, start="/")
+                s_path = seq.filepath
                 video_counter += 1
                 # Sum possible offsets (animation_offset and frame_offset)
                 # to pass as argument for ffmpeg. Values are in frames
@@ -247,12 +261,18 @@ def pack_your_stuff(scenes, export_path, sec_margin):
                     new_offset_start = start_offset
 
                 # Check end offsets; end offsets do not affect ffmpeg seeking
+                # For some reason, if the strip has end_offset == 0, it will
+                # leave a grey trace when being repositioned. For this reason,
+                # we're removing one frame of every movie strip that had no
+                # cut at its end. Apparently, this does the trick.
                 if end_offset > chosen_margin:
                     duration += chosen_margin
                     new_offset_end = chosen_margin
-                else: # end_offset <= chosen_margin
+                elif end_offset <= chosen_margin and end_offset != 0:
                     duration += end_offset
                     new_offset_end = end_offset
+                else: # end_offset <= chosen_margin and end_offset == 0
+                    new_offset_end = -1
 
                 # Convert frames to seconds/milliseconds.
                 seek_value = seek/fps
@@ -265,7 +285,7 @@ def pack_your_stuff(scenes, export_path, sec_margin):
                 ff_parameters = "-t %s -probesize 5000000 -c:v mjpeg -qscale:v 1 -an"\
                                 % (str(duration))
                 callFFMPEG = "\"%s\" -ss %s -i \"%s\" -y %s \"%s\"" % (ffCommand, \
-                              str(seek_value), seq.filepath, ff_parameters, new_path)
+                              str(seek_value), s_path, ff_parameters, new_path)
 
                 print(callFFMPEG)
                 call(callFFMPEG, shell=True)
@@ -275,7 +295,7 @@ def pack_your_stuff(scenes, export_path, sec_margin):
                 original_channel = seq.channel
  
                 # Update keyframes for strip
-                copy_keyframes(seq, scene, bpy.data.scenes[-1])
+                #copy_keyframes(seq, scene, bpy.data.scenes[-1])
 
                 # Replace strip's path to point to the new one. We temporarily
                 # position it at channel 35 so that when we clear its offsets, it
@@ -287,7 +307,7 @@ def pack_your_stuff(scenes, export_path, sec_margin):
                 # a bug in the API?
                 #seq.name = new_name
                 seq.filepath = new_path
-                # Clear all possible offsets and reposition strip
+                # Clear all possible offsets to reposition strip
                 seq.animation_offset_start = 0
                 seq.animation_offset_end = 0
                 seq.frame_offset_start = new_offset_start
@@ -295,6 +315,17 @@ def pack_your_stuff(scenes, export_path, sec_margin):
                 # Reposition strip
                 seq.frame_start = new_position
                 seq.channel = original_channel
+                
+                # It seems s_path is getting all mixed up when running
+                # the script, mixing filepaths from different strips.
+                # That's why we're reseting s_path here:
+                s_path = ""
+
+            # Copy original keyframes after repositioning all strips in the
+            # new timeline
+            for seq in bpy.context.sequences:
+                #if seq.type == 'SOUND' or seq.type == 'IMAGE' or seq.type == 'MOVIE':
+                copy_keyframes(seq, scene, bpy.data.scenes[-1])
 
         # Remove previously created backup scene for keyframe copying
         bpy.context.screen.scene = bpy.data.scenes[-1]
@@ -312,9 +343,9 @@ class VelvetRevolution_PackYourStuff(bpy.types.Operator, ExportHelper):
     filename_ext = ".blend"
 
     prop_sec = IntProperty(
-        name="Seconds",
-        description="Seconds to leave as margin in movie strips in backup",
-        default=2
+        name = "Seconds",
+        description = "Seconds to leave as margin in movie strips in backup",
+        default = 2
     )
 
     def draw(self, context):
@@ -339,6 +370,7 @@ class VelvetRevolution_PackYourStuff(bpy.types.Operator, ExportHelper):
         sec_margin = self.prop_sec
         scenes = bpy.data.scenes
         if sanity_check(scenes):
+            print("#"*50 + "\nRunning Velvet Revolution\n" + "#"*50)
             pack_your_stuff(scenes, export_path, sec_margin)
 
         # Save all changes in .blend file and finish
