@@ -1,0 +1,23 @@
+Blender Velvets release notes for Blender 2.79
+------------------------------------------------
+
+- Shortcut for Blender Revolver function "Proxy_Editing_ToProxy", responsible
+  for changing full-res videos paths to proxies paths has changed from 
+  Crtl+Alt+P to Ctrl+Shift+Alt+P.
+  
+- Introducing Velvet Revolution. Revolution allows you to back up your projects
+  in smaller size than if you kept all videos and audios in your computer. The
+  addon recognizes the cuts in your timeline, then fetches only those videos,
+  audios and images to back up, ignoring the rest. This back up will consist
+  of your *cuts*, not of your original videos, reducing the backup size.
+  You can choose a margin between the cuts (default is 2 seconds) in case you 
+  may need to do a new future render with minor differences. This addon is 
+  inspired by a function Final Cut has (or has had) and which name I still
+  have to find out. Velvet Revolver at this stage is to be considered
+  EXPERIMENTAL, so double check your cuts after using it and before discarding
+  any of the original data. Feedback is appreciated.
+
+- TODO: Strips_Channel_Down still holds a small bug when downing strips. This
+  bug has been addressed during the update for Blender 2.78, but there a small
+  bug still persists when downing strips in some specific ocasions. Map this
+  out.
