@@ -15,7 +15,7 @@ The **Blender Velvets** are a series of Blender Addons (or plugins, if you prefe
 ###### ::velvet_revolver::
 
     ::velvet_revolver:: has been tested and works on Blender versions:
-    2.78 (ffmpeg 3.2); 2.77 (ffmpeg 3.0); 2.76 (ffmpeg 2.8.1); 2.75 and 2.74 (ffmpeg 2.7.1); 2.73a and 2.72b (ffmpeg 2.5.3); 2.71, 2.69.
+    2.79 (ffmpeg 3.4); 2.78 (ffmpeg 3.2); 2.77 (ffmpeg 3.0); 2.76 (ffmpeg 2.8.1); 2.75 and 2.74 (ffmpeg 2.7.1); 2.73a and 2.72b (ffmpeg 2.5.3); 2.71, 2.69.
     There is no reason why it should not work on versions between those.
 
 The **::velvet_revolver::** is designed to make mass proxy generating an easy task for those lazy enough to open a terminal. It can create SD intra-frame (meaning 480p ProRes422 or MJPEG) proxies from all your videos using Blender's own interface. Just point it to a folder and dance to the radio for a while. In case you have multiple FPS in your footage, notoriously crappy to use in Blender, Revolver can also create full-Res copies of your sources, levelling everything to your chosen FPS. *Read the full documentation at [Velvet Revolver's webpage](http://blendervelvets.org/en/velvet-revolver/) (in English, Portuguese, Spanish and French).*
@@ -23,7 +23,7 @@ The **::velvet_revolver::** is designed to make mass proxy generating an easy ta
 ###### ::velvet_goldmine::
 
     ::velvet_goldmine:: has been tested and works on Blender versions:
-    2.78; 2.77; 2.76, 2.75, 2.74, 2.73a, 2.72b, 2.71, 2.7, 2.69, 2.68a, 2.66b, 2.66a, 2.66 and 2.65.
+    2.79; 2.78; 2.77; 2.76, 2.75, 2.74, 2.73a, 2.72b, 2.71, 2.7, 2.69, 2.68a, 2.66b, 2.66a, 2.66 and 2.65.
     There is no reason why it should not work on versions between those.
 
 The **::velvet_goldmine::** is a bunch of new functions and shortcuts aimed to fasten and loosen the overall hard VSE user interface. To be used with lots of glitter and with its companion, the *velvet_shortcuts*, for one can't dance alone, eh? *Read the full documentation at [Velvet Goldmine's webpage](http://blendervelvets.org/en/velvet-goldmine/) (in English, Portuguese, Spanish and French).*
@@ -31,7 +31,7 @@ The **::velvet_goldmine::** is a bunch of new functions and shortcuts aimed to f
 ###### ::blue_velvet::
 
     ::blue_velvet:: has been tested and works on Blender versions:
-    2.78 (ffmpeg 3.2 and Ardour 5.3.0); 2.77 (ffmpeg 3.0 and Ardour 4.7.0); 2.76 (ffmpeg 2.8.1 and Ardour 4.4.0); 2.75 and 2.74 (ffmpeg 2.7.1 and Ardour 4.1.0); 2.73a and 2.72b (ffmpeg 2.5.3 and Ardour 3.5.403); 2.69 (Ardour 3.2)
+    2.79 (ffmpeg 3.4 and Ardour 5.12.0); 2.78 (ffmpeg 3.2 and Ardour 5.3.0); 2.77 (ffmpeg 3.0 and Ardour 4.7.0); 2.76 (ffmpeg 2.8.1 and Ardour 4.4.0); 2.75 and 2.74 (ffmpeg 2.7.1 and Ardour 4.1.0); 2.73a and 2.72b (ffmpeg 2.5.3 and Ardour 3.5.403); 2.69 (Ardour 3.2)
     There is no reason why it should not work on versions between those.
 
 You can edit in Blender, but there's no way you will get decent audio out of it. The program was simply not made for DAW uses, so stop whining. What **::blue_velvet::** does is to get your finished timeline and export the audio cuts directly to Ardour, the correct program to deal with them. *Read the full documentation at [Blue Velvet's webpage](http://blendervelvets.org/en/blue-velvet/) (in English, Portuguese, Spanish and French).*
@@ -39,20 +39,18 @@ You can edit in Blender, but there's no way you will get decent audio out of it.
 ###### ::modified_space_sequencer::
 
     the modified space_sequencer has been tested and works on Blender versions:
-    2.78; 2.77; 2.76, 2.75, 2.74, 2.73a, 2.72b, 2.72, 2.71, 2.70, 2.69, 2.68a, 2.66b, 2.66a, 2.66 and 2.65.
+    2.79; 2.78; 2.77; 2.76, 2.75, 2.74, 2.73a, 2.72b, 2.72, 2.71, 2.70, 2.69, 2.68a, 2.66b, 2.66a, 2.66 and 2.65.
     There is no reason why it should not work on versions between those.
 
 Blender has an original space_sequencer, which is the VSE user interface. It is loaded every time the program starts. The use of a modified version of this script brings up a number of controls that exist but are hidden, adds some new and useful info for when you are in the middle of a project and gathers the most relevant strip properties in the Viewer window instead the scattered Strip Properties Panel (this is especially good for color grading). *Read the full documentation at the [Modified Space Sequencer webpage](http://blendervelvets.org/en/space-sequencer/) (in English, Portuguese, Spanish and French).*
-
-
 <BR>
+
 General install instructions
 ----------------------------
 
 Detailed instructions for installing the addons can be found on [this dedicated page](http://blendervelvets.org/en/blender-config/) (see [this section](http://blendervelvets.org/en/blender-config/#addons_install)). Instructions on how to use each addon can be seen on their respective pages at [blendervelvets.org](http://blendervelvets.org/) (in English, Portuguese, Spanish and French). 
-
-
 <BR>
+
 ::velvet_revolver:: shortcuts cheatsheet
 --------------------------------------------
 
@@ -60,14 +58,15 @@ Shortcuts for ::velvet_revolver:: are:
 
     "Proxy Editing - Change to Proxies"
     """Change filepaths of current strips to proxy files (_proxy.mov)"""
-    # Shortcut:  Ctrl + Alt + P
+    # Shortcut:  Ctrl + Alt + P (Until Blender 2.78)
+    # Shortcut:  Ctrl + Alt + Shift + P (Blender 2.79 onwards)
 
     "Proxy Editing - Change to Full Resolution"
     """Change filepaths of current strips back to full-resolution files"""
     # Shortcut:  Ctrl + Shift + P
 
-
 <BR>
+
 ::velvet_goldmine:: shortcuts cheatsheet
 --------------------------------------------
 
