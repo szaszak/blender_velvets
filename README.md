@@ -1,9 +1,9 @@
 the Blender Velvets
 ===================
+![Blender Velvets](https://florestavermelha.files.wordpress.com/2014/02/velvet_goldmine_full.jpg)
 
 <BR>
-![alt text](http://florestavermelha.files.wordpress.com/2014/02/velvet_goldmine_full.jpg "the Blender Velvets")
-##### *<p align="center">Glamorous new functions for video editing in Blender VSE. To be used with lots of glitter.</p>*
+<p align="center">Glamorous new functions for video editing in Blender VSE. To be used with lots of glitter.</p>
 <BR>
 
 What are the Blender Velvets?
