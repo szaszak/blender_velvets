@@ -1,7 +1,7 @@
 Blender Velvets release notes for Blender 2.79
 ------------------------------------------------
 
-- Shortcut for Blender Revolver function "Proxy_Editing_ToProxy", responsible
+- Shortcut for Velvet Revolver function "Proxy_Editing_ToProxy", responsible
   for changing full-res videos paths to proxies paths has changed from 
   Crtl+Alt+P to Ctrl+Shift+Alt+P.
   
