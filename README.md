@@ -43,16 +43,14 @@ You can edit in Blender, but there's no way you will get decent audio out of it.
     There is no reason why it should not work on versions between those.
 
 Blender has an original space_sequencer, which is the VSE user interface. It is loaded every time the program starts. The use of a modified version of this script brings up a number of controls that exist but are hidden, adds some new and useful info for when you are in the middle of a project and gathers the most relevant strip properties in the Viewer window instead the scattered Strip Properties Panel (this is especially good for color grading). *Read the full documentation at the [Modified Space Sequencer webpage](http://blendervelvets.org/en/space-sequencer/) (in English, Portuguese, Spanish and French).*
-
-
 <BR>
+
 General install instructions
 ----------------------------
 
 Detailed instructions for installing the addons can be found on [this dedicated page](http://blendervelvets.org/en/blender-config/) (see [this section](http://blendervelvets.org/en/blender-config/#addons_install)). Instructions on how to use each addon can be seen on their respective pages at [blendervelvets.org](http://blendervelvets.org/) (in English, Portuguese, Spanish and French). 
-
-
 <BR>
+
 ::velvet_revolver:: shortcuts cheatsheet
 --------------------------------------------
 
@@ -67,8 +65,8 @@ Shortcuts for ::velvet_revolver:: are:
     """Change filepaths of current strips back to full-resolution files"""
     # Shortcut:  Ctrl + Shift + P
 
-
 <BR>
+
 ::velvet_goldmine:: shortcuts cheatsheet
 --------------------------------------------
 
