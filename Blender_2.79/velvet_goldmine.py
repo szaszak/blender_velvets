@@ -25,7 +25,7 @@ bl_info = {
     "name": "velvet_goldmine ::",
     "description": "Glamorous new shortcuts for video editing in Blender VSE",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (1, 0, 20171025),
+    "version": (1, 0, 20181122),
     "blender": (2, 79, 0),
     "warning": "TO BE USED WITH LOTS OF GLITTER",
     "category": ":",
@@ -626,6 +626,9 @@ class Slight_Desync_Adjust(bpy.types.Operator):
                 # their final frames - if so, remove 1 frame from audio
                 if ss == ms and sp == mp and (se - me == 1):
                     sound.animation_offset_end += 1
+                
+                if ss == ms and sp == mp and (se - me == 2):
+                    sound.animation_offset_end += 2
 
         return {'FINISHED'}
 
