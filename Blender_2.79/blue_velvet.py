@@ -560,12 +560,14 @@ def createXML(sources, startFrame, endFrame, fps, timecode, audioRate,
 
     # create another sources' entry for stereo files
     stereoSources = []
+    numAdded = 0
     for source in sources:
         if (source['channels'] == 1):
             source['id'] = int(source['id'] + idCounter)
             createAudioSources(Session, source, 1)
             stereoSources.append(source)
-            idCounter += 1
+            numAdded += 1
+    idCounter += numAdded
 
     # create playlists (tracks)
     for track in tracks:
