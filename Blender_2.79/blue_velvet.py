@@ -155,8 +155,11 @@ def getAudioTimeline(ar, fps):
                 audioData['nExt'] = 1
                 audioData['ardour_name'] = "%s.%i" % (audioData['base_name'],
                                                       audioData['nExt'])
-                timelineSources.append(audioData)
-                idCounter += 1
+                if any (d['base_name'] == base_name for d in timelineSources):
+                    timelineRepeated.append(audioData)
+                else:
+                    timelineSources.append(audioData)
+                    idCounter += 1
             else:
                 audioData['nExt'] = int(ext)
                 audioData['ardour_name'] = "%s.%i" % (audioData['base_name'],
