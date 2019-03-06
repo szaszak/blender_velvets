@@ -562,10 +562,12 @@ def createXML(sources, startFrame, endFrame, fps, timecode, audioRate,
     stereoSources = []
     numAdded = 0
     for source in sources:
-        if (source['channels'] == 1):
-            source['id'] = int(source['id'] + idCounter)
-            createAudioSources(Session, source, 1)
-            stereoSources.append(source)
+        if (source['channels'] == 1) and not any (source['base_name'] ==
+                d['base_name'] for d in stereoSources):
+            newsrc = source.copy()
+            newsrc['id'] = int(newsrc['id'] + idCounter)
+            createAudioSources(Session, newsrc, 1)
+            stereoSources.append(newsrc)
             numAdded += 1
     idCounter += numAdded
 
