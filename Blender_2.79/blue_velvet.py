@@ -155,8 +155,11 @@ def getAudioTimeline(ar, fps):
                 audioData['nExt'] = 1
                 audioData['ardour_name'] = "%s.%i" % (audioData['base_name'],
                                                       audioData['nExt'])
-                timelineSources.append(audioData)
-                idCounter += 1
+                if any (d['base_name'] == base_name for d in timelineSources):
+                    timelineRepeated.append(audioData)
+                else:
+                    timelineSources.append(audioData)
+                    idCounter += 1
             else:
                 audioData['nExt'] = int(ext)
                 audioData['ardour_name'] = "%s.%i" % (audioData['base_name'],
@@ -560,12 +563,16 @@ def createXML(sources, startFrame, endFrame, fps, timecode, audioRate,
 
     # create another sources' entry for stereo files
     stereoSources = []
+    numAdded = 0
     for source in sources:
-        if (source['channels'] == 1):
-            source['id'] = int(source['id'] + idCounter)
-            createAudioSources(Session, source, 1)
-            stereoSources.append(source)
-            idCounter += 1
+        if (source['channels'] == 1) and not any (source['base_name'] ==
+                d['base_name'] for d in stereoSources):
+            newsrc = source.copy()
+            newsrc['id'] = int(newsrc['id'] + idCounter)
+            createAudioSources(Session, newsrc, 1)
+            stereoSources.append(newsrc)
+            numAdded += 1
+    idCounter += numAdded
 
     # create playlists (tracks)
     for track in tracks:
