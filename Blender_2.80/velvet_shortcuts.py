@@ -1,364 +1,847 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
-
-
 # Velvet Shortcuts version date: 20190909
 # To be used with Blender versions 2.80
 # Check documentation at http://blendervelvets.org
 # Author: szaszak
 
+keyconfig_data = \
+[("Screen",
+  {"space_type": 'EMPTY', "region_type": 'WINDOW'},
+  {"items":
+   [("screen.animation_step", {"type": 'TIMER0', "value": 'ANY', "any": True}, None),
+    ("screen.region_blend", {"type": 'TIMERREGION', "value": 'ANY', "any": True}, None),
+    ("screen.space_context_cycle",
+     {"type": 'TAB', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("direction", 'NEXT'),
+       ],
+      },
+     ),
+    ("screen.space_context_cycle",
+     {"type": 'TAB', "value": 'PRESS', "shift": True, "ctrl": True},
+     {"properties":
+      [("direction", 'PREV'),
+       ],
+      },
+     ),
+    ("screen.workspace_cycle",
+     {"type": 'PAGE_DOWN', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("direction", 'NEXT'),
+       ],
+      },
+     ),
+    ("screen.workspace_cycle",
+     {"type": 'PAGE_UP', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("direction", 'PREV'),
+       ],
+      },
+     ),
+    ("screen.region_quadview", {"type": 'Q', "value": 'PRESS', "ctrl": True, "alt": True}, None),
+    ("screen.repeat_last", {"type": 'R', "value": 'PRESS', "shift": True}, None),
+    ("file.execute", {"type": 'RET', "value": 'PRESS'}, None),
+    ("file.execute", {"type": 'NUMPAD_ENTER', "value": 'PRESS'}, None),
+    ("file.cancel", {"type": 'ESC', "value": 'PRESS'}, None),
+    ("ed.undo", {"type": 'Z', "value": 'PRESS', "ctrl": True}, None),
+    ("ed.redo", {"type": 'Z', "value": 'PRESS', "shift": True, "ctrl": True}, None),
+    ("render.render",
+     {"type": 'F12', "value": 'PRESS'},
+     {"properties":
+      [("use_viewport", True),
+       ],
+      },
+     ),
+    ("render.render",
+     {"type": 'F12', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("animation", True),
+       ("use_viewport", True),
+       ],
+      },
+     ),
+    ("render.view_cancel", {"type": 'ESC', "value": 'PRESS'}, None),
+    ("render.view_show", {"type": 'F11', "value": 'PRESS'}, None),
+    ("render.play_rendered_anim", {"type": 'F11', "value": 'PRESS', "ctrl": True}, None),
+    ("screen.screen_full_area", {"type": 'SPACE', "value": 'PRESS', "ctrl": True}, None),
+    ("screen.screen_full_area",
+     {"type": 'SPACE', "value": 'PRESS', "ctrl": True, "alt": True},
+     {"properties":
+      [("use_hide_panels", True),
+       ],
+      },
+     ),
+    ("screen.redo_last", {"type": 'F9', "value": 'PRESS'}, None),
+    ("screen.scene_toggle", {"type": 'TAB', "value": 'PRESS', "shift": True}, None),
+    ],
+   },
+  ),
+ ("Animation",
+  {"space_type": 'EMPTY', "region_type": 'WINDOW'},
+  {"items":
+   [("wm.context_toggle",
+     {"type": 'T', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("data_path", 'space_data.show_seconds'),
+       ],
+      },
+     ),
+    ("anim.previewrange_set", {"type": 'P', "value": 'PRESS'}, None),
+    ("anim.previewrange_clear", {"type": 'P', "value": 'PRESS', "alt": True}, None),
+    ("anim.start_frame_set", {"type": 'HOME', "value": 'PRESS', "ctrl": True}, None),
+    ("anim.start_frame_one_set", {"type": 'HOME', "value": 'PRESS', "alt": True}, None),
+    ("anim.end_frame_set", {"type": 'END', "value": 'PRESS', "ctrl": True}, None),
+    ("anim.end_frame_last_set", {"type": 'END', "value": 'PRESS', "alt": True}, None),
+    ("anim.change_frame", {"type": 'RIGHTMOUSE', "value": 'PRESS'}, None),
+    ],
+   },
+  ),
+ ("Graph Editor",
+  {"space_type": 'GRAPH_EDITOR', "region_type": 'WINDOW'},
+  {"items":
+   [("wm.context_toggle",
+     {"type": 'H', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("data_path", 'space_data.show_handles'),
+       ],
+      },
+     ),
+    ("graph.clickselect",
+     {"type": 'LEFTMOUSE', "value": 'PRESS'},
+     {"properties":
+      [("extend", False),
+       ("deselect_all", True),
+       ("column", False),
+       ("curves", False),
+       ],
+      },
+     ),
+    ("graph.clickselect",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "alt": True},
+     {"properties":
+      [("extend", False),
+       ("column", True),
+       ("curves", False),
+       ],
+      },
+     ),
+    ("graph.clickselect",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("extend", True),
+       ("column", False),
+       ("curves", False),
+       ],
+      },
+     ),
+    ("graph.clickselect",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "alt": True},
+     {"properties":
+      [("extend", True),
+       ("column", True),
+       ("curves", False),
+       ],
+      },
+     ),
+    ("graph.clickselect",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True, "alt": True},
+     {"properties":
+      [("extend", False),
+       ("column", False),
+       ("curves", True),
+       ],
+      },
+     ),
+    ("graph.clickselect",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True, "alt": True},
+     {"properties":
+      [("extend", True),
+       ("column", False),
+       ("curves", True),
+       ],
+      },
+     ),
+    ("graph.select_leftright",
+     {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True},
+     {"properties":
+      [("mode", 'CHECK'),
+       ("extend", False),
+       ],
+      },
+     ),
+    ("graph.select_leftright",
+     {"type": 'LEFTMOUSE', "value": 'CLICK', "shift": True, "ctrl": True},
+     {"properties":
+      [("mode", 'CHECK'),
+       ("extend", True),
+       ],
+      },
+     ),
+    ("graph.select_leftright",
+     {"type": 'LEFT_BRACKET', "value": 'PRESS'},
+     {"properties":
+      [("mode", 'LEFT'),
+       ("extend", False),
+       ],
+      },
+     ),
+    ("graph.select_leftright",
+     {"type": 'RIGHT_BRACKET', "value": 'PRESS'},
+     {"properties":
+      [("mode", 'RIGHT'),
+       ("extend", False),
+       ],
+      },
+     ),
+    ("graph.select_all",
+     {"type": 'A', "value": 'PRESS'},
+     {"properties":
+      [("action", 'SELECT'),
+       ],
+      },
+     ),
+    ("graph.select_all",
+     {"type": 'A', "value": 'PRESS', "alt": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("graph.select_all",
+     {"type": 'I', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
+    ("graph.select_all",
+     {"type": 'A', "value": 'DOUBLE_CLICK'},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("graph.select_box",
+     {"type": 'B', "value": 'PRESS'},
+     {"properties":
+      [("axis_range", False),
+       ("include_handles", False),
+       ],
+      },
+     ),
+    ("graph.select_box",
+     {"type": 'B', "value": 'PRESS', "alt": True},
+     {"properties":
+      [("axis_range", True),
+       ("include_handles", False),
+       ],
+      },
+     ),
+    ("graph.select_box",
+     {"type": 'B', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("axis_range", False),
+       ("include_handles", True),
+       ],
+      },
+     ),
+    ("graph.select_box",
+     {"type": 'B', "value": 'PRESS', "ctrl": True, "alt": True},
+     {"properties":
+      [("axis_range", True),
+       ("include_handles", True),
+       ],
+      },
+     ),
+    ("graph.select_box",
+     {"type": 'EVT_TWEAK_L', "value": 'ANY'},
+     {"properties":
+      [("tweak", True),
+       ("mode", 'SET'),
+       ],
+      },
+     ),
+    ("graph.select_box",
+     {"type": 'EVT_TWEAK_L', "value": 'ANY', "shift": True},
+     {"properties":
+      [("tweak", True),
+       ("mode", 'ADD'),
+       ],
+      },
+     ),
+    ("graph.select_box",
+     {"type": 'EVT_TWEAK_L', "value": 'ANY', "ctrl": True},
+     {"properties":
+      [("tweak", True),
+       ("mode", 'SUB'),
+       ],
+      },
+     ),
+    ("graph.select_lasso",
+     {"type": 'EVT_TWEAK_R', "value": 'ANY', "ctrl": True},
+     {"properties":
+      [("mode", 'ADD'),
+       ],
+      },
+     ),
+    ("graph.select_lasso",
+     {"type": 'EVT_TWEAK_R', "value": 'ANY', "shift": True, "ctrl": True},
+     {"properties":
+      [("mode", 'SUB'),
+       ],
+      },
+     ),
+    ("graph.select_circle", {"type": 'C', "value": 'PRESS'}, None),
+    ("graph.select_column",
+     {"type": 'K', "value": 'PRESS'},
+     {"properties":
+      [("mode", 'KEYS'),
+       ],
+      },
+     ),
+    ("graph.select_column",
+     {"type": 'K', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("mode", 'CFRA'),
+       ],
+      },
+     ),
+    ("graph.select_column",
+     {"type": 'K', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("mode", 'MARKERS_COLUMN'),
+       ],
+      },
+     ),
+    ("graph.select_column",
+     {"type": 'K', "value": 'PRESS', "alt": True},
+     {"properties":
+      [("mode", 'MARKERS_BETWEEN'),
+       ],
+      },
+     ),
+    ("graph.select_more", {"type": 'NUMPAD_PLUS', "value": 'PRESS', "ctrl": True}, None),
+    ("graph.select_less", {"type": 'NUMPAD_MINUS', "value": 'PRESS', "ctrl": True}, None),
+    ("graph.select_linked", {"type": 'L', "value": 'PRESS'}, None),
+    ("graph.frame_jump", {"type": 'G', "value": 'PRESS', "ctrl": True}, None),
+    ("wm.call_menu_pie",
+     {"type": 'S', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("name", 'GRAPH_MT_snap_pie'),
+       ],
+      },
+     ),
+    ("graph.mirror", {"type": 'M', "value": 'PRESS', "ctrl": True}, None),
+    ("graph.handle_type", {"type": 'V', "value": 'PRESS'}, None),
+    ("graph.interpolation_type", {"type": 'T', "value": 'PRESS'}, None),
+    ("graph.easing_type", {"type": 'E', "value": 'PRESS', "ctrl": True}, None),
+    ("graph.smooth", {"type": 'O', "value": 'PRESS', "alt": True}, None),
+    ("graph.sample", {"type": 'O', "value": 'PRESS', "shift": True, "alt": True}, None),
+    ("graph.bake", {"type": 'C', "value": 'PRESS', "alt": True}, None),
+    ("wm.call_menu",
+     {"type": 'X', "value": 'PRESS'},
+     {"properties":
+      [("name", 'GRAPH_MT_delete'),
+       ],
+      },
+     ),
+    ("wm.call_menu",
+     {"type": 'DEL', "value": 'PRESS'},
+     {"properties":
+      [("name", 'GRAPH_MT_delete'),
+       ],
+      },
+     ),
+    ("wm.call_menu",
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("name", 'GRAPH_MT_context_menu'),
+       ],
+      },
+     ),
+    ("graph.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True}, None),
+    ("graph.keyframe_insert", {"type": 'I', "value": 'PRESS'}, None),
+    ("graph.click_insert",
+     {"type": 'RIGHTMOUSE', "value": 'CLICK', "ctrl": True},
+     {"properties":
+      [("extend", False),
+       ],
+      },
+     ),
+    ("graph.click_insert",
+     {"type": 'RIGHTMOUSE', "value": 'CLICK', "shift": True, "ctrl": True},
+     {"properties":
+      [("extend", True),
+       ],
+      },
+     ),
+    ("graph.copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
+    ("graph.paste", {"type": 'V', "value": 'PRESS', "ctrl": True}, None),
+    ("graph.paste",
+     {"type": 'V', "value": 'PRESS', "shift": True, "ctrl": True},
+     {"properties":
+      [("flipped", True),
+       ],
+      },
+     ),
+    ("graph.previewrange_set", {"type": 'P', "value": 'PRESS', "ctrl": True, "alt": True}, None),
+    ("graph.view_all", {"type": 'HOME', "value": 'PRESS'}, None),
+    ("graph.view_all", {"type": 'NDOF_BUTTON_FIT', "value": 'PRESS'}, None),
+    ("graph.view_selected", {"type": 'NUMPAD_PERIOD', "value": 'PRESS'}, None),
+    ("graph.view_frame", {"type": 'NUMPAD_0', "value": 'PRESS'}, None),
+    ("graph.fmodifier_add",
+     {"type": 'M', "value": 'PRESS', "shift": True, "ctrl": True},
+     {"properties":
+      [("only_active", False),
+       ],
+      },
+     ),
+    ("anim.channels_editable_toggle", {"type": 'TAB', "value": 'PRESS'}, None),
+    ("transform.translate", {"type": 'G', "value": 'PRESS'}, None),
+    ("transform.translate", {"type": 'EVT_TWEAK_L', "value": 'ANY'}, None),
+    ("transform.transform",
+     {"type": 'E', "value": 'PRESS'},
+     {"properties":
+      [("mode", 'TIME_EXTEND'),
+       ],
+      },
+     ),
+    ("transform.rotate", {"type": 'R', "value": 'PRESS'}, None),
+    ("transform.resize", {"type": 'S', "value": 'PRESS'}, None),
+    ("wm.context_toggle",
+     {"type": 'O', "value": 'PRESS'},
+     {"properties":
+      [("data_path", 'tool_settings.use_proportional_fcurve'),
+       ],
+      },
+     ),
+    ("wm.call_menu_pie",
+     {"type": 'O', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("name", 'VIEW3D_MT_proportional_editing_falloff_pie'),
+       ],
+      },
+     ),
+    ("wm.call_menu_pie",
+     {"type": 'PERIOD', "value": 'PRESS'},
+     {"properties":
+      [("name", 'GRAPH_MT_pivot_pie'),
+       ],
+      },
+     ),
+    ("marker.add", {"type": 'M', "value": 'PRESS'}, None),
+    ("marker.rename", {"type": 'M', "value": 'PRESS', "ctrl": True}, None),
+    ("graph.cursor_set", {"type": 'RIGHTMOUSE', "value": 'PRESS'}, None),
+    ],
+   },
+  ),
+ ("Sequencer",
+  {"space_type": 'SEQUENCE_EDITOR', "region_type": 'WINDOW'},
+  {"items":
+   [("sequencer.select_all",
+     {"type": 'A', "value": 'PRESS'},
+     {"properties":
+      [("action", 'SELECT'),
+       ],
+      },
+     ),
+    ("sequencer.select_all",
+     {"type": 'A', "value": 'PRESS', "alt": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("sequencer.select_all",
+     {"type": 'I', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
+    ("sequencer.select_all",
+     {"type": 'A', "value": 'DOUBLE_CLICK'},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("sequencer.cut",
+     {"type": 'K', "value": 'PRESS'},
+     {"properties":
+      [("type", 'SOFT'),
+       ],
+      },
+     ),
+    ("sequencer.cut",
+     {"type": 'K', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("type", 'HARD'),
+       ],
+      },
+     ),
+    ("sequencer.mute",
+     {"type": 'H', "value": 'PRESS'},
+     {"properties":
+      [("unselected", False),
+       ],
+      },
+     ),
+    ("sequencer.mute",
+     {"type": 'H', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("unselected", True),
+       ],
+      },
+     ),
+    ("sequencer.unmute",
+     {"type": 'H', "value": 'PRESS', "alt": True},
+     {"properties":
+      [("unselected", False),
+       ],
+      },
+     ),
+    ("sequencer.unmute",
+     {"type": 'H', "value": 'PRESS', "shift": True, "alt": True},
+     {"properties":
+      [("unselected", True),
+       ],
+      },
+     ),
+    ("sequencer.strips_display_waveform", {"type": 'W', "value": 'PRESS'}, None),
+    ("sequencer.strips_hide_waveform", {"type": 'W', "value": 'PRESS', "alt": True}, None),
+    ("sequencer.lock", {"type": 'L', "value": 'PRESS', "shift": True}, None),
+    ("sequencer.unlock", {"type": 'L', "value": 'PRESS', "shift": True, "alt": True}, None),
+    ("sequencer.reassign_inputs", {"type": 'R', "value": 'PRESS'}, None),
+    ("sequencer.reload", {"type": 'R', "value": 'PRESS', "alt": True}, None),
+    ("sequencer.reload",
+     {"type": 'R', "value": 'PRESS', "shift": True, "alt": True},
+     {"properties":
+      [("adjust_length", True),
+       ],
+      },
+     ),
+    ("sequencer.refresh_all", {"type": 'R', "value": 'PRESS', "ctrl": True}, None),
+    ("sequencer.offset_clear", {"type": 'O', "value": 'PRESS', "alt": True}, None),
+    ("sequencer.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True}, None),
+    ("sequencer.fade_in_strip_start", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
+    ("sequencer.fade_out_strip_end", {"type": 'F', "value": 'PRESS', "alt": True}, None),
+    ("sequencer.strip_up", {"type": 'UP_ARROW', "value": 'PRESS', "alt": True}, None),
+    ("sequencer.strip_down", {"type": 'DOWN_ARROW', "value": 'PRESS', "alt": True}, None),
+    ("sequencer.delete", {"type": 'X', "value": 'PRESS'}, None),
+    ("sequencer.delete_direct", {"type": 'DEL', "value": 'PRESS'}, None),
+    ("sequencer.delete_direct_gaps", {"type": 'DEL', "value": 'PRESS', "ctrl": True}, None),
+    ("sequencer.copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
+    ("sequencer.paste", {"type": 'V', "value": 'PRESS', "ctrl": True}, None),
+    ("sequencer.images_separate", {"type": 'Y', "value": 'PRESS'}, None),
+    ("sequencer.meta_toggle", {"type": 'TAB', "value": 'PRESS'}, None),
+    ("sequencer.meta_make", {"type": 'G', "value": 'PRESS', "ctrl": True}, None),
+    ("sequencer.meta_separate", {"type": 'G', "value": 'PRESS', "ctrl": True, "alt": True}, None),
+    ("sequencer.view_all", {"type": 'HOME', "value": 'PRESS'}, None),
+    ("sequencer.view_all", {"type": 'NDOF_BUTTON_FIT', "value": 'PRESS'}, None),
+    ("sequencer.view_selected", {"type": 'NUMPAD_PERIOD', "value": 'PRESS'}, None),
+    ("sequencer.view_frame", {"type": 'NUMPAD_0', "value": 'PRESS'}, None),
+    ("sequencer.strip_jump",
+     {"type": 'PAGE_UP', "value": 'PRESS'},
+     {"properties":
+      [("next", True),
+       ("center", False),
+       ],
+      },
+     ),
+    ("sequencer.strip_jump",
+     {"type": 'PAGE_DOWN', "value": 'PRESS'},
+     {"properties":
+      [("next", False),
+       ("center", False),
+       ],
+      },
+     ),
+    ("sequencer.strip_jump",
+     {"type": 'PAGE_UP', "value": 'PRESS', "alt": True},
+     {"properties":
+      [("next", True),
+       ("center", True),
+       ],
+      },
+     ),
+    ("sequencer.strip_jump",
+     {"type": 'PAGE_DOWN', "value": 'PRESS', "alt": True},
+     {"properties":
+      [("next", False),
+       ("center", True),
+       ],
+      },
+     ),
+    ("sequencer.swap",
+     {"type": 'LEFT_ARROW', "value": 'PRESS', "alt": True},
+     {"properties":
+      [("side", 'LEFT'),
+       ],
+      },
+     ),
+    ("sequencer.swap",
+     {"type": 'RIGHT_ARROW', "value": 'PRESS', "alt": True},
+     {"properties":
+      [("side", 'RIGHT'),
+       ],
+      },
+     ),
+    ("sequencer.gap_remove",
+     {"type": 'BACK_SPACE', "value": 'PRESS'},
+     {"properties":
+      [("all", False),
+       ],
+      },
+     ),
+    ("sequencer.gap_remove",
+     {"type": 'BACK_SPACE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("all", True),
+       ],
+      },
+     ),
+    ("sequencer.gap_insert", {"type": 'EQUAL', "value": 'PRESS', "shift": True}, None),
+    ("sequencer.strips_concatenate_selected", {"type": 'C', "value": 'PRESS', "shift": True}, None),
+    ("sequencer.snap", {"type": 'S', "value": 'PRESS', "shift": True}, None),
+    ("sequencer.snap_selected_to_playhead", {"type": 'C', "value": 'PRESS', "shift": True, "ctrl": True, "alt": True}, None),
+    ("sequencer.snap_selected_to_timelinestart", {"type": 'S', "value": 'PRESS', "shift": True, "ctrl": True, "alt": True}, None),
+    ("sequencer.slight_desync_adjust", {"type": 'D', "value": 'PRESS', "shift": True, "ctrl": True, "alt": True}, None),
+    ("sequencer.swap_inputs", {"type": 'S', "value": 'PRESS', "alt": True}, None),
+    ("sequencer.strips_deinterlace", {"type": 'I', "value": 'PRESS', "shift": True, "ctrl": True}, None),
+    ("sequencer.strips_deinterlace_off", {"type": 'I', "value": 'PRESS', "shift": True, "alt": True}, None),
+    ("sequencer.cut_multicam",
+     {"type": 'ONE', "value": 'PRESS'},
+     {"properties":
+      [("camera", 1),
+       ],
+      },
+     ),
+    ("sequencer.cut_multicam",
+     {"type": 'TWO', "value": 'PRESS'},
+     {"properties":
+      [("camera", 2),
+       ],
+      },
+     ),
+    ("sequencer.cut_multicam",
+     {"type": 'THREE', "value": 'PRESS'},
+     {"properties":
+      [("camera", 3),
+       ],
+      },
+     ),
+    ("sequencer.cut_multicam",
+     {"type": 'FOUR', "value": 'PRESS'},
+     {"properties":
+      [("camera", 4),
+       ],
+      },
+     ),
+    ("sequencer.cut_multicam",
+     {"type": 'FIVE', "value": 'PRESS'},
+     {"properties":
+      [("camera", 5),
+       ],
+      },
+     ),
+    ("sequencer.cut_multicam",
+     {"type": 'SIX', "value": 'PRESS'},
+     {"properties":
+      [("camera", 6),
+       ],
+      },
+     ),
+    ("sequencer.cut_multicam",
+     {"type": 'SEVEN', "value": 'PRESS'},
+     {"properties":
+      [("camera", 7),
+       ],
+      },
+     ),
+    ("sequencer.cut_multicam",
+     {"type": 'EIGHT', "value": 'PRESS'},
+     {"properties":
+      [("camera", 8),
+       ],
+      },
+     ),
+    ("sequencer.cut_multicam",
+     {"type": 'NINE', "value": 'PRESS'},
+     {"properties":
+      [("camera", 9),
+       ],
+      },
+     ),
+    ("sequencer.cut_multicam",
+     {"type": 'ZERO', "value": 'PRESS'},
+     {"properties":
+      [("camera", 10),
+       ],
+      },
+     ),
+    ("sequencer.select",
+     {"type": 'LEFTMOUSE', "value": 'PRESS'},
+     {"properties":
+      [("extend", False),
+       ("deselect_all", True),
+       ("linked_handle", False),
+       ("left_right", 'NONE'),
+       ("linked_time", True),
+       ],
+      },
+     ),
+    ("sequencer.select",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("extend", True),
+       ("linked_handle", False),
+       ("left_right", 'NONE'),
+       ("linked_time", False),
+       ],
+      },
+     ),
+    ("sequencer.select",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "alt": True},
+     {"properties":
+      [("extend", False),
+       ("linked_handle", True),
+       ("left_right", 'NONE'),
+       ("linked_time", False),
+       ],
+      },
+     ),
+    ("sequencer.select",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "alt": True},
+     {"properties":
+      [("extend", True),
+       ("linked_handle", True),
+       ("left_right", 'NONE'),
+       ("linked_time", False),
+       ],
+      },
+     ),
+    ("sequencer.select",
+     {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True},
+     {"properties":
+      [("extend", False),
+       ("linked_handle", False),
+       ("left_right", 'MOUSE'),
+       ("linked_time", True),
+       ],
+      },
+     ),
+    ("sequencer.select",
+     {"type": 'LEFTMOUSE', "value": 'CLICK', "shift": True, "ctrl": True},
+     {"properties":
+      [("extend", True),
+       ("linked_handle", False),
+       ("left_right", 'MOUSE'),
+       ("linked_time", True),
+       ],
+      },
+     ),
+    ("sequencer.select_more", {"type": 'NUMPAD_PLUS', "value": 'PRESS', "ctrl": True}, None),
+    ("sequencer.select_less", {"type": 'NUMPAD_MINUS', "value": 'PRESS', "ctrl": True}, None),
+    ("sequencer.select_linked_pick",
+     {"type": 'L', "value": 'PRESS'},
+     {"properties":
+      [("extend", False),
+       ],
+      },
+     ),
+    ("sequencer.select_linked_pick",
+     {"type": 'L', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("extend", True),
+       ],
+      },
+     ),
+    ("sequencer.select_linked", {"type": 'L', "value": 'PRESS', "ctrl": True}, None),
+    ("sequencer.select_box",
+     {"type": 'EVT_TWEAK_L', "value": 'ANY'},
+     {"properties":
+      [("mode", 'SET'),
+       ("tweak", True),
+       ],
+      },
+     ),
+    ("sequencer.select_box",
+     {"type": 'EVT_TWEAK_L', "value": 'ANY', "shift": True},
+     {"properties":
+      [("mode", 'ADD'),
+       ("tweak", True),
+       ],
+      },
+     ),
+    ("sequencer.select_box",
+     {"type": 'EVT_TWEAK_L', "value": 'ANY', "ctrl": True},
+     {"properties":
+      [("mode", 'SUB'),
+       ("tweak", True),
+       ],
+      },
+     ),
+    ("sequencer.select_box", {"type": 'B', "value": 'PRESS'}, None),
+    ("sequencer.select_grouped", {"type": 'G', "value": 'PRESS', "shift": True}, None),
+    ("wm.call_menu",
+     {"type": 'A', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("name", 'SEQUENCER_MT_add'),
+       ],
+      },
+     ),
+    ("wm.call_menu",
+     {"type": 'C', "value": 'PRESS'},
+     {"properties":
+      [("name", 'SEQUENCER_MT_change'),
+       ],
+      },
+     ),
+    ("wm.call_menu",
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("name", 'SEQUENCER_MT_context_menu'),
+       ],
+      },
+     ),
+    ("sequencer.slip", {"type": 'S', "value": 'PRESS'}, None),
+    ("wm.context_set_int",
+     {"type": 'O', "value": 'PRESS'},
+     {"properties":
+      [("data_path", 'scene.sequence_editor.overlay_frame'),
+       ("value", 0),
+       ],
+      },
+     ),
+    ("transform.seq_slide", {"type": 'G', "value": 'PRESS'}, None),
+    ("transform.seq_slide", {"type": 'EVT_TWEAK_L', "value": 'ANY'}, None),
+    ("transform.transform",
+     {"type": 'E', "value": 'PRESS'},
+     {"properties":
+      [("mode", 'TIME_EXTEND'),
+       ],
+      },
+     ),
+    ("marker.add", {"type": 'M', "value": 'PRESS'}, None),
+    ("marker.rename", {"type": 'M', "value": 'PRESS', "ctrl": True}, None),
+    ("sequencer.marker_delete_closest", {"type": 'M', "value": 'PRESS', "alt": True}, None),
+    ("sequencer.marker_goto_left", {"type": 'LEFT_ARROW', "value": 'PRESS', "ctrl": True}, None),
+    ("sequencer.marker_goto_right", {"type": 'RIGHT_ARROW', "value": 'PRESS', "ctrl": True}, None),
+    ("sequencer.timeline_loop_selected", {"type": 'L', "value": 'PRESS', "shift": True, "ctrl": True, "alt": True}, None),
+    ("sequencer.timeline_preview_select", {"type": 'A', "value": 'PRESS', "shift": True, "ctrl": True}, None),
+    ("sequencer.view_selected_context", {"type": 'END', "value": 'PRESS'}, None),
+    ("sequencer.timeline_zoom_in_10s", {"type": 'HOME', "value": 'PRESS', "shift": True}, None),
+    ("sequencer.timeline_zoom_out_10s", {"type": 'END', "value": 'PRESS', "shift": True}, None),
+    ("sequencer.timeline_zoom_out_10s", {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True}, None),
+    ("sequencer.timeline_zoom_out_xy", {"type": 'END', "value": 'PRESS', "shift": True, "ctrl": True}, None),
+    ("sequencer.timeline_zoom_to_playhead", {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True}, None),
+    ],
+   },
+  ),
+ ]
 
-import bpy
-import os
 
-def kmi_props_setattr(kmi_props, attr, value):
-    try:
-        setattr(kmi_props, attr, value)
-    except AttributeError:
-        print("Warning: property '%s' not found in keymap item '%s'" %
-              (attr, kmi_props.__class__.__name__))
-    except Exception as e:
-        print("Warning: %r" % e)
-
-wm = bpy.context.window_manager
-kc = wm.keyconfigs.new(os.path.splitext(os.path.basename(__file__))[0])
-
-# Map Window
-km = kc.keymaps.new('Window', space_type='EMPTY', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('wm.window_duplicate', 'W', 'PRESS', ctrl=True, alt=True)
-kmi = km.keymap_items.new('wm.read_homefile', 'N', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('wm.save_homefile', 'U', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('wm.call_menu', 'O', 'PRESS', shift=True, ctrl=True)
-kmi_props_setattr(kmi.properties, 'name', 'INFO_MT_file_open_recent')
-kmi = km.keymap_items.new('wm.open_mainfile', 'O', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('wm.open_mainfile', 'F1', 'PRESS')
-kmi = km.keymap_items.new('wm.link', 'O', 'PRESS', ctrl=True, alt=True)
-kmi = km.keymap_items.new('wm.append', 'F1', 'PRESS', shift=True)
-kmi = km.keymap_items.new('wm.save_mainfile', 'S', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('wm.save_mainfile', 'W', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('wm.save_as_mainfile', 'S', 'PRESS', shift=True, ctrl=True)
-kmi = km.keymap_items.new('wm.save_as_mainfile', 'F2', 'PRESS')
-kmi = km.keymap_items.new('wm.save_as_mainfile', 'S', 'PRESS', ctrl=True, alt=True)
-kmi_props_setattr(kmi.properties, 'copy', True)
-kmi = km.keymap_items.new('wm.window_fullscreen_toggle', 'F11', 'PRESS', alt=True)
-kmi = km.keymap_items.new('wm.quit_blender', 'Q', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('wm.doc_view_manual_ui_context', 'F1', 'PRESS', alt=True)
-kmi = km.keymap_items.new('wm.redraw_timer', 'T', 'PRESS', ctrl=True, alt=True)
-kmi = km.keymap_items.new('wm.debug_menu', 'D', 'PRESS', ctrl=True, alt=True)
-kmi = km.keymap_items.new('wm.search_menu', 'SPACE', 'PRESS')
-kmi = km.keymap_items.new('wm.call_menu', 'NDOF_BUTTON_MENU', 'PRESS')
-kmi_props_setattr(kmi.properties, 'name', 'USERPREF_MT_ndof_settings')
-kmi = km.keymap_items.new('wm.context_set_enum', 'F2', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'data_path', 'area.type')
-kmi_props_setattr(kmi.properties, 'value', 'LOGIC_EDITOR')
-kmi = km.keymap_items.new('wm.context_set_enum', 'F3', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'data_path', 'area.type')
-kmi_props_setattr(kmi.properties, 'value', 'NODE_EDITOR')
-kmi = km.keymap_items.new('wm.context_set_enum', 'F4', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'data_path', 'area.type')
-kmi_props_setattr(kmi.properties, 'value', 'CONSOLE')
-kmi = km.keymap_items.new('wm.context_set_enum', 'F5', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'data_path', 'area.type')
-kmi_props_setattr(kmi.properties, 'value', 'VIEW_3D')
-kmi = km.keymap_items.new('wm.context_set_enum', 'F6', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'data_path', 'area.type')
-kmi_props_setattr(kmi.properties, 'value', 'GRAPH_EDITOR')
-kmi = km.keymap_items.new('wm.context_set_enum', 'F7', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'data_path', 'area.type')
-kmi_props_setattr(kmi.properties, 'value', 'PROPERTIES')
-kmi = km.keymap_items.new('wm.context_set_enum', 'F8', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'data_path', 'area.type')
-kmi_props_setattr(kmi.properties, 'value', 'SEQUENCE_EDITOR')
-kmi = km.keymap_items.new('wm.context_set_enum', 'F9', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'data_path', 'area.type')
-kmi_props_setattr(kmi.properties, 'value', 'OUTLINER')
-kmi = km.keymap_items.new('wm.context_set_enum', 'F10', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'data_path', 'area.type')
-kmi_props_setattr(kmi.properties, 'value', 'IMAGE_EDITOR')
-kmi = km.keymap_items.new('wm.context_set_enum', 'F11', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'data_path', 'area.type')
-kmi_props_setattr(kmi.properties, 'value', 'TEXT_EDITOR')
-kmi = km.keymap_items.new('wm.context_set_enum', 'F12', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'data_path', 'area.type')
-kmi_props_setattr(kmi.properties, 'value', 'DOPESHEET_EDITOR')
-kmi = km.keymap_items.new('wm.context_scale_float', 'NDOF_BUTTON_PLUS', 'PRESS')
-kmi_props_setattr(kmi.properties, 'data_path', 'user_preferences.inputs.ndof_sensitivity')
-kmi_props_setattr(kmi.properties, 'value', 1.100000023841858)
-kmi = km.keymap_items.new('wm.context_scale_float', 'NDOF_BUTTON_MINUS', 'PRESS')
-kmi_props_setattr(kmi.properties, 'data_path', 'user_preferences.inputs.ndof_sensitivity')
-kmi_props_setattr(kmi.properties, 'value', 0.9090908765792847)
-kmi = km.keymap_items.new('wm.context_scale_float', 'NDOF_BUTTON_PLUS', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'data_path', 'user_preferences.inputs.ndof_sensitivity')
-kmi_props_setattr(kmi.properties, 'value', 1.5)
-kmi = km.keymap_items.new('wm.context_scale_float', 'NDOF_BUTTON_MINUS', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'data_path', 'user_preferences.inputs.ndof_sensitivity')
-kmi_props_setattr(kmi.properties, 'value', 0.6666666865348816)
-kmi = km.keymap_items.new('info.reports_display_update', 'TIMER_REPORT', 'ANY', any=True)
-
-# Map Screen
-km = kc.keymaps.new('Screen', space_type='EMPTY', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('screen.animation_step', 'TIMER0', 'ANY', any=True)
-kmi = km.keymap_items.new('screen.region_blend', 'TIMERREGION', 'ANY', any=True)
-kmi = km.keymap_items.new('screen.screen_set', 'RIGHT_ARROW', 'PRESS', ctrl=True)
-kmi_props_setattr(kmi.properties, 'delta', 1)
-kmi = km.keymap_items.new('screen.screen_set', 'LEFT_ARROW', 'PRESS', ctrl=True)
-kmi_props_setattr(kmi.properties, 'delta', -1)
-kmi = km.keymap_items.new('screen.screen_full_area', 'UP_ARROW', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('screen.screen_full_area', 'DOWN_ARROW', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('screen.screen_full_area', 'SPACE', 'PRESS', shift=True)
-kmi = km.keymap_items.new('screen.screen_full_area', 'F10', 'PRESS', alt=True)
-kmi_props_setattr(kmi.properties, 'use_hide_panels', True)
-kmi = km.keymap_items.new('screen.screenshot', 'F3', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('screen.screencast', 'F3', 'PRESS', alt=True)
-kmi = km.keymap_items.new('screen.space_context_cycle', 'TAB', 'PRESS', ctrl=True)
-kmi_props_setattr(kmi.properties, 'direction', 'NEXT')
-kmi = km.keymap_items.new('screen.space_context_cycle', 'TAB', 'PRESS', shift=True, ctrl=True)
-kmi_props_setattr(kmi.properties, 'direction', 'PREV')
-kmi = km.keymap_items.new('screen.region_quadview', 'Q', 'PRESS', ctrl=True, alt=True)
-kmi = km.keymap_items.new('screen.repeat_history', 'F3', 'PRESS')
-kmi = km.keymap_items.new('screen.repeat_last', 'R', 'PRESS', shift=True)
-kmi = km.keymap_items.new('screen.region_flip', 'F5', 'PRESS')
-kmi = km.keymap_items.new('screen.redo_last', 'F6', 'PRESS')
-kmi = km.keymap_items.new('script.reload', 'F8', 'PRESS')
-kmi = km.keymap_items.new('file.execute', 'RET', 'PRESS')
-kmi = km.keymap_items.new('file.execute', 'NUMPAD_ENTER', 'PRESS')
-kmi = km.keymap_items.new('file.cancel', 'ESC', 'PRESS')
-kmi = km.keymap_items.new('ed.undo', 'Z', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('ed.redo', 'Z', 'PRESS', shift=True, ctrl=True)
-kmi = km.keymap_items.new('ed.undo_history', 'Z', 'PRESS', ctrl=True, alt=True)
-kmi = km.keymap_items.new('render.render', 'F12', 'PRESS')
-kmi_props_setattr(kmi.properties, 'use_viewport', True)
-kmi = km.keymap_items.new('render.render', 'F12', 'PRESS', ctrl=True)
-kmi_props_setattr(kmi.properties, 'animation', True)
-kmi_props_setattr(kmi.properties, 'use_viewport', True)
-kmi = km.keymap_items.new('render.view_cancel', 'ESC', 'PRESS')
-kmi = km.keymap_items.new('render.view_show', 'F11', 'PRESS')
-kmi = km.keymap_items.new('render.play_rendered_anim', 'F11', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('screen.userpref_show', 'U', 'PRESS', ctrl=True, alt=True)
-
-# Map Frames
-km = kc.keymaps.new('Frames', space_type='EMPTY', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('screen.frame_offset', 'UP_ARROW', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'delta', 10)
-kmi = km.keymap_items.new('screen.frame_offset', 'DOWN_ARROW', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'delta', -10)
-kmi = km.keymap_items.new('screen.frame_offset', 'LEFT_ARROW', 'PRESS')
-kmi_props_setattr(kmi.properties, 'delta', -1)
-kmi = km.keymap_items.new('screen.frame_offset', 'RIGHT_ARROW', 'PRESS')
-kmi_props_setattr(kmi.properties, 'delta', 1)
-kmi = km.keymap_items.new('screen.frame_offset', 'WHEELDOWNMOUSE', 'PRESS', alt=True)
-kmi_props_setattr(kmi.properties, 'delta', 1)
-kmi = km.keymap_items.new('screen.frame_offset', 'WHEELUPMOUSE', 'PRESS', alt=True)
-kmi_props_setattr(kmi.properties, 'delta', -1)
-kmi = km.keymap_items.new('screen.frame_jump', 'UP_ARROW', 'PRESS', shift=True, ctrl=True)
-kmi_props_setattr(kmi.properties, 'end', True)
-kmi = km.keymap_items.new('screen.frame_jump', 'DOWN_ARROW', 'PRESS', shift=True, ctrl=True)
-kmi_props_setattr(kmi.properties, 'end', False)
-kmi = km.keymap_items.new('screen.frame_jump', 'RIGHT_ARROW', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'end', True)
-kmi = km.keymap_items.new('screen.frame_jump', 'LEFT_ARROW', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'end', False)
-kmi = km.keymap_items.new('screen.keyframe_jump', 'UP_ARROW', 'PRESS')
-kmi_props_setattr(kmi.properties, 'next', True)
-kmi = km.keymap_items.new('screen.keyframe_jump', 'DOWN_ARROW', 'PRESS')
-kmi_props_setattr(kmi.properties, 'next', False)
-kmi = km.keymap_items.new('screen.keyframe_jump', 'MEDIA_LAST', 'PRESS')
-kmi_props_setattr(kmi.properties, 'next', True)
-kmi = km.keymap_items.new('screen.keyframe_jump', 'MEDIA_FIRST', 'PRESS')
-kmi_props_setattr(kmi.properties, 'next', False)
-kmi = km.keymap_items.new('screen.animation_play', 'SPACE', 'PRESS')
-kmi = km.keymap_items.new('screen.animation_play', 'SPACE', 'PRESS', shift=True, alt=True)
-kmi_props_setattr(kmi.properties, 'reverse', True)
-kmi = km.keymap_items.new('screen.animation_cancel', 'ESC', 'PRESS')
-kmi = km.keymap_items.new('screen.animation_play', 'MEDIA_PLAY', 'PRESS')
-kmi = km.keymap_items.new('screen.animation_cancel', 'MEDIA_STOP', 'PRESS')
-
-# Map Sequencer
-km = kc.keymaps.new('Sequencer', space_type='SEQUENCE_EDITOR', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('sequencer.refresh_all', 'R', 'PRESS', shift=True)
-kmi = km.keymap_items.new('sequencer.select_all', 'A', 'PRESS')
-kmi_props_setattr(kmi.properties, 'action', 'SELECT')
-kmi = km.keymap_items.new('sequencer.select_all', 'A', 'PRESS', alt=True)
-kmi_props_setattr(kmi.properties, 'action', 'DESELECT')
-kmi = km.keymap_items.new('sequencer.select_all', 'I', 'PRESS', ctrl=True)
-kmi_props_setattr(kmi.properties, 'action', 'INVERT')
-kmi = km.keymap_items.new('sequencer.cut', 'K', 'PRESS')
-kmi_props_setattr(kmi.properties, 'type', 'SOFT')
-kmi = km.keymap_items.new('sequencer.cut', 'K', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'type', 'HARD')
-kmi = km.keymap_items.new('sequencer.mute', 'H', 'PRESS')
-kmi_props_setattr(kmi.properties, 'unselected', False)
-kmi = km.keymap_items.new('sequencer.mute', 'H', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'unselected', True)
-kmi = km.keymap_items.new('sequencer.unmute', 'H', 'PRESS', alt=True)
-kmi_props_setattr(kmi.properties, 'unselected', False)
-kmi = km.keymap_items.new('sequencer.unmute', 'H', 'PRESS', shift=True, alt=True)
-kmi_props_setattr(kmi.properties, 'unselected', True)
-kmi = km.keymap_items.new('sequencer.lock', 'L', 'PRESS', shift=True)
-kmi = km.keymap_items.new('sequencer.unlock', 'L', 'PRESS', shift=True, alt=True)
-kmi = km.keymap_items.new('sequencer.reassign_inputs', 'R', 'PRESS')
-kmi = km.keymap_items.new('sequencer.reload', 'R', 'PRESS', alt=True)
-kmi = km.keymap_items.new('sequencer.reload', 'R', 'PRESS', shift=True, alt=True)
-kmi_props_setattr(kmi.properties, 'adjust_length', True)
-kmi = km.keymap_items.new('sequencer.offset_clear', 'O', 'PRESS', alt=True)
-kmi = km.keymap_items.new('sequencer.duplicate_move', 'D', 'PRESS', shift=True)
-kmi = km.keymap_items.new('sequencer.delete', 'X', 'PRESS')
-kmi = km.keymap_items.new('sequencer.delete_direct', 'DEL', 'PRESS')
-kmi = km.keymap_items.new('sequencer.delete_direct_gaps', 'DEL', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('sequencer.copy', 'C', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('sequencer.paste', 'V', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('sequencer.images_separate', 'Y', 'PRESS')
-kmi = km.keymap_items.new('sequencer.meta_toggle', 'TAB', 'PRESS')
-kmi = km.keymap_items.new('sequencer.meta_make', 'G', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('sequencer.meta_separate', 'G', 'PRESS', alt=True)
-kmi = km.keymap_items.new('sequencer.view_all', 'HOME', 'PRESS')
-kmi = km.keymap_items.new('sequencer.view_all', 'NDOF_BUTTON_FIT', 'PRESS')
-kmi = km.keymap_items.new('sequencer.view_all', 'RIGHTMOUSE', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('sequencer.view_selected', 'NUMPAD_PERIOD', 'PRESS')
-kmi = km.keymap_items.new('sequencer.view_selected', 'HOME', 'PRESS', shift=True)
-kmi = km.keymap_items.new('sequencer.view_selected', 'DEL', 'PRESS', shift=True)
-kmi = km.keymap_items.new('sequencer.strip_jump', 'PAGE_UP', 'PRESS')
-kmi_props_setattr(kmi.properties, 'next', True)
-kmi_props_setattr(kmi.properties, 'center', False)
-kmi = km.keymap_items.new('sequencer.strip_jump', 'PAGE_DOWN', 'PRESS')
-kmi_props_setattr(kmi.properties, 'next', False)
-kmi_props_setattr(kmi.properties, 'center', False)
-kmi = km.keymap_items.new('sequencer.strip_jump', 'PAGE_UP', 'PRESS', alt=True)
-kmi_props_setattr(kmi.properties, 'next', True)
-kmi_props_setattr(kmi.properties, 'center', True)
-kmi = km.keymap_items.new('sequencer.strip_jump', 'PAGE_DOWN', 'PRESS', alt=True)
-kmi_props_setattr(kmi.properties, 'next', False)
-kmi_props_setattr(kmi.properties, 'center', True)
-kmi = km.keymap_items.new('sequencer.swap', 'LEFT_ARROW', 'PRESS', alt=True)
-kmi_props_setattr(kmi.properties, 'side', 'LEFT')
-kmi = km.keymap_items.new('sequencer.swap', 'RIGHT_ARROW', 'PRESS', alt=True)
-kmi_props_setattr(kmi.properties, 'side', 'RIGHT')
-kmi = km.keymap_items.new('sequencer.gap_remove', 'BACK_SPACE', 'PRESS')
-kmi_props_setattr(kmi.properties, 'all', False)
-kmi = km.keymap_items.new('sequencer.gap_remove', 'BACK_SPACE', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'all', True)
-kmi = km.keymap_items.new('sequencer.gap_insert', 'EQUAL', 'PRESS', shift=True)
-kmi = km.keymap_items.new('sequencer.snap', 'S', 'PRESS', shift=True)
-kmi = km.keymap_items.new('sequencer.swap_inputs', 'S', 'PRESS', alt=True)
-kmi = km.keymap_items.new('sequencer.cut_multicam', 'ONE', 'PRESS')
-kmi_props_setattr(kmi.properties, 'camera', 1)
-kmi = km.keymap_items.new('sequencer.cut_multicam', 'TWO', 'PRESS')
-kmi_props_setattr(kmi.properties, 'camera', 2)
-kmi = km.keymap_items.new('sequencer.cut_multicam', 'THREE', 'PRESS')
-kmi_props_setattr(kmi.properties, 'camera', 3)
-kmi = km.keymap_items.new('sequencer.cut_multicam', 'FOUR', 'PRESS')
-kmi_props_setattr(kmi.properties, 'camera', 4)
-kmi = km.keymap_items.new('sequencer.cut_multicam', 'FIVE', 'PRESS')
-kmi_props_setattr(kmi.properties, 'camera', 5)
-kmi = km.keymap_items.new('sequencer.cut_multicam', 'SIX', 'PRESS')
-kmi_props_setattr(kmi.properties, 'camera', 6)
-kmi = km.keymap_items.new('sequencer.cut_multicam', 'SEVEN', 'PRESS')
-kmi_props_setattr(kmi.properties, 'camera', 7)
-kmi = km.keymap_items.new('sequencer.cut_multicam', 'EIGHT', 'PRESS')
-kmi_props_setattr(kmi.properties, 'camera', 8)
-kmi = km.keymap_items.new('sequencer.cut_multicam', 'NINE', 'PRESS')
-kmi_props_setattr(kmi.properties, 'camera', 9)
-kmi = km.keymap_items.new('sequencer.cut_multicam', 'ZERO', 'PRESS')
-kmi_props_setattr(kmi.properties, 'camera', 10)
-kmi = km.keymap_items.new('sequencer.select', 'SELECTMOUSE', 'PRESS')
-kmi_props_setattr(kmi.properties, 'extend', False)
-kmi_props_setattr(kmi.properties, 'linked_handle', False)
-kmi_props_setattr(kmi.properties, 'left_right', 'NONE')
-kmi_props_setattr(kmi.properties, 'linked_time', True)
-kmi = km.keymap_items.new('sequencer.select', 'SELECTMOUSE', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'extend', True)
-kmi_props_setattr(kmi.properties, 'linked_handle', False)
-kmi_props_setattr(kmi.properties, 'left_right', 'NONE')
-kmi_props_setattr(kmi.properties, 'linked_time', False)
-kmi = km.keymap_items.new('sequencer.select', 'SELECTMOUSE', 'PRESS', shift=True, alt=True)
-kmi_props_setattr(kmi.properties, 'extend', True)
-kmi_props_setattr(kmi.properties, 'linked_handle', True)
-kmi_props_setattr(kmi.properties, 'left_right', 'NONE')
-kmi_props_setattr(kmi.properties, 'linked_time', False)
-kmi = km.keymap_items.new('sequencer.select', 'SELECTMOUSE', 'PRESS', alt=True)
-kmi_props_setattr(kmi.properties, 'extend', False)
-kmi_props_setattr(kmi.properties, 'linked_handle', True)
-kmi_props_setattr(kmi.properties, 'left_right', 'NONE')
-kmi_props_setattr(kmi.properties, 'linked_time', False)
-kmi = km.keymap_items.new('sequencer.select', 'SELECTMOUSE', 'PRESS', ctrl=True)
-kmi_props_setattr(kmi.properties, 'extend', False)
-kmi_props_setattr(kmi.properties, 'linked_handle', False)
-kmi_props_setattr(kmi.properties, 'left_right', 'NONE')
-kmi_props_setattr(kmi.properties, 'linked_time', False)
-kmi = km.keymap_items.new('sequencer.select', 'SELECTMOUSE', 'PRESS', shift=True, ctrl=True)
-kmi_props_setattr(kmi.properties, 'extend', True)
-kmi_props_setattr(kmi.properties, 'linked_handle', False)
-kmi_props_setattr(kmi.properties, 'left_right', 'NONE')
-kmi_props_setattr(kmi.properties, 'linked_time', True)
-kmi = km.keymap_items.new('sequencer.select', 'SELECTMOUSE', 'PRESS')
-kmi_props_setattr(kmi.properties, 'left_right', 'MOUSE')
-kmi = km.keymap_items.new('sequencer.select_more', 'NUMPAD_PLUS', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('sequencer.select_less', 'NUMPAD_MINUS', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('sequencer.select_linked_pick', 'L', 'PRESS')
-kmi_props_setattr(kmi.properties, 'extend', False)
-kmi = km.keymap_items.new('sequencer.select_linked_pick', 'L', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'extend', True)
-kmi = km.keymap_items.new('sequencer.select_linked', 'L', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('sequencer.select_border', 'B', 'PRESS')
-kmi_props_setattr(kmi.properties, 'extend', False)
-kmi = km.keymap_items.new('sequencer.select_grouped', 'G', 'PRESS', shift=True)
-kmi = km.keymap_items.new('wm.call_menu', 'A', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'name', 'SEQUENCER_MT_add')
-kmi = km.keymap_items.new('wm.call_menu', 'C', 'PRESS')
-kmi_props_setattr(kmi.properties, 'name', 'SEQUENCER_MT_change')
-kmi = km.keymap_items.new('sequencer.slip', 'S', 'PRESS')
-kmi = km.keymap_items.new('wm.context_set_int', 'O', 'PRESS')
-kmi_props_setattr(kmi.properties, 'data_path', 'scene.sequence_editor.overlay_frame')
-kmi_props_setattr(kmi.properties, 'value', 0)
-kmi = km.keymap_items.new('transform.seq_slide', 'G', 'PRESS')
-kmi = km.keymap_items.new('transform.seq_slide', 'EVT_TWEAK_S', 'ANY')
-kmi = km.keymap_items.new('transform.transform', 'E', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'TIME_EXTEND')
-kmi = km.keymap_items.new('marker.add', 'M', 'PRESS')
-kmi = km.keymap_items.new('marker.rename', 'M', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('sequencer.select_border', 'B', 'PRESS', alt=True)
-kmi = km.keymap_items.new('sequencer.fade_in_strip_start', 'F', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('sequencer.fade_out_strip_end', 'F', 'PRESS', alt=True)
-#kmi = km.keymap_items.new('sequencer.marker_delete_closest', 'M', 'PRESS', alt=True)
-#kmi = km.keymap_items.new('sequencer.marker_goto_left', 'LEFT_ARROW', 'PRESS', ctrl=True)
-#kmi = km.keymap_items.new('sequencer.marker_goto_right', 'RIGHT_ARROW', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('screen.scene_toggle', 'TAB', 'PRESS', shift=True)
-kmi = km.keymap_items.new('sequencer.slight_desync_adjust', 'D', 'PRESS', shift=True, ctrl=True, alt=True)
-kmi = km.keymap_items.new('sequencer.snap_sequence_to_playhead', 'C', 'PRESS', shift=True, ctrl=True, alt=True)
-kmi = km.keymap_items.new('sequencer.snap_sequence_to_timelinestart', 'S', 'PRESS', shift=True, ctrl=True, alt=True)
-kmi = km.keymap_items.new('sequencer.strip_up', 'UP_ARROW', 'PRESS', alt=True)
-kmi = km.keymap_items.new('sequencer.strip_down', 'DOWN_ARROW', 'PRESS', alt=True)
-kmi = km.keymap_items.new('sequencer.strips_concatenate_selected', 'C', 'PRESS', shift=True)
-kmi = km.keymap_items.new('sequencer.strips_deinterlace', 'I', 'PRESS', shift=True, ctrl=True)
-kmi = km.keymap_items.new('sequencer.strips_deinterlace_off', 'I', 'PRESS', ctrl=True, alt=True)
-kmi = km.keymap_items.new('sequencer.strips_display_waveform', 'W', 'PRESS')
-kmi = km.keymap_items.new('sequencer.strips_hide_waveform', 'W', 'PRESS', alt=True)
-#kmi = km.keymap_items.new('anim.end_frame_last_set', 'END', 'PRESS', alt=True)
-#kmi = km.keymap_items.new('anim.start_frame_one_set', 'HOME', 'PRESS', alt=True)
-kmi = km.keymap_items.new('sequencer.timeline_loop_selected', 'L', 'PRESS', shift=True, ctrl=True, alt=True)
-kmi = km.keymap_items.new('sequencer.timeline_preview_select', 'A', 'PRESS', shift=True, ctrl=True)
-kmi = km.keymap_items.new('sequencer.view_selected_context', 'END', 'PRESS')
-kmi = km.keymap_items.new('sequencer.timeline_zoom_in_10s', 'HOME', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('sequencer.timeline_zoom_out_10s', 'END', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('sequencer.timeline_zoom_out_10s', 'RIGHTMOUSE', 'PRESS', shift=True, ctrl=True)
-kmi = km.keymap_items.new('sequencer.timeline_zoom_out_xy', 'END', 'PRESS', shift=True, ctrl=True)
-kmi = km.keymap_items.new('sequencer.timeline_zoom_to_playhead', 'RIGHTMOUSE', 'PRESS', shift=True)
+if __name__ == "__main__":
+    import os
+    from bl_keymap_utils.io import keyconfig_import_from_data
+    keyconfig_import_from_data(os.path.splitext(os.path.basename(__file__))[0], keyconfig_data)
