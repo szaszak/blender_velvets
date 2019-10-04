@@ -499,10 +499,11 @@ classes = (
     Proxy_Editing_ToProxy,
     Proxy_Editing_ToFullRes,
 #    VideoSource,
-    VelvetRevolver,
-    Velvet_Revolver_Transcoder,
+#    VelvetRevolver,
+#    Velvet_Revolver_Transcoder,
 )
 
+# store keymaps here to access after registration
 revolver_keymaps = []
 
 def register():
@@ -512,13 +513,14 @@ def register():
     # Add menu entry
     bpy.types.TOPBAR_MT_file_external_data.append(menuEntry)
 
-    # Register shortcut for Proxy_Editing
+    # Handle the keymap for Proxy_Editing
     wm = bpy.context.window_manager
-    kc = bpy.context.window_manager.keyconfigs.addon
-    if wm.keyconfigs.addon:
-        km = wm.keyconfigs.addon.keymaps.new(name = "Sequencer",space_type='SEQUENCE_EDITOR', region_type='WINDOW')
-        kmi = km.keymap_items.new(Proxy_Editing_ToFullRes.bl_idname, 'P', 'PRESS', shift=True, ctrl=True)
-        kmi = km.keymap_items.new(Proxy_Editing_ToProxy.bl_idname, 'P', 'PRESS', shift=True, ctrl=True, alt=True)
+    km = wm.keyconfigs.addon.keymaps.new(name = "Sequencer",space_type='SEQUENCE_EDITOR', region_type='WINDOW')
+
+    kmi = km.keymap_items.new(Proxy_Editing_ToFullRes.bl_idname, 'P', 'PRESS', shift=True, ctrl=True)
+    revolver_keymaps.append((km, kmi))
+
+    kmi = km.keymap_items.new(Proxy_Editing_ToProxy.bl_idname, 'P', 'PRESS', shift=True, ctrl=True, alt=True)
     revolver_keymaps.append((km, kmi))
 
 
@@ -530,11 +532,8 @@ def unregister():
     bpy.types.TOPBAR_MT_file_external_data.remove(menuEntry)
 
     # Unregister Proxy_Editing shortcut
-    wm = bpy.context.window_manager
-    kc = wm.keyconfigs.addon
-    if kc:
-        for km, kmi in revolver_keymaps:
-            km.keymap_items.remove(kmi)
+    for km, kmi in revolver_keymaps:
+        km.keymap_items.remove(kmi)
     revolver_keymaps.clear()
 
 
