@@ -499,8 +499,8 @@ classes = (
     Proxy_Editing_ToProxy,
     Proxy_Editing_ToFullRes,
 #    VideoSource,
-#    VelvetRevolver,
-#    Velvet_Revolver_Transcoder,
+    VelvetRevolver,
+    Velvet_Revolver_Transcoder,
 )
 
 # store keymaps here to access after registration
