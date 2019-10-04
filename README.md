@@ -15,32 +15,32 @@ The **Blender Velvets** are a series of Blender Addons (or plugins, if you prefe
 ###### ::velvet_revolver::
 
     ::velvet_revolver:: has been tested and works on Blender versions:
-    2.80 (ffmpeg 4.2.1); for previous versions check README in Vintage_Blender/Blender_2.79.
-    There is no reason why it should not work on versions between those.
+    2.80 (ffmpeg 4.2.1).
+    There is no reason why it should not work on versions between those. For previous versions check README in Vintage_Blender/Blender_2.79.
 
 The **::velvet_revolver::** is designed to make mass proxy generating an easy task for those lazy enough to open a terminal. It can create low definition intra-frame (meaning 360p ProRes422 or MJPEG) proxies from all your videos using Blender's own interface. Just point it to a folder and dance to the radio for a while. In case you have multiple FPS in your footage, notoriously crappy to use in Blender, Revolver can also create full-Res copies of your sources, levelling everything to your chosen FPS. *Read the full documentation at [Velvet Revolver's webpage](http://blendervelvets.org/en/velvet-revolver/) (in English, Portuguese, Spanish and French).*
 
 ###### ::velvet_goldmine::
 
     ::velvet_goldmine:: has been tested and works on Blender versions:
-    2.80; for previous versions check README in Vintage_Blender/Blender_2.79.
-    There is no reason why it should not work on versions between those.
+    2.80.
+    There is no reason why it should not work on versions between those. For previous versions check README in Vintage_Blender/Blender_2.79.
 
 The **::velvet_goldmine::** is a bunch of new functions and shortcuts aimed to fasten and loosen the overall hard VSE user interface. To be used with lots of glitter and with its companion, the *velvet_shortcuts*, for one can't dance alone, eh? *Read the full documentation at [Velvet Goldmine's webpage](http://blendervelvets.org/en/velvet-goldmine/) (in English, Portuguese, Spanish and French).*
 
 ###### ::blue_velvet::
 
     ::blue_velvet:: has been tested and works on Blender versions:
-    2.80 (ffmpeg 4.2.1 and Ardour 5.12.0); for previous versions check README in Vintage_Blender/Blender_2.79.
-    There is no reason why it should not work on versions between those.
+    2.80 (ffmpeg 4.2.1 and Ardour 5.12.0).
+    There is no reason why it should not work on versions between those. For previous versions check README in Vintage_Blender/Blender_2.79.
 
 You can edit in Blender, but there's no way you will get decent audio out of it. The program was simply not made for DAW uses, so stop whining. What **::blue_velvet::** does is to get your finished timeline and export the audio cuts directly to Ardour, the correct program to deal with them. *Read the full documentation at [Blue Velvet's webpage](http://blendervelvets.org/en/blue-velvet/) (in English, Portuguese, Spanish and French).*
 
 ###### ::modified_space_sequencer::
 
     the modified space_sequencer has been tested and works on Blender versions:
-    2.80; for previous versions check README in Vintage_Blender/Blender_2.79.
-    There is no reason why it should not work on versions between those.
+    2.80.
+    There is no reason why it should not work on versions between those. For previous versions check README in Vintage_Blender/Blender_2.79.
 
 Blender has an original space_sequencer, which is the VSE user interface. It is loaded every time the program starts. The use of a modified version of this script brings up a number of controls that exist but are hidden and adds some new and useful info for when you are in the middle of a project. *Read the full documentation at the [Modified Space Sequencer webpage](http://blendervelvets.org/en/space-sequencer/) (in English, Portuguese, Spanish and French).*
 <BR>
@@ -83,10 +83,6 @@ Beyond adding the new functions/shortcuts, **velvet_shortcuts** also changes the
 <b>"Left Mouse Click"</b> (strip) - now selects strips with linked time by default (audio + video);<BR>
 <b>"Shift+Left Mouse"</b> (strip) - selects strips disregarding linked time (adds to selection for more than one strip);<BR>
 <b>"Ctrl+Left Mouse"</b> (timeline) - now selects all strips on the left/right of the cursor;<BR>
-
-!!!!!!
-<b>"Ctrl+Right Mouse"</b> - view all (equivalent to "Home", without having to abandon the mouse);<BR>
-<b>"Shift + Home"</b> - Zooms to selected strips (added for MacOS support; MacOS shortcut is Fn + Shift + LeftArrow);
 
 
 #### New functions - the **::velvet_goldmine::** addon
