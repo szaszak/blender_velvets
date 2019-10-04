@@ -16,7 +16,8 @@ The **Blender Velvets** are a series of Blender Addons (or plugins, if you prefe
 
     ::velvet_revolver:: has been tested and works on Blender versions:
     2.80 (ffmpeg 4.2.1).
-    There is no reason why it should not work on versions between those. For previous versions check README in Vintage_Blender/Blender_2.79.
+    There is no reason why it should not work on versions between those.
+    For previous versions check README in Vintage_Blender/Blender_2.79.
 
 The **::velvet_revolver::** is designed to make mass proxy generating an easy task for those lazy enough to open a terminal. It can create low definition intra-frame (meaning 360p ProRes422 or MJPEG) proxies from all your videos using Blender's own interface. Just point it to a folder and dance to the radio for a while. In case you have multiple FPS in your footage, notoriously crappy to use in Blender, Revolver can also create full-Res copies of your sources, levelling everything to your chosen FPS. *Read the full documentation at [Velvet Revolver's webpage](http://blendervelvets.org/en/velvet-revolver/) (in English, Portuguese, Spanish and French).*
 
@@ -24,7 +25,8 @@ The **::velvet_revolver::** is designed to make mass proxy generating an easy ta
 
     ::velvet_goldmine:: has been tested and works on Blender versions:
     2.80.
-    There is no reason why it should not work on versions between those. For previous versions check README in Vintage_Blender/Blender_2.79.
+    There is no reason why it should not work on versions between those.
+    For previous versions check README in Vintage_Blender/Blender_2.79.
 
 The **::velvet_goldmine::** is a bunch of new functions and shortcuts aimed to fasten and loosen the overall hard VSE user interface. To be used with lots of glitter and with its companion, the *velvet_shortcuts*, for one can't dance alone, eh? *Read the full documentation at [Velvet Goldmine's webpage](http://blendervelvets.org/en/velvet-goldmine/) (in English, Portuguese, Spanish and French).*
 
@@ -32,7 +34,8 @@ The **::velvet_goldmine::** is a bunch of new functions and shortcuts aimed to f
 
     ::blue_velvet:: has been tested and works on Blender versions:
     2.80 (ffmpeg 4.2.1 and Ardour 5.12.0).
-    There is no reason why it should not work on versions between those. For previous versions check README in Vintage_Blender/Blender_2.79.
+    There is no reason why it should not work on versions between those.
+    For previous versions check README in Vintage_Blender/Blender_2.79.
 
 You can edit in Blender, but there's no way you will get decent audio out of it. The program was simply not made for DAW uses, so stop whining. What **::blue_velvet::** does is to get your finished timeline and export the audio cuts directly to Ardour, the correct program to deal with them. *Read the full documentation at [Blue Velvet's webpage](http://blendervelvets.org/en/blue-velvet/) (in English, Portuguese, Spanish and French).*
 
@@ -40,7 +43,8 @@ You can edit in Blender, but there's no way you will get decent audio out of it.
 
     the modified space_sequencer has been tested and works on Blender versions:
     2.80.
-    There is no reason why it should not work on versions between those. For previous versions check README in Vintage_Blender/Blender_2.79.
+    There is no reason why it should not work on versions between those.
+    For previous versions check README in Vintage_Blender/Blender_2.79.
 
 Blender has an original space_sequencer, which is the VSE user interface. It is loaded every time the program starts. The use of a modified version of this script brings up a number of controls that exist but are hidden and adds some new and useful info for when you are in the middle of a project. *Read the full documentation at the [Modified Space Sequencer webpage](http://blendervelvets.org/en/space-sequencer/) (in English, Portuguese, Spanish and French).*
 <BR>
