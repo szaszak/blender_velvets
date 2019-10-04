@@ -518,7 +518,7 @@ class Snap_Selected_To_TimelineStart(bpy.types.Operator):
 
 
 class Strips_Channel_Up(bpy.types.Operator):
-    """Moves selected strip one channel up"""
+    """Moves selected strips one channel up"""
     bl_idname = "sequencer.strip_up"
     bl_label = "Strips - Channel Up"
     bl_options = {'REGISTER', 'UNDO'}
@@ -539,7 +539,7 @@ class Strips_Channel_Up(bpy.types.Operator):
 
 
 class Strips_Channel_Down(bpy.types.Operator):
-    """Moves selected strip one channel down"""
+    """Moves selected strips one channel down"""
     bl_idname = "sequencer.strip_down"
     bl_label = "Strips - Channel Down"
     bl_options = {'REGISTER', 'UNDO'}
