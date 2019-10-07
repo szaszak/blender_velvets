@@ -22,7 +22,7 @@ bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (2, 0, 20191004),
+    "version": (2, 0, 20191007),
     "blender": (2, 80, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
@@ -276,10 +276,10 @@ class VideoSource(object):
                                -pix_fmt yuv422p10le -acodec pcm_s16be"
             elif v_format == "is_mjpeg":
                 self.format = "-probesize 5000000 -c:v mjpeg \
-                               -qscale:v 5 -acodec pcm_s16be"
+                               -qscale:v 5 -pix_fmt yuvj422p -acodec pcm_s16be"
             else: # v_format == "is_h264":
-                self.format = "-probesize 5000000 -c:v libx264 \
-                               -pix_fmt yuv420p -c:a copy"
+                self.format = "-probesize 5000000 -c:v libx264 -pix_fmt yuv420p \
+                               -preset ultrafast -tune fastdecode -c:a copy"
                 # -preset ultrafast was having problems 
                 # dealing with ProRes422 from Final Cut
         else: # v_res == "fullres"
@@ -287,7 +287,7 @@ class VideoSource(object):
                 self.v_output = self.input[:-4] + "_PRORES.mov"
                 self.format = "-probesize 5000000 -c:v prores -profile:v 3 \
                                -qscale:v 5 -vendor ap10 -pix_fmt yuv422p10le \
-                               -acodec pcm_s16be"
+                               -pix_fmt yuvj422p -acodec pcm_s16be"
             elif v_format == "is_mjpeg":
                 self.v_output = self.input[:-4] + "_MJPEG.mov"
                 self.format = "-probesize 5000000 -c:v mjpeg -qscale:v 1 \
@@ -303,7 +303,7 @@ class VideoSource(object):
     def runFF(self):
         # Due to spaces, the command entries (ffCommand, input and output) have
         # to be read as strings by the call command, thus the escapings below
-        callFFMPEG = "\"%s\" -i \"%s\" -y %s -r %s -s %s %s -ar %s %s \"%s\"" \
+        callFFMPEG = "\"%s\" -hwaccel auto -i \"%s\" -y %s -r %s -s %s %s -ar %s %s \"%s\"" \
                      % (self.ffCommand, self.input, self.format, self.fps, self.v_size,
                         self.deinter, self.arate, self.achannels, self.v_output)
 
