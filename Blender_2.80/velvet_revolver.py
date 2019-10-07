@@ -427,6 +427,7 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
         fps = round(render.fps / render.fps_base, 2)
 
         sources = []
+
         for i in glob.glob(videosFolderPath + "*.*"):
             if i[-4:].lower() in bpy.path.extensions_movie:
                 # The line below does not allow for the creation of proxies from
@@ -441,26 +442,56 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
                    and "_PRORES." not in i and "_h264" not in i:
                     sources.append(i)
 
-        if self.proxies:
-            for source in sources:
-                v_res = "proxy"
-                vs = VideoSource(ffCommand, videosFolderPath, source, v_res,
-                                 self.prop_proxy_w, self.prop_proxy_h,
-                                 self.v_format, fps, self.prop_deint,
-                                 self.prop_ar, self.prop_ac)
-                vs.runFF()
-
-        if self.copies:
-            for source in sources:
-                v_res = "fullres"
-                vs = VideoSource(ffCommand, videosFolderPath, source, v_res,
-                                 self.prop_fullres_w, self.prop_fullres_h,
-                                 self.v_format, fps, self.prop_deint,
-                                 self.prop_ar, self.prop_ac)
-                vs.runFF()
-
+        # If nothing is selected to do, abort. Else, continue
         if not self.proxies and not self.copies:
             print("No action selected for Velvet Revolver. Aborting.")
+
+        else:
+            # Create a percentage to base a (mouse) progress counter
+            wm = bpy.context.window_manager
+
+            if self.proxies and self.copies:
+                # If Revolver has to create both proxies and copies,
+                # there are 2x as many levels to be considered
+                inc_level = int(100 / (2 * len(sources)))
+            else:
+                inc_level = int(100 / len(sources))
+
+            wm.progress_begin(1, 100)
+            percentage_level = 1
+
+
+            if self.proxies:
+                for source in sources:
+                    v_res = "proxy"
+                    vs = VideoSource(ffCommand, videosFolderPath, source, v_res,
+                                     self.prop_proxy_w, self.prop_proxy_h,
+                                     self.v_format, fps, self.prop_deint,
+                                     self.prop_ar, self.prop_ac)
+
+                    # Update window_manager progress counter
+                    wm.progress_update(percentage_level)
+                    percentage_level += inc_level
+
+                    vs.runFF()
+
+            if self.copies:
+                for source in sources:
+                    v_res = "fullres"
+                    vs = VideoSource(ffCommand, videosFolderPath, source, v_res,
+                                     self.prop_fullres_w, self.prop_fullres_h,
+                                     self.v_format, fps, self.prop_deint,
+                                     self.prop_ar, self.prop_ac)
+
+                    # Update window_manager progress counter
+                    wm.progress_update(percentage_level)
+                    percentage_level += inc_level
+
+                    vs.runFF()
+
+
+            # Finish report on progress counter
+            wm.progress_end()
 
         return {'FINISHED'}
 
