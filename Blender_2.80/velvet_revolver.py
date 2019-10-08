@@ -425,10 +425,6 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
         box.use_property_split = False
         box.prop(self, 'prop_ac')
 
-        col = layout.column(align=True)
-        col.label(text="Resulting videos will have %.2f FPS." % fps)
-        col.label(text="(FPS inherited from project's Properties)")
-
 
     @classmethod
     def poll(cls, context):
