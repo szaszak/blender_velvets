@@ -449,17 +449,16 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
         else:
             # Create a percentage to base a (mouse) progress counter
             wm = bpy.context.window_manager
+            wm.progress_begin(0, 100)
+            percentage_level = 0
 
+            # Counter incrementes according to the number of sources
             if self.proxies and self.copies:
                 # If Revolver has to create both proxies and copies,
                 # there are 2x as many levels to be considered
                 inc_level = int(100 / (2 * len(sources)))
             else:
                 inc_level = int(100 / len(sources))
-
-            wm.progress_begin(1, 100)
-            percentage_level = 1
-
 
             if self.proxies:
                 for source in sources:
@@ -488,7 +487,6 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
                     percentage_level += inc_level
 
                     vs.runFF()
-
 
             # Finish report on progress counter
             wm.progress_end()
