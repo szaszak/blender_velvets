@@ -22,7 +22,7 @@ bl_info = {
     "name": "blue_velvet ::",
     "description": "An exporter of Blender's VSE audio timeline to Ardour",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (1, 0, 20191004),
+    "version": (1, 0, 20191008),
     "blender": (2, 80, 0),
     "warning": "War, children, it's just a shot away.",
     "category": ":",
@@ -650,7 +650,7 @@ def runFFMPEG(ffCommand, sources, audioRate, sampleFormat, outputFolder):
 ######## ----------------------------------------------------------------------
 
 from bpy_extras.io_utils import ExportHelper
-from bpy.props import StringProperty, BoolProperty
+from bpy.props import StringProperty, BoolProperty, EnumProperty
 
 
 class ExportArdour(bpy.types.Operator, ExportHelper):
@@ -659,6 +659,31 @@ class ExportArdour(bpy.types.Operator, ExportHelper):
     bl_label = "Export to Ardour"
     filename_ext = ".ardour"
     filter_glob: StringProperty(default="*.ardour", options={'HIDDEN'})
+
+    folder_items = (
+        ('outside_f', 'Outside audios folder', ''),
+        ('same_f', 'Inside audios folder', '')
+    )
+
+    f_location: EnumProperty(
+        name="Location",
+        default="outside_f",
+        description="Where to store Ardour XML project file",
+        items=folder_items
+    )
+
+
+    def draw(self, context):
+        layout = self.layout
+
+        row = layout.row()
+        row.label(text="Navigate to where you want the audio")
+        row = layout.row()
+        row.label(text="folder to be and hit 'Export to Ardour'.")
+        row = layout.row()
+        row.label(text="Ardour's XML should be placed:")
+
+        layout.prop(self, 'f_location')
 
     @classmethod
     def poll(cls, context):
@@ -690,7 +715,15 @@ class ExportArdour(bpy.types.Operator, ExportHelper):
         ffCommand = preferences.addons['blue_velvet'].preferences.ffCommand
         runFFMPEG(ffCommand, sources, audioRate, sampleFormat, audiosFolder)
 
-        writeXML(self.filepath, Session)
+        # Write Ardour XML file outside/inside audios folder
+        if self.f_location == 'outside_f':
+            xml_location = self.filepath
+        else: # self.f_location == 'same_f'
+            print(self.filepath)
+            xml_location = audiosFolder + os.sep + ardourFile
+            print(xml_location + os.sep + ardourFile)
+
+        writeXML(xml_location, Session)
 
         return {'FINISHED'}
 
