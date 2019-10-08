@@ -22,7 +22,7 @@ bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (2, 0, 20191007),
+    "version": (2, 0, 20191008),
     "blender": (2, 80, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
@@ -59,7 +59,7 @@ class Proxy_Editing_ToProxy(bpy.types.Operator):
         bpy.ops.file.make_paths_absolute()
 
         def checkProxyFile(f_path, ref):
-            ''' Checks for (and returns) correspondent proxy file that may or 
+            ''' Checks for (and returns) correspondent proxy file that may or
             may not have the same extension as the original full_res file '''
             base_path, ext = os.path.splitext(f_path)
             proxy_file = base_path[:ref] + "_proxy" + ext
@@ -254,7 +254,7 @@ class VideoSource(object):
         self.filepath = filepath
         self.fps = fps
         self.arate = str(ar)
-        
+
         self.v_size = "%sx%s" % (v_res_w, v_res_h)
 
         if deinter:
@@ -280,7 +280,7 @@ class VideoSource(object):
             else: # v_format == "is_h264":
                 self.format = "-probesize 5000000 -c:v libx264 -pix_fmt yuv420p \
                                -preset ultrafast -tune fastdecode -c:a copy"
-                # -preset ultrafast was having problems 
+                # -preset ultrafast was having problems
                 # dealing with ProRes422 from Final Cut
         else: # v_res == "fullres"
             if v_format == "is_prores":
@@ -296,7 +296,7 @@ class VideoSource(object):
                 self.v_output = self.input[:-4] + "_h264.mkv"
                 self.format = "-probesize 5000000 -c:v libx264 \
                                -pix_fmt yuv420p -c:a copy"
-                # -preset ultrafast was having problems 
+                # -preset ultrafast was having problems
                 # dealing with ProRes422 from Final Cut
 
 
@@ -330,32 +330,32 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
     )
 
     proxies: BoolProperty(
-        name="Create proxies",
+        name="Create Proxies",
         description="Create proxies with same FPS as current scene",
         default=True,
     )
     prop_proxy_w: IntProperty(
-        name="Proxy size (width)",
+        name="Proxy Width",
         description="Proxy videos will have this width",
         default=640
     )
     prop_proxy_h: IntProperty(
-        name="Proxy size (height)",
+        name="Height",
         description="Proxy videos will have this height",
         default=360
     )
     copies: BoolProperty(
-        name="Create full-res copies",
+        name="Create Full-res Copies",
         description="Create full-res copies with same FPS as current scene (slow)",
         default=False,
     )
     prop_fullres_w: IntProperty(
-        name="Full-res size (width)",
+        name="Full-res Width",
         description="Full-res videos will have this width",
         default=1920
     )
     prop_fullres_h: IntProperty(
-        name="Full-res size (height)",
+        name="Height",
         description="Full-res videos will have this height",
         default=1080
     )
@@ -376,40 +376,59 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
         default=False,
     )
     prop_ac: BoolProperty(
-        name="Force mono audio?",
+        name="Force Mono Audio",
         description="Forces FFMPEG to transcode videos to mono - easier panning in Blender, but usually not recommended",
         default=False,
     )
 
     def draw(self, context):
+
         #fps = context.scene.render.fps
         render = context.scene.render
         fps = round(render.fps / render.fps_base, 2)
 
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        row = layout.row()
-        row.label(text="Navigate to your videos folder, choose")
-        row = layout.row()
-        row.label(text="options below and hit 'Export to Revolver'")
+        col = layout.column(align=True)
+        col.label(text="Navigate to your videos folder, choose")
+        col.label(text="options below and hit 'Export to Revolver'")
 
-        layout.prop(self, 'proxies')
-        layout.prop(self, 'prop_proxy_w')
-        layout.prop(self, 'prop_proxy_h')
-        layout.prop(self, 'copies')
-        layout.prop(self, 'prop_fullres_w')
-        layout.prop(self, 'prop_fullres_h')
-        layout.prop(self, 'v_format')
+        box = layout.box()
+        box.use_property_split = False
+        box.prop(self, 'v_format')
+        box.prop(self, 'prop_deint')
+        box.label(text="Resulting videos will have %.2f FPS." % fps)
+        box.label(text="(FPS inherited from project's Properties)")
 
-        row = layout.row()
-        row.label(text="Resulting videos will have %.2f FPS." % fps)
+        box = layout.box()
+        box.use_property_split = False
+        box.prop(self, 'proxies')
+        box.use_property_split = True
+        col = box.column(align=True)
+        col.active = self.proxies
+        col.prop(self, 'prop_proxy_w')
+        col.prop(self, 'prop_proxy_h')
 
-        row = layout.row()
-        row.label(text="(FPS inherited from project's Properties)")
+        box = layout.box()
+        box.use_property_split = False
+        box.prop(self, 'copies')
+        box.use_property_split = True
+        col = box.column(align=True)
+        col.active = self.copies
+        col.prop(self, 'prop_fullres_w')
+        col.prop(self, 'prop_fullres_h')
 
-        layout.prop(self, 'prop_ar')
-        layout.prop(self, 'prop_deint')
-        layout.prop(self, 'prop_ac')
+        box = layout.box()
+        box.prop(self, 'prop_ar')
+        box.use_property_split = False
+        box.prop(self, 'prop_ac')
+
+        col = layout.column(align=True)
+        col.label(text="Resulting videos will have %.2f FPS." % fps)
+        col.label(text="(FPS inherited from project's Properties)")
+
 
     @classmethod
     def poll(cls, context):
@@ -431,7 +450,7 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
         for i in glob.glob(videosFolderPath + "*.*"):
             if i[-4:].lower() in bpy.path.extensions_movie:
                 # The line below does not allow for the creation of proxies from
-                # a _PRORES or _MJPEG file. TO-DO: creation of sources = [] has 
+                # a _PRORES or _MJPEG file. TO-DO: creation of sources = [] has
                 # to be inside self.proxies and self.copies. Then, the script
                 # should check for a "original" file (ie. without _prores) ->
                 # if it finds it, pass; else, execute ffmpeg command.
@@ -488,8 +507,11 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
 
                     vs.runFF()
 
+
             # Finish report on progress counter
             wm.progress_end()
+
+            self.report({'INFO'}, "Velvet Revolver Encoding Finished")
 
         return {'FINISHED'}
 
