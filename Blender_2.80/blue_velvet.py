@@ -624,7 +624,14 @@ def runFFMPEG(ffCommand, sources, audioRate, sampleFormat, outputFolder):
     elif sampleFormat == "S24":
         acodec = "pcm_s24le"
     elif sampleFormat == "FLOAT":
-        acodec = "pcm_f32le"        
+        acodec = "pcm_f32le"
+
+    # Create a percentage to base a (mouse) progress counter
+    wm = bpy.context.window_manager
+    wm.progress_begin(0, 100)
+    percentage_level = 0
+    # Counter incrementes according to the number of sources
+    inc_level = int(100 / len(sources))
 
     for source in sources:
         basename, ext = os.path.splitext(source['name'])
@@ -641,7 +648,16 @@ def runFFMPEG(ffCommand, sources, audioRate, sampleFormat, outputFolder):
         callFFMPEG = "\"%s\" -i \"%s\" -y -vn -ar %i -ac \"%s\" -acodec \"%s\" \"%s\"" \
                      % (ffCommand, input, audioRate, audioChannels, acodec, output)
         print(callFFMPEG)
+
+        # Update window_manager progress counter
+        wm.progress_update(percentage_level)
+        percentage_level += inc_level
+
+        # Run FFMPEG
         call(callFFMPEG, shell=True)
+
+    # Finish report on progress counter
+    wm.progress_end()
 
     return {'FINISHED'}
 
@@ -719,9 +735,7 @@ class ExportArdour(bpy.types.Operator, ExportHelper):
         if self.f_location == 'outside_f':
             xml_location = self.filepath
         else: # self.f_location == 'same_f'
-            print(self.filepath)
             xml_location = audiosFolder + os.sep + ardourFile
-            print(xml_location + os.sep + ardourFile)
 
         writeXML(xml_location, Session)
 
