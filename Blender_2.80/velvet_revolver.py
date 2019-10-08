@@ -22,7 +22,7 @@ bl_info = {
     "name": "velvet_revolver ::",
     "description": "Mass-create proxies and/or transcode to equalize FPSs",
     "author": "szaszak - http://blendervelvets.org",
-    "version": (2, 0, 20191007),
+    "version": (2, 0, 20191008),
     "blender": (2, 80, 0),
     "warning": "Bang! Bang! That awful sound.",
     "category": ":",
@@ -376,7 +376,7 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
         default=False,
     )
     prop_ac: BoolProperty(
-        name="Force Mono",
+        name="Force Mono Audio",
         description="Forces FFMPEG to transcode videos to mono - easier panning in Blender, but usually not recommended",
         default=False,
     )
@@ -397,6 +397,13 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
 
         box = layout.box()
         box.use_property_split = False
+        box.prop(self, 'v_format')
+        box.prop(self, 'prop_deint')
+        box.label(text="Resulting videos will have %.2f FPS." % fps)
+        box.label(text="(FPS inherited from project's Properties)")
+
+        box = layout.box()
+        box.use_property_split = False
         box.prop(self, 'proxies')
         box.use_property_split = True
         col = box.column(align=True)
@@ -412,11 +419,10 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
         col.active = self.copies
         col.prop(self, 'prop_fullres_w')
         col.prop(self, 'prop_fullres_h')
-        col.prop(self, 'v_format')
 
         box = layout.box()
         box.prop(self, 'prop_ar')
-        box.prop(self, 'prop_deint')
+        box.use_property_split = False
         box.prop(self, 'prop_ac')
 
         col = layout.column(align=True)
@@ -462,17 +468,16 @@ class VelvetRevolver(bpy.types.Operator, ExportHelper):
         else:
             # Create a percentage to base a (mouse) progress counter
             wm = bpy.context.window_manager
+            wm.progress_begin(0, 100)
+            percentage_level = 0
 
+            # Counter incrementes according to the number of sources
             if self.proxies and self.copies:
                 # If Revolver has to create both proxies and copies,
                 # there are 2x as many levels to be considered
                 inc_level = int(100 / (2 * len(sources)))
             else:
                 inc_level = int(100 / len(sources))
-
-            wm.progress_begin(1, 100)
-            percentage_level = 1
-
 
             if self.proxies:
                 for source in sources:
